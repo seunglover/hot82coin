@@ -163,15 +163,16 @@ class BybitAPI {
             }
             
             const latest = response.result.list[0];
-            const buyRatio = parseFloat(latest.buyRatio);    // longAccount 대신 buyRatio 사용
-            const sellRatio = parseFloat(latest.sellRatio);  // shortAccount 대신 sellRatio 사용
+            const buyRatio = parseFloat(latest.buyRatio);    // 예: 0.49
+            const sellRatio = parseFloat(latest.sellRatio);  // 예: 0.51
             const longShortRatio = buyRatio / sellRatio;
             
+            // buyRatio와 sellRatio는 이미 0~1 사이의 값이므로 그대로 사용
             return {
                 symbol,
                 longShortRatio,
-                longAccount: buyRatio * 100,    // 백분율로 변환
-                shortAccount: sellRatio * 100,  // 백분율로 변환
+                longAccount: buyRatio,    // 0.49 (49%)
+                shortAccount: sellRatio,  // 0.51 (51%)
                 timestamp: latest.timestamp
             };
         } catch (error) {

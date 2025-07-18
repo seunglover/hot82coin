@@ -284,8 +284,9 @@ class CoinRankingApp {
         let longShortDisplay = '';
         if (coin.longShortRatio && coin.longAccount !== null && coin.shortAccount !== null && 
             coin.longAccount > 0 && coin.shortAccount > 0) {
-            const longPercent = (coin.longAccount * 100).toFixed(1);
-            const shortPercent = (coin.shortAccount * 100).toFixed(1);
+            // 바이비트 API는 0~1 사이 값, CoinGecko는 이미 백분율
+            const longPercent = coin.longAccount <= 1 ? (coin.longAccount * 100).toFixed(1) : coin.longAccount.toFixed(1);
+            const shortPercent = coin.shortAccount <= 1 ? (coin.shortAccount * 100).toFixed(1) : coin.shortAccount.toFixed(1);
             const ratioText = coin.note ? `(추정)` : '';
             longShortDisplay = `
                 <div class="longshort-mini">
