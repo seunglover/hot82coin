@@ -456,10 +456,24 @@ class BybitAPI {
                 return bVolume - aVolume;
             });
             
-            // 메인코인을 먼저, 그 다음 밈코인 순서로 결합
-            const combinedCoins = [...sortedMainCoins, ...sortedMemeCoins].slice(0, limit);
+            // 1~10위는 메인코인만, 11위부터는 밈코인도 포함
+            const top10MainCoins = sortedMainCoins.slice(0, 10);
+            const remainingCoins = [...sortedMainCoins.slice(10), ...sortedMemeCoins]
+                .sort((a, b) => {
+                    const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                    const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                    return bVolume - aVolume;
+                })
+                .slice(0, limit - 10);
             
-            console.log('최종 결과 상위 10개:', combinedCoins.slice(0, 10).map(item => ({
+            const combinedCoins = [...top10MainCoins, ...remainingCoins];
+            
+            console.log('최종 결과 상위 10개 (메인코인):', combinedCoins.slice(0, 10).map(item => ({
+                symbol: item.symbol,
+                volume: item.volume24h || item.volume || item.quoteVolume,
+                price: item.lastPrice
+            })));
+            console.log('11위 이후 (밈코인 포함):', combinedCoins.slice(10, 20).map(item => ({
                 symbol: item.symbol,
                 volume: item.volume24h || item.volume || item.quoteVolume,
                 price: item.lastPrice
