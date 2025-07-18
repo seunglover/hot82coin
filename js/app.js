@@ -386,14 +386,23 @@ class CoinRankingApp {
                 // 최소 1자리는 표시 (0.0000001 같은 경우)
                 significantDigits = Math.max(significantDigits, 1);
                 
-                // toFixed 대신 toPrecision 사용 (반올림 방지)
-                const precision = decimalIndex + significantDigits;
-                const result = `$${parseFloat(price.toPrecision(precision))}`;
+                // 과학적 표기법 방지를 위해 toFixed 사용
+                let result = price.toFixed(significantDigits);
+                
+                // 결과가 여전히 과학적 표기법이면 강제로 변환
+                if (result.includes('e-')) {
+                    const [base, exponent] = result.split('e-');
+                    const exp = parseInt(exponent);
+                    const decimalPlaces = exp - 1;
+                    result = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
+                }
+                
+                const finalResult = `$${result}`;
                 
                 if (price < 0.01) {
-                    console.log(`USD 가격 결과 - 원본: ${price}, 결과: ${result}, significantDigits: ${significantDigits}, precision: ${precision}`);
+                    console.log(`USD 가격 결과 - 원본: ${price}, 결과: ${finalResult}, significantDigits: ${significantDigits}`);
                 }
-                return result;
+                return finalResult;
             }
             return `$${price.toFixed(6)}`;
         }
@@ -442,12 +451,19 @@ class CoinRankingApp {
                 // 최소 1자리는 표시 (0.000024 같은 경우)
                 significantDigits = Math.max(significantDigits, 1);
                 
-                // toFixed 대신 toPrecision 사용 (반올림 방지)
-                const precision = decimalIndex + significantDigits;
-                const result = parseFloat(price.toPrecision(precision));
+                // 과학적 표기법 방지를 위해 toFixed 사용
+                let result = price.toFixed(significantDigits);
+                
+                // 결과가 여전히 과학적 표기법이면 강제로 변환
+                if (result.includes('e-')) {
+                    const [base, exponent] = result.split('e-');
+                    const exp = parseInt(exponent);
+                    const decimalPlaces = exp - 1;
+                    result = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
+                }
                 
                 if (price < 0.01) {
-                    console.log(`KRW 가격 결과 - 원본: ${price}, 결과: ${result}, significantDigits: ${significantDigits}, precision: ${precision}`);
+                    console.log(`KRW 가격 결과 - 원본: ${price}, 결과: ${result}, significantDigits: ${significantDigits}`);
                 }
                 return result;
             }
