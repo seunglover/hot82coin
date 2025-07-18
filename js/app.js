@@ -7,6 +7,7 @@ class CoinRankingApp {
         this.lastUpdateTime = null;
         this.autoRefreshInterval = null;
         this.previousRanks = {}; // 이전 순위 저장
+        this.previousVolumes = {}; // 이전 거래량 데이터 저장
         this.currentCoins = []; // 현재 코인 데이터
         this.currentSort = 'volume'; // 현재 정렬 기준
         this.currentTheme = 'light'; // 현재 테마
@@ -116,6 +117,9 @@ class CoinRankingApp {
             
             // 순위 업데이트
             this.updateRanks(coinsWithAllData);
+            
+            // 거래량 데이터 업데이트
+            this.updateVolumes(coinsWithAllData);
             
             // 코인 목록 표시
             this.displayCoins(coinsWithAllData);
@@ -241,6 +245,27 @@ class CoinRankingApp {
     }
 
     /**
+     * 거래량 급등 뱃지 생성
+     */
+    getVolumeSurgeBadge(coin) {
+        // 이전 거래량 데이터가 있으면 변화율 계산
+        if (this.previousVolumes && this.previousVolumes[coin.symbol]) {
+            const previousVolume = this.previousVolumes[coin.symbol];
+            const currentVolume = coin.volume;
+            
+            if (previousVolume > 0) {
+                const volumeChangePercent = ((currentVolume - previousVolume) / previousVolume) * 100;
+                
+                // 거래량이 50% 이상 증가하면 급등 뱃지 표시
+                if (volumeChangePercent >= 50) {
+                    return '<span class="volume-surge-badge">📈 거래량 급등</span>';
+                }
+            }
+        }
+        return '';
+    }
+
+    /**
      * 개별 코인 아이템 생성
      */
     createCoinItem(coin) {
@@ -299,7 +324,10 @@ class CoinRankingApp {
                 <div class="krw-price">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
                 <div class="volume">$${this.formatNumber(coin.volume)}</div>
                 <div class="change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
-                <div class="market-cap">$${this.formatNumber(coin.accurateMarketCap || coin.marketCap)}</div>
+                <div class="market-cap">
+                    $${this.formatNumber(coin.accurateMarketCap || coin.marketCap)}
+                    ${this.getVolumeSurgeBadge(coin)}
+                </div>
             </div>
         `;
     }
@@ -395,6 +423,17 @@ class CoinRankingApp {
             newRanks[coin.symbol] = coin.rank;
         });
         this.previousRanks = newRanks;
+    }
+
+    /**
+     * 거래량 데이터 업데이트
+     */
+    updateVolumes(coins) {
+        const newVolumes = {};
+        coins.forEach(coin => {
+            newVolumes[coin.symbol] = coin.volume;
+        });
+        this.previousVolumes = newVolumes;
     }
 
     /**

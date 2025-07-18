@@ -414,6 +414,22 @@ body {
     font-weight: 700;
     color: var(--text-secondary);
     font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.volume-surge-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    animation: pulse 2s infinite;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
 }
 
 
