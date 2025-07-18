@@ -31,14 +31,6 @@ class CoinRankingApp {
      * 이벤트 바인딩
      */
     bindEvents() {
-        // 새로고침 버튼
-        const refreshBtn = document.getElementById('refresh-btn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                this.loadCoinData();
-            });
-        }
-
         // 메뉴 버튼 이벤트 바인딩
         this.bindMenuEvents();
 
@@ -96,9 +88,7 @@ class CoinRankingApp {
             case 'theme':
                 this.toggleTheme();
                 break;
-            case 'refresh':
-                this.loadCoinData();
-                break;
+
         }
     }
 
@@ -270,14 +260,6 @@ class CoinRankingApp {
      */
     setLoading(loading) {
         this.isLoading = loading;
-        const refreshBtn = document.querySelector('.refresh-btn');
-        if (refreshBtn) {
-            refreshBtn.disabled = loading;
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            refreshBtn.textContent = loading ? 
-                (isMobile ? '🔄 모바일 로딩 중...' : '🔄 로딩 중...') : 
-                '🔄 새로고침';
-        }
     }
 
     /**
@@ -481,7 +463,6 @@ class CoinRankingApp {
                 <div class="col-longshort longshort-column">
                     ${longShortDisplay}
                 </div>
-
                 <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
                 <div class="col-change change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
                 <div class="col-sparkline sparkline">
@@ -870,6 +851,13 @@ async function drawSparkline(symbol, canvasId) {
     try {
         console.log('스파크라인 차트 시작:', symbol, canvasId);
         
+        // Canvas 요소 확인
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            console.error('Canvas 요소를 찾을 수 없습니다:', canvasId);
+            return;
+        }
+        
         // 먼저 선물 거래로 시도
         let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
         console.log('선물 API URL:', url);
@@ -894,18 +882,11 @@ async function drawSparkline(symbol, canvasId) {
             const closePrices = json.result.list.map(item => parseFloat(item[4])); // 종가 (인덱스 4)
             console.log('종가 데이터:', closePrices);
             
-            const canvas = document.getElementById(canvasId);
-            console.log('Canvas 요소:', canvas);
-            
-            if (canvas && closePrices.length > 0) {
+            if (closePrices.length > 0) {
                 const changeClass = closePrices[closePrices.length - 1] >= closePrices[0] ? 'positive' : 'negative';
                 const lineColor = changeClass === 'positive' ? '#10b981' : '#ef4444';
                 
-                // Canvas 크기 설정
-                canvas.width = canvas.offsetWidth;
-                canvas.height = 60;
-                
-                console.log('Sparkline 라이브러리 확인:', typeof Sparkline);
+                console.log('Canvas 크기:', canvas.offsetWidth, 'x', canvas.offsetHeight);
                 
                 // 내장 SVG 차트 사용
                 drawSVGSparkline(canvas, closePrices, lineColor, changeClass);
@@ -941,7 +922,12 @@ async function drawSparkline(symbol, canvasId) {
 
 // SVG로 직접 스파크라인 차트 그리기
 function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
-    const width = canvas.offsetWidth;
+    // Canvas 크기가 0인 경우 기본값 사용
+    let width = canvas.offsetWidth;
+    if (width === 0) {
+        width = 300; // 기본 너비
+        console.log('Canvas 너비가 0이므로 기본값 사용:', width);
+    }
     const height = 60;
     const padding = 10;
     
@@ -1089,7 +1075,7 @@ function showCoinModal(symbol) {
         // 모달이 표시된 후 스파크라인 차트 그리기
         setTimeout(() => {
             drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
-        }, 100);
+        }, 300);
         
     } else {
         modalTitle.textContent = symbol + ' 정보';
