@@ -433,15 +433,6 @@ class CoinRankingApp {
             }
         }
         
-        // 시가총액 규모
-        if (coin.marketCap > 1e11) { // 1000억 달러 이상
-            info.push('💎 대형주');
-        } else if (coin.marketCap > 1e9) { // 10억 달러 이상
-            info.push('🏢 중형주');
-        } else {
-            info.push('💫 소형주');
-        }
-        
         // 현재 시간 기준 상태
         const now = new Date();
         const hour = now.getHours();
