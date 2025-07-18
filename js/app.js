@@ -9,6 +9,7 @@ class CoinRankingApp {
         this.previousRanks = {}; // 이전 순위 저장
         this.currentCoins = []; // 현재 코인 데이터
         this.currentSort = 'volume'; // 현재 정렬 기준
+        this.currentTheme = 'light'; // 현재 테마
         this.init();
     }
 
@@ -16,6 +17,7 @@ class CoinRankingApp {
      * 애플리케이션 초기화
      */
     init() {
+        this.loadTheme();
         this.bindEvents();
         this.loadCoinData();
         this.startAutoRefresh();
@@ -281,7 +283,7 @@ class CoinRankingApp {
                     <div class="coin-rank">${displayRank}</div>
                 </div>
                 <div class="coin-price">
-                    <div>
+                    <div class="price-info">
                         <div class="price-usd">${this.formatUSDPrice(coin.price)}</div>
                         <div class="price-krw">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
                     </div>
@@ -431,6 +433,42 @@ class CoinRankingApp {
     }
 
 
+
+    /**
+     * 테마 로드
+     */
+    loadTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        this.setTheme(savedTheme);
+    }
+
+    /**
+     * 테마 설정
+     */
+    setTheme(theme) {
+        this.currentTheme = theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        
+        if (theme === 'dark') {
+            themeIcon.textContent = '☀️';
+            themeText.textContent = '라이트 모드';
+        } else {
+            themeIcon.textContent = '🌙';
+            themeText.textContent = '다크 모드';
+        }
+    }
+
+    /**
+     * 테마 토글
+     */
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        this.setTheme(newTheme);
+    }
 
     /**
      * 애플리케이션 정리

@@ -1,21 +1,54 @@
-/* 트렌디한 코인 테마 디자인 */
+/* 모던한 다크/라이트 모드 디자인 */
 :root {
-    --primary-color: #00d4aa;
-    --secondary-color: #1a1a2e;
-    --accent-color: #ff6b35;
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --bg-primary: #0f0f23;
-    --bg-secondary: #1a1a2e;
-    --bg-card: #1e1e3a;
-    --border-color: #2a2a4a;
-    --success-color: #00d4aa;
-    --danger-color: #ff4757;
-    --warning-color: #ffa502;
-    --gradient-primary: linear-gradient(135deg, #00d4aa 0%, #0099cc 100%);
-    --gradient-secondary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    --shadow: 0 8px 32px rgba(0, 212, 170, 0.1);
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+    /* 라이트 모드 */
+    --bg-primary-light: #ffffff;
+    --bg-secondary-light: #f8fafc;
+    --bg-card-light: #ffffff;
+    --text-primary-light: #1e293b;
+    --text-secondary-light: #64748b;
+    --border-light: #e2e8f0;
+    --accent-light: #3b82f6;
+    --success-light: #10b981;
+    --danger-light: #ef4444;
+    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+    
+    /* 다크 모드 */
+    --bg-primary-dark: #0f172a;
+    --bg-secondary-dark: #1e293b;
+    --bg-card-dark: #334155;
+    --text-primary-dark: #f1f5f9;
+    --text-secondary-dark: #94a3b8;
+    --border-dark: #475569;
+    --accent-dark: #60a5fa;
+    --success-dark: #34d399;
+    --danger-dark: #f87171;
+    --shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.3);
+    
+    /* 기본값 (라이트 모드) */
+    --bg-primary: var(--bg-primary-light);
+    --bg-secondary: var(--bg-secondary-light);
+    --bg-card: var(--bg-card-light);
+    --text-primary: var(--text-primary-light);
+    --text-secondary: var(--text-secondary-light);
+    --border: var(--border-light);
+    --accent: var(--accent-light);
+    --success: var(--success-light);
+    --danger: var(--danger-light);
+    --shadow: var(--shadow-light);
+}
+
+/* 다크 모드 클래스 */
+[data-theme="dark"] {
+    --bg-primary: var(--bg-primary-dark);
+    --bg-secondary: var(--bg-secondary-dark);
+    --bg-card: var(--bg-card-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --border: var(--border-dark);
+    --accent: var(--accent-dark);
+    --success: var(--success-dark);
+    --danger: var(--danger-dark);
+    --shadow: var(--shadow-dark);
 }
 
 * {
@@ -29,20 +62,7 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
-    overflow-x: hidden;
-}
-
-/* 배경 그라데이션 효과 */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 20% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
-    z-index: -1;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -62,10 +82,7 @@ body::before {
 .header h1 {
     font-size: 2.5rem;
     font-weight: 800;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     margin-bottom: 10px;
     letter-spacing: -0.02em;
 }
@@ -74,6 +91,31 @@ body::before {
     color: var(--text-secondary);
     font-size: 1.1rem;
     font-weight: 500;
+}
+
+/* 테마 토글 버튼 */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
 }
 
 /* 통계 카드 */
@@ -86,38 +128,20 @@ body::before {
 
 .stat-item {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
     padding: 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
 }
 
-.stat-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-primary);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-}
-
 .stat-item:hover {
-    transform: translateY(-4px);
-    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    border-color: var(--accent);
     box-shadow: var(--shadow);
-}
-
-.stat-item:hover::before {
-    opacity: 0.1;
 }
 
 .stat-icon {
@@ -140,6 +164,10 @@ body::before {
     margin-bottom: 30px;
     flex-wrap: wrap;
     gap: 15px;
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
 }
 
 .update-info {
@@ -150,11 +178,11 @@ body::before {
 }
 
 .refresh-btn {
-    background: var(--gradient-primary);
+    background: var(--accent);
     color: white;
     border: none;
     padding: 12px 24px;
-    border-radius: 12px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -165,8 +193,9 @@ body::before {
 }
 
 .refresh-btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--shadow);
+    opacity: 0.9;
 }
 
 .refresh-btn:disabled {
@@ -178,12 +207,12 @@ body::before {
 /* 코인 리스트 */
 .coin-list {
     display: grid;
-    gap: 12px;
+    gap: 16px;
 }
 
 .coin-list-mobile {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     overflow-x: auto;
     padding: 10px 0;
     scroll-snap-type: x mandatory;
@@ -192,45 +221,28 @@ body::before {
 
 .coin-item {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
     padding: 20px;
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(10px);
     scroll-snap-align: start;
-}
-
-.coin-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gradient-primary);
-    opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .coin-item:hover {
     transform: translateY(-2px);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-card);
-}
-
-.coin-item:hover::before {
-    opacity: 1;
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
 }
 
 .coin-item.rank-up {
-    border-color: var(--success-color);
+    border-color: var(--success);
 }
 
 .coin-item.rank-down {
-    border-color: var(--danger-color);
+    border-color: var(--danger);
 }
 
 .coin-header {
@@ -242,13 +254,13 @@ body::before {
 
 .coin-name {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .coin-symbol {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: var(--text-primary);
 }
 
@@ -259,9 +271,9 @@ body::before {
 }
 
 .coin-rank {
-    background: var(--gradient-primary);
+    background: var(--accent);
     color: white;
-    padding: 4px 12px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
@@ -272,12 +284,18 @@ body::before {
 .coin-price {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     margin-bottom: 15px;
 }
 
+.price-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .price-usd {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-primary);
 }
@@ -294,14 +312,18 @@ body::before {
     gap: 5px;
     font-weight: 600;
     font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 6px;
 }
 
 .price-change.positive {
-    color: var(--success-color);
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
 }
 
 .price-change.negative {
-    color: var(--danger-color);
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
 }
 
 .coin-stats {
@@ -309,6 +331,8 @@ body::before {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
     margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
 }
 
 .stat-row {
@@ -352,8 +376,8 @@ body::before {
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-color);
-    border-top: 3px solid var(--primary-color);
+    border: 3px solid var(--border);
+    border-top: 3px solid var(--accent);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 20px;
@@ -380,7 +404,7 @@ body::before {
 .error {
     text-align: center;
     padding: 40px 20px;
-    color: var(--danger-color);
+    color: var(--danger);
 }
 
 .error h3 {
@@ -398,7 +422,7 @@ body::before {
     text-align: center;
     margin-top: 40px;
     padding: 20px 0;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border);
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
@@ -416,7 +440,7 @@ body::before {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
 }
 
@@ -424,16 +448,16 @@ body::before {
     background: var(--bg-card);
     margin: 5% auto;
     padding: 0;
-    border-radius: 16px;
+    border-radius: 12px;
     width: 90%;
     max-width: 500px;
-    border: 1px solid var(--border-color);
-    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 .modal-header {
     padding: 20px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -475,13 +499,13 @@ body::before {
 .api-item {
     margin-bottom: 20px;
     padding: 15px;
-    background: var(--bg-primary);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .api-item strong {
-    color: var(--primary-color);
+    color: var(--accent);
     display: block;
     margin-bottom: 8px;
     font-size: 1rem;
@@ -535,6 +559,13 @@ body::before {
         margin: 10% auto;
         width: 95%;
     }
+    
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
 }
 
 /* 스크롤바 스타일 */
@@ -544,16 +575,16 @@ body::before {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: var(--border);
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
+    background: var(--accent);
 }
 
 /* 애니메이션 */
@@ -568,7 +599,7 @@ body::before {
 
 /* 호버 효과 개선 */
 .coin-item:hover .coin-symbol {
-    color: var(--primary-color);
+    color: var(--accent);
 }
 
 /* 랭크 변화 애니메이션 */

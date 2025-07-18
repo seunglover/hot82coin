@@ -27,6 +27,10 @@
     <!-- 배포 트리거: 2024-01-15 -->
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">다크 모드</span>
+    </button>
     <div class="container">
         <div class="header">
             <h1>🔥 지금 핫한 코인 순위</h1>
@@ -123,6 +127,13 @@
     <script src="js/app.js"></script>
     
     <script>
+        // 테마 토글 함수
+        function toggleTheme() {
+            if (window.coinApp) {
+                window.coinApp.toggleTheme();
+            }
+        }
+        
         // API 정보 모달 표시
         function showApiInfo() {
             document.getElementById('apiInfoModal').style.display = 'block';
