@@ -29,22 +29,61 @@ class CoinRankingApp {
      * 이벤트 바인딩
      */
     bindEvents() {
-        const refreshBtn = document.querySelector('.refresh-btn');
+        // 새로고침 버튼
+        const refreshBtn = document.getElementById('refresh-btn');
         if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => this.loadCoinData());
+            refreshBtn.addEventListener('click', () => {
+                this.loadCoinData();
+            });
         }
 
-        // 키보드 단축키
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'r' || e.key === 'R') {
-                e.preventDefault();
-                this.loadCoinData();
-            }
+        // 테마 토글 버튼
+        const themeBtn = document.getElementById('theme-btn');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        }
+
+        // 마우스 드래그 스크롤 기능 추가
+        this.initDragScroll();
+    }
+
+    /**
+     * 마우스 드래그 스크롤 초기화
+     */
+    initDragScroll() {
+        const coinList = document.querySelector('.coin-list');
+        if (!coinList) return;
+
+        let isDragging = false;
+        let startX = 0;
+        let scrollLeft = 0;
+
+        coinList.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX - coinList.offsetLeft;
+            scrollLeft = coinList.scrollLeft;
+            coinList.style.cursor = 'grabbing';
         });
-        
 
-        
+        coinList.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - coinList.offsetLeft;
+            const walk = (x - startX) * 2; // 스크롤 속도 조절
+            coinList.scrollLeft = scrollLeft - walk;
+        });
 
+        coinList.addEventListener('mouseup', () => {
+            isDragging = false;
+            coinList.style.cursor = 'grab';
+        });
+
+        coinList.addEventListener('mouseleave', () => {
+            isDragging = false;
+            coinList.style.cursor = 'grab';
+        });
     }
 
     /**
@@ -224,6 +263,9 @@ class CoinRankingApp {
                 showCoinModal(symbol);
             });
         });
+
+        // 드래그 스크롤 다시 초기화
+        this.initDragScroll();
     }
 
     /**
