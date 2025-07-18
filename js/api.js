@@ -51,9 +51,7 @@ class BinanceAPI {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15',
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15'
                 },
                 mode: 'cors',
                 signal: controller.signal,
@@ -108,9 +106,7 @@ class BinanceAPI {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'User-Agent': 'CoinRankingApp/1.0',
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
+                    'User-Agent': 'CoinRankingApp/1.0'
                 },
                 mode: 'cors',
                 signal: controller.signal,
