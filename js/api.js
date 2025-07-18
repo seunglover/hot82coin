@@ -45,14 +45,19 @@ class BinanceAPI {
 
             const controller = new AbortController();
             // 모바일에서는 더 짧은 타임아웃 사용
-            const timeout = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 12000 : 10000;
+            const timeout = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 15000 : 10000;
             const timeoutId = setTimeout(() => controller.abort(), timeout);
+            
+            // 카카오톡 인앱 브라우저 감지
+            const isKakaoTalk = navigator.userAgent.includes('KAKAOTALK');
             
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'User-Agent': 'CoinRankingApp/1.0'
+                    'User-Agent': isKakaoTalk ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15' : 'CoinRankingApp/1.0',
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
                 },
                 mode: 'cors',
                 signal: controller.signal,
@@ -69,17 +74,62 @@ class BinanceAPI {
         } catch (error) {
             console.error(`API 요청 오류 (시도 ${retryCount + 1}/${maxRetries + 1}):`, error);
             
+            // 카카오톡 인앱 브라우저에서 실패한 경우 대체 API 사용
+            if (navigator.userAgent.includes('KAKAOTALK') && retryCount === 0) {
+                console.log('카카오톡 인앱 브라우저에서 바이낸스 API 실패, CoinGecko API로 대체...');
+                return await this.getFallbackData();
+            }
+            
             // 재시도 가능한 오류인 경우 재시도
             if (retryCount < maxRetries && (
                 error.name === 'AbortError' || 
                 error.message.includes('timeout') ||
-                error.message.includes('NetworkError')
+                error.message.includes('NetworkError') ||
+                error.message.includes('Load failed')
             )) {
                 console.log(`${retryCount + 1}초 후 재시도...`);
                 await new Promise(resolve => setTimeout(resolve, (retryCount + 1) * 1000));
                 return this.makeRequest(endpoint, params, retryCount + 1);
             }
             
+            throw error;
+        }
+    }
+
+    /**
+     * 카카오톡 인앱 브라우저용 대체 데이터 (CoinGecko API 사용)
+     */
+    async getFallbackData() {
+        try {
+            console.log('CoinGecko API로 대체 데이터 가져오는 중...');
+            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=50&page=1&sparkline=false&locale=en', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15'
+                },
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`CoinGecko API 요청 실패: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // 바이낸스 API 형식에 맞게 변환
+            return data.map((coin, index) => ({
+                symbol: coin.symbol.toUpperCase() + 'USDT',
+                lastPrice: coin.current_price.toString(),
+                quoteVolume: coin.total_volume.toString(),
+                priceChange: (coin.current_price - coin.price_change_24h).toString(),
+                priceChangePercent: coin.price_change_percentage_24h.toString(),
+                highPrice: coin.high_24h.toString(),
+                lowPrice: coin.low_24h.toString(),
+                volume: coin.total_volume.toString()
+            }));
+        } catch (error) {
+            console.error('대체 데이터 가져오기 실패:', error);
             throw error;
         }
     }
