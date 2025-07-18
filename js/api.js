@@ -484,8 +484,10 @@ class BybitAPI {
                 return bVolume - aVolume;
             });
             
-            // 메인코인을 먼저, 그 다음 밈코인 순서로 결합
-            combinedCoins = [...sortedMainCoinsByVolumeAndChange, ...sortedMemeCoinsByVolume].slice(0, limit);
+            // 메인코인을 먼저, 그 다음 밈코인 순서로 결합 (메인코인 최소 20개 보장)
+            const mainCoinsToShow = sortedMainCoinsByVolumeAndChange.slice(0, Math.max(20, limit * 0.6));
+            const memeCoinsToShow = sortedMemeCoinsByVolume.slice(0, limit - mainCoinsToShow.length);
+            combinedCoins = [...mainCoinsToShow, ...memeCoinsToShow];
             
             console.log('메인코인 거래량+변동률 정렬 결과:', sortedMainCoinsByVolumeAndChange.map(item => item.symbol));
             console.log('최종 결과 상위 10개:', combinedCoins.slice(0, 10).map(item => ({

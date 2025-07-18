@@ -1047,7 +1047,21 @@ class CoinRankingApp {
                     .slice(0, 10); // 상위 10개만 표시
                 break;
             default: // 'all'
-                filteredCoins = filteredCoins.slice(0, 30);
+                // 메인코인 우선 표시 (상위 20개 메인코인 + 10개 밈코인)
+                const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
+                
+                const mainCoinList = filteredCoins.filter(coin => mainCoins.includes(coin.symbol));
+                const otherCoins = filteredCoins.filter(coin => !mainCoins.includes(coin.symbol));
+                
+                console.log('전체 코인 개수:', filteredCoins.length);
+                console.log('메인코인 개수:', mainCoinList.length);
+                console.log('메인코인 목록:', mainCoinList.map(coin => coin.symbol));
+                console.log('기타 코인 개수:', otherCoins.length);
+                
+                // 메인코인을 먼저, 그 다음 다른 코인들
+                filteredCoins = [...mainCoinList, ...otherCoins].slice(0, 30);
+                console.log('최종 표시할 코인 개수:', filteredCoins.length);
+                console.log('최종 코인 목록:', filteredCoins.map(coin => coin.symbol));
                 break;
         }
 
