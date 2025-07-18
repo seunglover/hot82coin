@@ -9,7 +9,8 @@ class CoinRankingApp {
         this.previousRanks = {}; // 이전 순위 저장
         this.previousVolumes = {}; // 이전 거래량 데이터 저장
         this.currentCoins = []; // 현재 코인 데이터
-        this.currentSort = 'volume'; // 현재 정렬 기준
+        this.sortKey = 'rank'; // 현재 정렬 키
+        this.sortOrder = 'asc'; // 현재 정렬 순서
         this.currentTheme = 'light'; // 현재 테마
         this.currentMenu = 'all'; // 현재 선택된 메뉴
         this.allCoins = []; // 모든 코인 데이터 저장
@@ -278,11 +279,11 @@ class CoinRankingApp {
         contentDiv.innerHTML = `
             <div class="coin-list">
                 <div class="list-header">
-                    <div class="col-rank">${rankText}</div>
-                    <div class="col-coin">${coinText}</div>
-                    <div class="col-longshort">${longshortText}</div>
-                    <div class="col-volume">${volumeText}</div>
-                    <div class="col-change">${changeText}</div>
+                    <div class="col-rank sortable" data-sort-key="rank">${rankText} ${this.getSortArrow('rank')}</div>
+                    <div class="col-coin sortable" data-sort-key="symbol">${coinText} ${this.getSortArrow('symbol')}</div>
+                    <div class="col-longshort sortable" data-sort-key="longAccount">${longshortText} ${this.getSortArrow('longAccount')}</div>
+                    <div class="col-volume sortable" data-sort-key="volume">${volumeText} ${this.getSortArrow('volume')}</div>
+                    <div class="col-change sortable" data-sort-key="priceChangePercent">${changeText} ${this.getSortArrow('priceChangePercent')}</div>
                     <div class="col-sparkline">${chartText}</div>
                     <div class="col-interest">${interestText}</div>
                 </div>
@@ -298,6 +299,14 @@ class CoinRankingApp {
             });
         });
 
+        // 정렬 헤더 클릭 이벤트 바인딩
+        document.querySelectorAll('.list-header .sortable').forEach(header => {
+            header.addEventListener('click', (e) => {
+                const sortKey = header.getAttribute('data-sort-key');
+                this.sortCoins(sortKey);
+            });
+        });
+
         // 스파크라인 차트 그리기
         coins.forEach(coin => {
             setTimeout(() => {
@@ -307,6 +316,69 @@ class CoinRankingApp {
 
         // 드래그 스크롤 다시 초기화
         this.initDragScroll();
+    }
+
+    /**
+     * 정렬 화살표 가져오기
+     */
+    getSortArrow(key) {
+        if (this.sortKey === key) {
+            return this.sortOrder === 'asc' ? '▲' : '▼';
+        }
+        return '';
+    }
+
+    /**
+     * 코인 정렬
+     */
+    sortCoins(key) {
+        if (this.sortKey === key) {
+            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortKey = key;
+            this.sortOrder = 'asc';
+        }
+
+        let sortedCoins = [...this.allCoins];
+
+        // 현재 메뉴에 따라 필터링된 코인에만 정렬 적용
+        switch (this.currentMenu) {
+            case 'rising':
+                sortedCoins = sortedCoins.filter(coin => coin.priceChangePercent > 0);
+                break;
+            case 'volume':
+                sortedCoins = sortedCoins;
+                break;
+            case 'longshort':
+                sortedCoins = sortedCoins.filter(coin => coin.longAccount && coin.longAccount > 0.65);
+                break;
+            case 'ai':
+                sortedCoins = sortedCoins.filter(coin => coin.aiScore >= 4);
+                break;
+            default: // 'all'
+                sortedCoins = sortedCoins;
+                break;
+        }
+
+        sortedCoins.sort((a, b) => {
+            let valA = a[key];
+            let valB = b[key];
+
+            // 문자열인 경우 소문자로 변환하여 비교
+            if (typeof valA === 'string') valA = valA.toLowerCase();
+            if (typeof valB === 'string') valB = valB.toLowerCase();
+
+            if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+            if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        // 정렬 후 순위 재설정
+        sortedCoins.forEach((coin, index) => {
+            coin.displayRank = index + 1;
+        });
+
+        this.displayCoins(sortedCoins);
     }
 
     /**
@@ -958,55 +1030,37 @@ class CoinRankingApp {
             case 'rising':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.priceChangePercent > 0)
-                    .sort((a, b) => b.priceChangePercent - a.priceChangePercent)
                     .slice(0, 10); // 상위 10개만 표시
-                // 순위 재정렬
-                filteredCoins.forEach((coin, index) => {
-                    coin.displayRank = index + 1;
-                });
                 break;
             case 'volume':
-                // 24시간 거래량 많은 순으로 정렬
                 filteredCoins = filteredCoins
-                    .sort((a, b) => b.volume - a.volume)
                     .slice(0, 10);
-                
-                // 순위 재정렬
-                filteredCoins.forEach((coin, index) => {
-                    coin.displayRank = index + 1;
-                });
                 break;
             case 'longshort':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.longAccount && coin.longAccount > 0.65)
-                    .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0))
                     .slice(0, 10); // 상위 10개만 표시
-                // 순위 재정렬
-                filteredCoins.forEach((coin, index) => {
-                    coin.displayRank = index + 1;
-                });
                 break;
             case 'ai':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.aiScore >= 4)
-                    .sort((a, b) => b.aiScore - a.aiScore)
                     .slice(0, 10); // 상위 10개만 표시
-                // 순위 재정렬
-                filteredCoins.forEach((coin, index) => {
-                    coin.displayRank = index + 1;
-                });
                 break;
             default: // 'all'
-                // API에서 이미 메인코인 우선순위로 정렬된 데이터를 그대로 사용 - 상위 30개 표시
                 filteredCoins = filteredCoins.slice(0, 30);
-                // 순위 재정렬
-                filteredCoins.forEach((coin, index) => {
-                    coin.displayRank = index + 1;
-                });
                 break;
         }
 
-        this.displayCoins(filteredCoins);
+        // 필터링된 코인에 대해 AI 스코어 및 순위 재설정 (정렬 전)
+        filteredCoins.forEach((coin, index) => {
+            const aiResult = this.calculateAIScore(coin);
+            coin.aiScore = aiResult.score;
+            coin.aiReasons = aiResult.reasons;
+            coin.displayRank = index + 1; // 임시 순위
+        });
+
+        // 현재 정렬 기준에 따라 코인 정렬
+        this.sortCoins(this.sortKey);
     }
 
     /**

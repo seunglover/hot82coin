@@ -288,6 +288,27 @@ body {
     min-width: 900px;
 }
 
+.list-header .sortable {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: color 0.2s ease;
+}
+
+.list-header .sortable:hover {
+    color: var(--accent);
+}
+
+.list-header .sortable.active {
+    color: var(--accent);
+}
+
+.list-header .sortable span {
+    font-size: 0.7em;
+}
+
 .coin-item {
     display: grid;
     grid-template-columns: 60px 1fr 100px 100px 100px 100px 80px;
