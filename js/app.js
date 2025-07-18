@@ -331,10 +331,10 @@ class CoinRankingApp {
             return '$0.00';
         }
         
-        // 적당한 소수점으로 표시
+        // 적당한 소수점으로 표시하고 쉼표 구분 추가
         if (price >= 1000) {
-            // 1000달러 이상: 소수점 2자리
-            return `$${price.toFixed(2)}`;
+            // 1000달러 이상: 소수점 2자리, 쉼표 구분
+            return `$${parseFloat(price.toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         } else if (price >= 100) {
             // 100~999달러: 소수점 2자리
             return `$${price.toFixed(2)}`;
@@ -455,15 +455,15 @@ class CoinRankingApp {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
         
-        const themeIcon = document.getElementById('theme-icon');
         const themeText = document.getElementById('theme-text');
+        const themeIcon = document.getElementById('theme-icon');
         
         if (theme === 'dark') {
-            themeIcon.textContent = '☀️';
             themeText.textContent = '라이트 모드';
+            themeIcon.textContent = '☀️';
         } else {
-            themeIcon.textContent = '🌙';
             themeText.textContent = '다크 모드';
+            themeIcon.textContent = '🌙';
         }
     }
 

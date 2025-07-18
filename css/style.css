@@ -93,70 +93,68 @@ body {
     font-weight: 500;
 }
 
-/* 테마 토글 버튼 */
-.theme-toggle {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+/* 새로고침 버튼 개선 */
+.refresh-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
     border-radius: 6px;
-    padding: 12px 20px;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.9rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 150px;
-    height: fit-content;
+    min-width: 100px;
 }
 
-.theme-toggle:hover {
+.refresh-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+    opacity: 0.9;
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 메뉴 바 */
+.menu-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.menu-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    min-width: 80px;
+    text-align: center;
+}
+
+.menu-btn:hover {
     background: var(--bg-secondary);
     transform: translateY(-1px);
     border-color: var(--accent);
     box-shadow: var(--shadow);
 }
 
-/* 통계 카드 */
-.stats {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.stat-item {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 150px;
-}
-
-.stat-item:hover {
-    transform: translateY(-1px);
-    border-color: var(--accent);
-    box-shadow: var(--shadow);
-}
-
-.stat-icon {
-    font-size: 1.2rem;
-    display: block;
-}
-
-.stat-label {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 0.9rem;
+.menu-btn:active {
+    transform: translateY(0);
 }
 
 /* 컨트롤 */
@@ -180,32 +178,7 @@ body {
     color: var(--text-secondary);
 }
 
-.refresh-btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
 
-.refresh-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow);
-    opacity: 0.9;
-}
-
-.refresh-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
 
 /* 코인 리스트 */
 .coin-list {
@@ -520,6 +493,8 @@ body {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-content {
@@ -531,6 +506,9 @@ body {
     max-width: 500px;
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {
@@ -796,21 +774,15 @@ body {
         font-size: 2rem;
     }
     
-    .stats {
+    .menu-bar {
         margin-bottom: 15px;
+        gap: 8px;
     }
     
-    .stat-item {
-        padding: 8px 16px;
-        max-width: 120px;
-    }
-    
-    .stat-icon {
-        font-size: 1rem;
-    }
-    
-    .stat-label {
+    .menu-btn {
+        padding: 8px 12px;
         font-size: 0.8rem;
+        min-width: 70px;
     }
     
     .controls {
@@ -856,15 +828,19 @@ body {
     }
     
     .modal-content {
-        margin: 10% auto;
+        margin: 5% auto;
         width: 95%;
+        max-height: 85vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
-    .theme-toggle {
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        max-width: 120px;
+    .modal {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
+    
+
     
     /* 모바일 모달 스타일 */
     .coin-stats-grid {
