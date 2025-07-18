@@ -203,6 +203,18 @@ class CoinRankingApp {
             
                     // 데이터 표시
         this.allCoins = coinsWithAllData; // 모든 코인 데이터 저장
+        
+        // 디버깅: 롱숏 데이터가 제대로 저장되었는지 확인
+        console.log('=== 스텝 1: allCoins에 저장된 롱숏 데이터 ===');
+        const longShortCoins = this.allCoins.filter(coin => coin.longAccount);
+        console.log('롱숏 데이터가 있는 코인 개수:', longShortCoins.length);
+        console.log('롱숏 데이터 상세:', longShortCoins.map(coin => ({
+            symbol: coin.symbol,
+            longAccount: coin.longAccount,
+            shortAccount: coin.shortAccount,
+            volume: coin.volume
+        })));
+        
         this.displayFilteredCoins(); // 필터링된 코인 표시
         
         // 다국어 텍스트 업데이트
@@ -210,11 +222,7 @@ class CoinRankingApp {
             this.updateTextsForLanguage();
         }
             
-            // 1위 코인 정보 표시
-            if (coinsWithAllData.length > 0) {
-                const topCoin = coinsWithAllData[0];
-                this.displayTopCoinInfo(topCoin.symbol, topCoin);
-            }
+            // 1위 코인 정보는 displayFilteredCoins에서 업데이트됨
             
             // 시장 심리 지표 가져오기 및 표시
             this.loadMarketSentiment();
@@ -236,8 +244,25 @@ class CoinRankingApp {
      */
     mergeAllData(coins, longShortData, accurateMarketCapData) {
         return coins.map(coin => {
-            const longShortInfo = longShortData.find(ls => ls.symbol === coin.symbol);
+            // 롱숏 데이터 매칭 - symbol과 fullSymbol 모두 시도
+            const longShortInfo = longShortData.find(ls => 
+                ls.symbol === coin.symbol || 
+                ls.fullSymbol === coin.fullSymbol ||
+                ls.symbol === coin.fullSymbol?.replace('USDT', '') ||
+                ls.fullSymbol === coin.symbol + 'USDT'
+            );
             const marketCapInfo = accurateMarketCapData.find(mc => mc.symbol === coin.symbol);
+            
+            // 디버깅: 롱숏 데이터 매칭 결과 로그
+            if (longShortInfo) {
+                console.log(`롱숏 데이터 매칭 성공: ${coin.symbol}`, longShortInfo);
+            } else {
+                console.log(`롱숏 데이터 매칭 실패: ${coin.symbol}`, {
+                    availableSymbols: longShortData.map(ls => ({ symbol: ls.symbol, fullSymbol: ls.fullSymbol })),
+                    coinSymbol: coin.symbol,
+                    coinFullSymbol: coin.fullSymbol
+                });
+            }
             
             return {
                 ...coin,
@@ -332,15 +357,31 @@ class CoinRankingApp {
      * 코인 정렬
      */
     sortCoins(key) {
-        if (this.sortKey === key) {
-            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-        } else {
-            this.sortKey = key;
-            this.sortOrder = 'asc';
-        }
+        try {
+            // 입력값 검증
+            if (!key || typeof key !== 'string') {
+                console.error('sortCoins: 유효하지 않은 정렬 키:', key);
+                return;
+            }
 
-        // 현재 필터링된 코인 목록을 가져와서 정렬
-        let sortedCoins = [...this.allCoins];
+            // 정렬 순서 업데이트
+            if (this.sortKey === key) {
+                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortOrder = 'asc';
+            }
+
+            console.log(`정렬 시작 - 키: ${key}, 순서: ${this.sortOrder}, 메뉴: ${this.currentMenu}`);
+
+            // 데이터 검증
+            if (!this.allCoins || !Array.isArray(this.allCoins) || this.allCoins.length === 0) {
+                console.warn('sortCoins: 정렬할 코인 데이터가 없습니다.');
+                return;
+            }
+
+            // 현재 필터링된 코인 목록을 가져와서 정렬
+            let sortedCoins = [...this.allCoins];
 
         // 현재 메뉴에 따라 필터링된 코인에만 정렬 적용
         switch (this.currentMenu) {
@@ -353,8 +394,8 @@ class CoinRankingApp {
                 sortedCoins = sortedCoins;
                 break;
             case 'longshort':
-                // 롱/숏 비율: 롱 비중 높은 코인만
-                sortedCoins = sortedCoins.filter(coin => coin.longAccount && coin.longAccount > 0.65);
+                // 롱/숏 비율: 순수하게 롱 비중 높은 순 (거래량 무관)
+                sortedCoins = sortedCoins.filter(coin => coin.longAccount && coin.longAccount > 0.6);
                 break;
             case 'ai':
                 // AI 추천: AI 점수 높은 코인만
@@ -369,18 +410,84 @@ class CoinRankingApp {
                 break;
         }
 
-        sortedCoins.sort((a, b) => {
-            let valA = a[key];
-            let valB = b[key];
+        // 롱숏 메뉴에서도 정렬 키에 따라 정렬 가능하도록 수정
+        if (this.currentMenu === 'longshort') {
+            console.log('롱숏 메뉴 정렬 시작 - 정렬 키:', key, '정렬 순서:', this.sortOrder);
+            
+            // 롱숏 데이터가 있는 코인만 필터링
+            const longShortCoins = sortedCoins.filter(coin => {
+                return coin && typeof coin === 'object' && coin.longAccount !== undefined && coin.longAccount !== null;
+            });
+            
+            console.log(`롱숏 데이터가 있는 코인: ${longShortCoins.length}개`);
+            
+            if (longShortCoins.length === 0) {
+                console.warn('롱숏 메뉴: 정렬할 롱숏 데이터가 없습니다.');
+                return;
+            }
+            
+            // 롱숏 메뉴에서는 기본적으로 롱 비중 순이지만, 다른 정렬도 허용
+            if (key === 'longAccount' || this.sortKey === 'longAccount') {
+                // 롱 비중 정렬
+                sortedCoins = longShortCoins.sort((a, b) => {
+                    const longA = parseFloat(a.longAccount) || 0;
+                    const longB = parseFloat(b.longAccount) || 0;
+                    const result = longB - longA;
+                    return this.sortOrder === 'asc' ? -result : result;
+                });
+            } else {
+                // 다른 정렬 기준 사용
+                sortedCoins = longShortCoins.sort((a, b) => {
+                    let valA = a[key];
+                    let valB = b[key];
 
-            // 문자열인 경우 소문자로 변환하여 비교
-            if (typeof valA === 'string') valA = valA.toLowerCase();
-            if (typeof valB === 'string') valB = valB.toLowerCase();
+                    // null/undefined 체크
+                    if (valA === null || valA === undefined) valA = 0;
+                    if (valB === null || valB === undefined) valB = 0;
 
-            if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
-            if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
-            return 0;
-        });
+                    // 문자열인 경우 소문자로 변환하여 비교
+                    if (typeof valA === 'string') valA = valA.toLowerCase();
+                    if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                    if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                    if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+            
+            console.log('sortCoins - 롱숏 메뉴 정렬 후:', sortedCoins.map(coin => ({
+                symbol: coin.symbol,
+                longAccount: coin.longAccount,
+                sortKey: key,
+                sortOrder: this.sortOrder
+            })));
+        } else {
+            // 다른 메뉴에서는 현재 정렬 기준에 따라 정렬
+            console.log(`다른 메뉴 정렬 - 키: ${key}, 순서: ${this.sortOrder}`);
+            
+            // 정렬할 데이터가 있는지 확인
+            if (sortedCoins.length === 0) {
+                console.warn('정렬할 코인 데이터가 없습니다.');
+                return;
+            }
+            
+            sortedCoins.sort((a, b) => {
+                let valA = a[key];
+                let valB = b[key];
+
+                // null/undefined 체크
+                if (valA === null || valA === undefined) valA = 0;
+                if (valB === null || valB === undefined) valB = 0;
+
+                // 문자열인 경우 소문자로 변환하여 비교
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
 
         // 정렬 후 순위 재설정
         sortedCoins.forEach((coin, index) => {
@@ -388,6 +495,26 @@ class CoinRankingApp {
         });
 
         this.displayCoins(sortedCoins);
+        
+        // 1위 코인 정보 업데이트 (정렬된 코인의 첫 번째)
+        if (sortedCoins.length > 0) {
+            const topCoin = sortedCoins[0];
+            console.log(`1위 코인 업데이트 (정렬): ${topCoin.symbol} (${this.currentMenu} 메뉴)`);
+            this.displayTopCoinInfo(topCoin.symbol, topCoin);
+        }
+
+        console.log(`정렬 완료 - 총 ${sortedCoins.length}개 코인 정렬됨`);
+
+    } catch (error) {
+        console.error('sortCoins 함수에서 오류 발생:', error);
+        console.error('오류 상세 정보:', {
+            key: key,
+            sortKey: this.sortKey,
+            sortOrder: this.sortOrder,
+            currentMenu: this.currentMenu,
+            allCoinsLength: this.allCoins ? this.allCoins.length : 'undefined'
+        });
+    }
     }
 
     /**
@@ -713,9 +840,9 @@ class CoinRankingApp {
         const displayRank = coin.displayRank || coin.rank;
         const rankArrow = this.getRankChangeArrow(coin.symbol, displayRank);
         
-        // 롱숏 비율 표시 (데이터가 없어도 안전하게 처리)
+        // 롱숏 비율 표시 (조건 완화)
         let longShortDisplay = '';
-        if (coin.longShortRatio && coin.longAccount !== null && coin.shortAccount !== null && 
+        if (coin.longAccount !== null && coin.shortAccount !== null && 
             coin.longAccount > 0 && coin.shortAccount > 0) {
             // 바이비트 API는 0~1 사이 값, CoinGecko는 이미 백분율
             const longPercent = coin.longAccount <= 1 ? (coin.longAccount * 100).toFixed(1) : coin.longAccount.toFixed(1);
@@ -731,6 +858,12 @@ class CoinRankingApp {
                 </div>
             `;
         } else {
+            // 디버깅: 왜 데이터가 없는지 확인
+            console.log(`롱숏 데이터 없음: ${coin.symbol}`, {
+                longAccount: coin.longAccount,
+                shortAccount: coin.shortAccount,
+                longShortRatio: coin.longShortRatio
+            });
             longShortDisplay = '<div class="no-data">데이터 없음</div>';
         }
         
@@ -1026,6 +1159,9 @@ class CoinRankingApp {
         if (!this.allCoins.length) return;
 
         let filteredCoins = [...this.allCoins];
+        
+        console.log('displayFilteredCoins 시작 - 현재 메뉴:', this.currentMenu);
+        console.log('allCoins 개수:', this.allCoins.length);
 
         // AI 스코어 계산 (모든 코인에 대해)
         filteredCoins.forEach(coin => {
@@ -1050,11 +1186,45 @@ class CoinRankingApp {
                     .slice(0, 10);
                 break;
             case 'longshort':
-                // 롱/숏 비율: 롱 비중 높은 코인만
-                filteredCoins = filteredCoins
-                    .filter(coin => coin.longAccount && coin.longAccount > 0.65)
-                    .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0)) // 롱 비중 높은 순
-                    .slice(0, 10);
+                // 롱/숏 비율: 순수하게 롱 비중 높은 순 (거래량 무관)
+                console.log('=== 스텝 2: 롱숏 메뉴 필터링 ===');
+                console.log('전체 코인 개수:', filteredCoins.length);
+                
+                const longShortDataCoins = filteredCoins.filter(coin => coin.longAccount);
+                console.log('롱숏 데이터가 있는 코인들:', longShortDataCoins.map(coin => ({
+                    symbol: coin.symbol,
+                    longAccount: coin.longAccount,
+                    shortAccount: coin.shortAccount,
+                    volume: coin.volume
+                })));
+                
+                // 롱숏 데이터가 있는 모든 코인을 롱 비중 순으로 정렬 (거래량 무관)
+                const longShortCoins = filteredCoins.filter(coin => coin.longAccount && coin.longAccount > 0.6);
+                console.log('필터링 후 롱숏 코인들:', longShortCoins.map(coin => ({
+                    symbol: coin.symbol,
+                    longAccount: coin.longAccount,
+                    shortAccount: coin.shortAccount,
+                    volume: coin.volume
+                })));
+                
+                // 정렬 전 상태 확인
+                console.log('정렬 전 순서:', longShortCoins.map(coin => `${coin.symbol}: ${coin.longAccount}`));
+                
+                filteredCoins = longShortCoins
+                    .sort((a, b) => {
+                        const result = (b.longAccount || 0) - (a.longAccount || 0);
+                        console.log(`정렬 비교: ${a.symbol}(${a.longAccount}) vs ${b.symbol}(${b.longAccount}) = ${result}`);
+                        return result;
+                    }) // 순수하게 롱 비중 높은 순
+                    .slice(0, 15); // 더 많은 코인 표시
+                
+                console.log('=== 스텝 2 완료: 최종 정렬 후 코인들 ===');
+                console.log('정렬 후 코인들:', filteredCoins.map(coin => ({
+                    symbol: coin.symbol,
+                    longAccount: coin.longAccount,
+                    shortAccount: coin.shortAccount,
+                    volume: coin.volume
+                })));
                 break;
             case 'ai':
                 // AI 추천: AI 점수 높은 코인만
@@ -1090,29 +1260,159 @@ class CoinRankingApp {
             coin.displayRank = index + 1; // 임시 순위
         });
 
-        // 현재 정렬 기준에 따라 코인 정렬 (무한 루프 방지)
-        if (this.sortKey && this.sortKey !== 'rank') {
-            filteredCoins.sort((a, b) => {
-                let valA = a[this.sortKey];
-                let valB = b[this.sortKey];
-
-                // 문자열인 경우 소문자로 변환하여 비교
-                if (typeof valA === 'string') valA = valA.toLowerCase();
-                if (typeof valB === 'string') valB = valB.toLowerCase();
-
-                if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
-                if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
-                return 0;
+        // 롱숏 메뉴에서도 정렬 키에 따라 정렬 가능하도록 수정
+        if (this.currentMenu === 'longshort') {
+            console.log('=== 스텝 3: 롱숏 메뉴 정렬 ===');
+            console.log('정렬 전:', filteredCoins.map(coin => `${coin.symbol}: ${coin.longAccount}`));
+            console.log('현재 정렬 키:', this.sortKey, '정렬 순서:', this.sortOrder);
+            
+            // 데이터 검증
+            if (!filteredCoins || filteredCoins.length === 0) {
+                console.warn('롱숏 메뉴: 정렬할 데이터가 없습니다.');
+                return;
+            }
+            
+            // 롱숏 데이터가 있는 코인만 필터링
+            const validLongShortCoins = filteredCoins.filter(coin => {
+                return coin && typeof coin === 'object' && 
+                       coin.longAccount !== undefined && coin.longAccount !== null &&
+                       !isNaN(parseFloat(coin.longAccount));
             });
+            
+            console.log(`유효한 롱숏 데이터가 있는 코인: ${validLongShortCoins.length}개`);
+            
+            if (validLongShortCoins.length === 0) {
+                console.warn('롱숏 메뉴: 유효한 롱숏 데이터가 없습니다.');
+                return;
+            }
+            
+            // 완전히 새로운 배열을 만들어서 정렬 (원본 배열 영향 방지)
+            let sortedLongShortCoins = [...validLongShortCoins];
+            
+            try {
+                // 정렬 키에 따라 정렬
+                if (this.sortKey === 'longAccount' || !this.sortKey || this.sortKey === 'rank') {
+                    // 기본적으로 롱 비중 순 정렬
+                    sortedLongShortCoins.sort((a, b) => {
+                        const longA = parseFloat(a.longAccount) || 0;
+                        const longB = parseFloat(b.longAccount) || 0;
+                        const result = longB - longA;
+                        return this.sortOrder === 'asc' ? -result : result;
+                    });
+                } else {
+                    // 다른 정렬 기준 사용
+                    sortedLongShortCoins.sort((a, b) => {
+                        let valA = a[this.sortKey];
+                        let valB = b[this.sortKey];
 
-            // 정렬 후 순위 재설정
-            filteredCoins.forEach((coin, index) => {
-                coin.displayRank = index + 1;
-            });
+                        // null/undefined 체크
+                        if (valA === null || valA === undefined) valA = 0;
+                        if (valB === null || valB === undefined) valB = 0;
+
+                        // 문자열인 경우 소문자로 변환하여 비교
+                        if (typeof valA === 'string') valA = valA.toLowerCase();
+                        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                        if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                        if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                }
+                
+                console.log('정렬 후:', sortedLongShortCoins.map(coin => ({
+                    symbol: coin.symbol,
+                    longAccount: coin.longAccount,
+                    sortKey: this.sortKey,
+                    sortOrder: this.sortOrder
+                })));
+                
+                // 정렬 후 순위 재설정
+                sortedLongShortCoins.forEach((coin, index) => {
+                    coin.displayRank = index + 1;
+                });
+                
+                console.log('순위 재설정 후:', sortedLongShortCoins.map(coin => `${coin.symbol}: ${coin.displayRank}위`));
+                
+                // 정렬된 배열로 교체
+                filteredCoins = sortedLongShortCoins;
+                console.log('=== 스텝 3 완료 ===');
+                
+            } catch (error) {
+                console.error('롱숏 메뉴 정렬 중 오류 발생:', error);
+                console.error('오류 상세 정보:', {
+                    sortKey: this.sortKey,
+                    sortOrder: this.sortOrder,
+                    coinsCount: validLongShortCoins.length
+                });
+            }
+        } else {
+            // 다른 메뉴에서는 현재 정렬 기준에 따라 정렬
+            if (this.sortKey && this.sortKey !== 'rank') {
+                try {
+                    console.log(`다른 메뉴 정렬 - 키: ${this.sortKey}, 순서: ${this.sortOrder}`);
+                    
+                    // 데이터 검증
+                    if (!filteredCoins || filteredCoins.length === 0) {
+                        console.warn('다른 메뉴: 정렬할 데이터가 없습니다.');
+                        return;
+                    }
+                    
+                    filteredCoins.sort((a, b) => {
+                        let valA = a[this.sortKey];
+                        let valB = b[this.sortKey];
+
+                        // null/undefined 체크
+                        if (valA === null || valA === undefined) valA = 0;
+                        if (valB === null || valB === undefined) valB = 0;
+
+                        // 문자열인 경우 소문자로 변환하여 비교
+                        if (typeof valA === 'string') valA = valA.toLowerCase();
+                        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                        if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                        if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+
+                    // 정렬 후 순위 재설정
+                    filteredCoins.forEach((coin, index) => {
+                        coin.displayRank = index + 1;
+                    });
+                    
+                    console.log(`다른 메뉴 정렬 완료 - ${filteredCoins.length}개 코인 정렬됨`);
+                    
+                } catch (error) {
+                    console.error('다른 메뉴 정렬 중 오류 발생:', error);
+                    console.error('오류 상세 정보:', {
+                        sortKey: this.sortKey,
+                        sortOrder: this.sortOrder,
+                        coinsCount: filteredCoins ? filteredCoins.length : 0
+                    });
+                }
+            }
         }
 
+        // 롱숏 메뉴에서는 특별한 처리
+        if (this.currentMenu === 'longshort') {
+            console.log('=== 스텝 4: 최종 확인 ===');
+            console.log('최종 표시할 코인들:', filteredCoins.map(coin => ({
+                symbol: coin.symbol,
+                rank: coin.displayRank,
+                longAccount: coin.longAccount
+            })));
+            console.log('1위 코인:', filteredCoins[0] ? `${filteredCoins[0].symbol} (${filteredCoins[0].longAccount})` : '없음');
+            console.log('=== 스텝 4 완료 ===');
+        }
+        
         // 코인 목록 표시
         this.displayCoins(filteredCoins);
+        
+        // 1위 코인 정보 업데이트 (필터링된 코인의 첫 번째)
+        if (filteredCoins.length > 0) {
+            const topCoin = filteredCoins[0];
+            console.log(`1위 코인 업데이트: ${topCoin.symbol} (${this.currentMenu} 메뉴)`);
+            this.displayTopCoinInfo(topCoin.symbol, topCoin);
+        }
     }
 
     /**

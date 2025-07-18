@@ -256,7 +256,7 @@ class BybitAPI {
      * 스팟 심볼을 바이비트 V5 선물 심볼로 변환
      */
     convertToFuturesSymbol(spotSymbol) {
-        // 바이비트 V5 선물 API에서 지원하는 심볼들
+        // 바이비트 V5 선물 API에서 지원하는 심볼들 (더 많은 심볼 추가)
         const supportedFuturesSymbols = [
             'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT', 
             'AVAXUSDT', 'DOTUSDT', 'MATICUSDT', 'LINKUSDT', 'UNIUSDT',
@@ -265,7 +265,9 @@ class BybitAPI {
             'ICPUSDT', 'FILUSDT', 'TRXUSDT', 'ETCUSDT', 'XLMUSDT',
             'APTUSDT', 'OPUSDT', 'ARBUSDT', 'SUIUSDT', 'SEIUSDT',
             'INJUSDT', 'TIAUSDT', 'JUPUSDT', 'PYTHUSDT', 'WIFUSDT',
-            'BONKUSDT', 'PEPEUSDT', 'FLOKIUSDT', 'MEMEUSDT', 'WIFUSDT'
+            'BONKUSDT', 'PEPEUSDT', 'FLOKIUSDT', 'MEMEUSDT', 'WIFUSDT',
+            'BOMEUSDT', 'BOOKUSDT', 'SLERFUSDT', 'POPCATUSDT', 'TURBOUSDT',
+            'MYROUSDT', 'SMOGUSDT', 'WENUSDT', 'JTOUSDT', 'SLERFUSDT'
         ];
         
         // 이미 선물 심볼인 경우 그대로 반환
@@ -320,8 +322,8 @@ class BybitAPI {
         try {
             const longShortData = [];
             
-            // 바이비트에서 선물 거래를 지원하는 메인 코인들만 처리
-            const supportedMainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI'];
+            // 바이비트에서 선물 거래를 지원하는 메인 코인들만 처리 (DOGE 추가)
+            const supportedMainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'DOGE', 'SHIB', 'XRP', 'LTC', 'BCH'];
             const supportedMainCoinSymbols = supportedMainCoins.map(coin => coin + 'USDT');
             
             // 지원되는 메인 코인들만 처리
@@ -337,16 +339,17 @@ class BybitAPI {
                             shortAccount: ratioData.shortAccount,
                             timestamp: ratioData.timestamp
                         });
+                        console.log(`메인코인 롱숏 데이터 성공: ${symbol}`, ratioData);
                     }
                 } catch (error) {
                     console.warn(`${symbol} 롱숏 비율 데이터 가져오기 실패:`, error);
                 }
             }
             
-            // 상위 거래량 코인들 중에서 선물 거래가 지원되는 것들만 처리
+            // 상위 거래량 코인들 중에서 선물 거래가 지원되는 것들만 처리 (더 많은 코인 시도)
             const topVolumeCoins = coins
                 .filter(coin => !supportedMainCoins.includes(coin.symbol))
-                .slice(0, 3); // 추가 3개만 (오류 줄이기)
+                .slice(0, 10); // 10개로 증가
             
             for (const coin of topVolumeCoins) {
                 try {
@@ -360,6 +363,7 @@ class BybitAPI {
                             shortAccount: ratioData.shortAccount,
                             timestamp: ratioData.timestamp
                         });
+                        console.log(`거래량 코인 롱숏 데이터 성공: ${coin.symbol}`, ratioData);
                     }
                 } catch (error) {
                     console.warn(`${coin.symbol} 롱숏 비율 데이터 가져오기 실패:`, error);
@@ -367,6 +371,12 @@ class BybitAPI {
             }
             
             console.log('롱숏 비율 데이터 수집 완료:', longShortData.length, '개');
+            console.log('수집된 롱숏 데이터:', longShortData.map(item => ({
+                symbol: item.symbol,
+                fullSymbol: item.fullSymbol,
+                longAccount: item.longAccount,
+                shortAccount: item.shortAccount
+            })));
             return longShortData;
         } catch (error) {
             console.error('상위 코인 롱숏 비율 데이터 가져오기 오류:', error);
