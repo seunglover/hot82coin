@@ -1114,7 +1114,7 @@ function showCoinModal(symbol) {
                     <h4>24시간 가격 변동</h4>
                     <div class="sparkline-container">
                         <div class="sparkline-placeholder">
-                            <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
+                            <div id="modal-sparkline-${coin.symbol}" class="sparkline-chart"></div>
                             <div class="sparkline-note">실시간 차트 데이터 로딩 중...</div>
                         </div>
                     </div>
@@ -1147,28 +1147,28 @@ function showCoinModal(symbol) {
         // 모달이 표시된 후 스파크라인 차트 그리기
         setTimeout(() => {
             console.log('모달 스파크차트 첫 번째 시도');
-            const canvas = document.getElementById(`sparkline-${coin.symbol}`);
+            const canvas = document.getElementById(`modal-sparkline-${coin.symbol}`);
             if (canvas) {
                 // 강제로 크기 설정
                 canvas.style.width = '400px';
                 canvas.style.height = '60px';
                 canvas.style.minWidth = '400px';
                 canvas.style.minHeight = '60px';
-                drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+                drawSparkline(coin.symbol, `modal-sparkline-${coin.symbol}`);
             }
         }, 300);
         
         // 모달이 완전히 표시된 후 다시 시도
         setTimeout(() => {
             console.log('모달 스파크차트 두 번째 시도');
-            const canvas = document.getElementById(`sparkline-${coin.symbol}`);
+            const canvas = document.getElementById(`modal-sparkline-${coin.symbol}`);
             if (canvas) {
                 console.log('Canvas 크기 확인:', canvas.offsetWidth, 'x', canvas.offsetHeight);
                 if (canvas.offsetWidth < 200) {
                     console.log('Canvas 크기가 작아서 다시 시도');
                     canvas.style.width = '400px';
                     canvas.style.height = '60px';
-                    drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+                    drawSparkline(coin.symbol, `modal-sparkline-${coin.symbol}`);
                 }
             }
         }, 800);
@@ -1176,7 +1176,7 @@ function showCoinModal(symbol) {
         // 최종 시도
         setTimeout(() => {
             console.log('모달 스파크차트 최종 시도');
-            const canvas = document.getElementById(`sparkline-${coin.symbol}`);
+            const canvas = document.getElementById(`modal-sparkline-${coin.symbol}`);
             if (canvas) {
                 console.log('최종 시도 - 강제로 차트 그리기');
                 // 강제로 크기 설정 후 차트 그리기
@@ -1184,7 +1184,7 @@ function showCoinModal(symbol) {
                 canvas.style.height = '60px';
                 canvas.style.minWidth = '400px';
                 canvas.style.minHeight = '60px';
-                drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+                drawSparkline(coin.symbol, `modal-sparkline-${coin.symbol}`);
             }
         }, 1500);
         
