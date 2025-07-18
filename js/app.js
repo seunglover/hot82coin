@@ -339,9 +339,19 @@ class CoinRankingApp {
             return '$0.00';
         }
         
+        // 과학적 표기법을 일반 소수점 표기법으로 변환
+        let priceStr = price.toString();
+        if (priceStr.includes('e-')) {
+            const [base, exponent] = priceStr.split('e-');
+            const exp = parseInt(exponent);
+            const decimalPlaces = exp - 1;
+            priceStr = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
+            price = parseFloat(priceStr);
+        }
+        
         // 디버깅: 매우 작은 값들 확인
         if (price < 0.01) {
-            console.log(`USD 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}`);
+            console.log(`USD 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}, 변환된: ${priceStr}`);
         }
         
         // 적당한 소수점으로 표시하고 쉼표 구분 추가
@@ -398,9 +408,19 @@ class CoinRankingApp {
             return '0';
         }
         
+        // 과학적 표기법을 일반 소수점 표기법으로 변환
+        let priceStr = price.toString();
+        if (priceStr.includes('e-')) {
+            const [base, exponent] = priceStr.split('e-');
+            const exp = parseInt(exponent);
+            const decimalPlaces = exp - 1;
+            priceStr = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
+            price = parseFloat(priceStr);
+        }
+        
         // 디버깅: 매우 작은 값들 확인
         if (price < 0.01) {
-            console.log(`KRW 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}`);
+            console.log(`KRW 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}, 변환된: ${priceStr}`);
         }
         
         // 1원 이하일 때만 소수점 사용
