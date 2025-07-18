@@ -472,6 +472,24 @@ body {
     text-align: center;
 }
 
+/* 거래량 급증 배지 스타일 */
+.volume-surge-badge.volume-high {
+    background: #f59e0b;
+    color: white;
+    font-weight: bold;
+}
+
+.volume-surge-badge.volume-medium {
+    background: #fbbf24;
+    color: white;
+    font-weight: bold;
+}
+
+.volume-surge-badge.volume-low {
+    background: #fde047;
+    color: #92400e;
+    font-weight: bold;
+}
 
 
 /* 로딩 */

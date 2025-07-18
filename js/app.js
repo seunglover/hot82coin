@@ -359,11 +359,11 @@ class CoinRankingApp {
         // 거래량 급증 메뉴에서는 거래량 배지 표시
         if (this.currentMenu === 'volume') {
             if (coin.volume >= 1e8) {
-                return '<span class="volume-surge-badge">🔥 폭증</span>';
+                return '<span class="volume-surge-badge volume-high">🔥 폭등중</span>';
             } else if (coin.volume >= 1e7) {
-                return '<span class="volume-surge-badge">📈 급증</span>';
+                return '<span class="volume-surge-badge volume-medium">📈 급증</span>';
             } else if (coin.volume >= 1e6) {
-                return '<span class="volume-surge-badge">💹 증가</span>';
+                return '<span class="volume-surge-badge volume-low">💹 증가</span>';
             }
             return '';
         }
