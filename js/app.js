@@ -211,7 +211,7 @@ class CoinRankingApp {
                     <div>KRW 가격</div>
                     <div>거래량</div>
                     <div>변동률</div>
-                    <div>거래량 급등</div>
+                    <div>거래량</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
@@ -265,7 +265,7 @@ class CoinRankingApp {
         
         // 거래량이 많은 코인에도 뱃지 표시 (상위 10개)
         if (coin.rank <= 10) {
-            return '<span class="volume-high-badge">🔥 많음</span>';
+            return '<span class="volume-high-badge">🔥 거래량 급등</span>';
         }
         
         return '';
