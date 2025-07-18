@@ -1,13 +1,22 @@
 /**
- * 바이비트 API 관련 기능
+ * 바이비트 V5 API 관련 기능
+ * https://bybit-exchange.github.io/docs/v5/intro
  */
 class BybitAPI {
     constructor() {
-        this.BYBIT_URL = 'https://api.bybit.com/v5/market';
+        this.BYBIT_URL = 'https://api.bybit.com/v5';
         this.rateLimit = {
             requests: 0,
-            maxRequests: 1200, // 1분당 최대 요청 수
+            maxRequests: 1200, // V5 API: 1분당 최대 요청 수
             resetTime: Date.now() + 60000 // 1분 후 리셋
+        };
+        
+        // V5 API 카테고리
+        this.categories = {
+            spot: 'spot',           // 현물 거래
+            linear: 'linear',        // USDT 선물
+            inverse: 'inverse',      // 역방향 선물
+            option: 'option'         // 옵션
         };
     }
 
@@ -29,7 +38,7 @@ class BybitAPI {
     }
 
     /**
-     * 바이비트 API 요청 실행
+     * 바이비트 V5 API 요청 실행
      */
     async makeRequest(endpoint, params = {}, retryCount = 0) {
         const maxRetries = 2;
@@ -60,12 +69,19 @@ class BybitAPI {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                throw new Error(`바이비트 API 요청 실패: ${response.status} ${response.statusText}`);
+                throw new Error(`바이비트 V5 API 요청 실패: ${response.status} ${response.statusText}`);
             }
 
-            return await response.json();
+            const data = await response.json();
+            
+            // V5 API 응답 검증
+            if (data.retCode !== 0) {
+                throw new Error(`바이비트 V5 API 오류: ${data.retMsg} (코드: ${data.retCode})`);
+            }
+
+            return data;
         } catch (error) {
-            console.error(`바이비트 API 요청 오류 (시도 ${retryCount + 1}/${maxRetries + 1}):`, error);
+            console.error(`바이비트 V5 API 요청 오류 (시도 ${retryCount + 1}/${maxRetries + 1}):`, error);
             
             // 재시도 가능한 오류인 경우 재시도
             if (retryCount < maxRetries && (
@@ -122,21 +138,21 @@ class BybitAPI {
     }
 
     /**
-     * 바이비트 24시간 티커 정보 가져오기
+     * 바이비트 V5 24시간 티커 정보 가져오기
      */
     async get24hrTicker() {
-        return await this.makeRequest('/tickers', { category: 'spot' });
+        return await this.makeRequest('/market/tickers', { category: this.categories.spot });
     }
 
     /**
-     * 바이비트 선물 롱숏 비율 API에서 데이터 가져오기
+     * 바이비트 V5 선물 롱숏 비율 API에서 데이터 가져오기
      * https://api.bybit.com/v5/market/account-ratio
      */
     async getLongShortRatio(symbol = 'BTCUSDT') {
         try {
-            // 바이비트 공식 API 사용
-            const response = await this.makeRequest('/account-ratio', { 
-                category: 'linear',
+            // 바이비트 V5 공식 API 사용
+            const response = await this.makeRequest('/market/account-ratio', { 
+                category: this.categories.linear,
                 symbol: symbol,
                 period: '1h',  // 1시간 단위로 변경
                 limit: 1
@@ -159,9 +175,9 @@ class BybitAPI {
                 timestamp: latest.timestamp
             };
         } catch (error) {
-            console.warn(`바이비트 롱숏 비율 API 실패 (${symbol}):`, error.message);
+            console.warn(`바이비트 V5 롱숏 비율 API 실패 (${symbol}):`, error.message);
             
-            // 바이비트 API 실패 시 CoinGecko에서 대체 데이터 가져오기
+            // 바이비트 V5 API 실패 시 CoinGecko에서 대체 데이터 가져오기
             try {
                 return await this.getLongShortRatioFromCoinGecko(symbol);
             } catch (fallbackError) {
@@ -318,20 +334,20 @@ class BybitAPI {
      */
     async getTopCoinsByVolume(limit = 50) {
         try {
-            console.log('바이비트 API에서 거래량 기준 상위 코인 가져오는 중...');
+            console.log('바이비트 V5 API에서 거래량 기준 상위 코인 가져오는 중...');
             return await this.getTopCoinsFromBybit(limit);
         } catch (error) {
-            console.error('바이비트 API 실패, CoinGecko API로 대체:', error);
+            console.error('바이비트 V5 API 실패, CoinGecko API로 대체:', error);
             return await this.getTopCoinsFromCoinGecko(limit);
         }
     }
 
     /**
-     * 바이비트 API에서 거래량 기준 상위 코인 가져오기
+     * 바이비트 V5 API에서 거래량 기준 상위 코인 가져오기
      */
     async getTopCoinsFromBybit(limit = 50) {
         try {
-            console.log('바이비트 API에서 거래량 기준 상위 코인 가져오는 중...');
+            console.log('바이비트 V5 API에서 거래량 기준 상위 코인 가져오는 중...');
             const response = await this.get24hrTicker();
             
             if (!response.result || !response.result.list) {
@@ -377,7 +393,7 @@ class BybitAPI {
                 marketCap: parseFloat(coin.lastPrice) * parseFloat(coin.volume24h) * 0.1 // 추정치
             }));
         } catch (error) {
-            console.error('바이비트 API 오류, CoinGecko API로 대체:', error);
+            console.error('바이비트 V5 API 오류, CoinGecko API로 대체:', error);
             return await this.getTopCoinsFromCoinGecko(limit);
         }
     }
@@ -443,20 +459,20 @@ class BybitAPI {
      */
     async getMarketStats() {
         try {
-            console.log('바이비트 API에서 시장 통계 가져오는 중...');
+            console.log('바이비트 V5 API에서 시장 통계 가져오는 중...');
             return await this.getMarketStatsFromBybit();
         } catch (error) {
-            console.error('바이비트 API 실패, CoinGecko API로 대체:', error);
+            console.error('바이비트 V5 API 실패, CoinGecko API로 대체:', error);
             return await this.getMarketStatsFromCoinGecko();
         }
     }
 
     /**
-     * 바이비트 API에서 시장 통계 가져오기
+     * 바이비트 V5 API에서 시장 통계 가져오기
      */
     async getMarketStatsFromBybit() {
         try {
-            console.log('바이비트 API에서 시장 통계 가져오는 중...');
+            console.log('바이비트 V5 API에서 시장 통계 가져오는 중...');
             const response = await this.get24hrTicker();
             
             if (!response.result || !response.result.list) {
@@ -493,7 +509,7 @@ class BybitAPI {
                 topLosers: losers
             };
         } catch (error) {
-            console.error('바이비트 시장 통계 오류, CoinGecko API로 대체:', error);
+            console.error('바이비트 V5 시장 통계 오류, CoinGecko API로 대체:', error);
             return await this.getMarketStatsFromCoinGecko();
         }
     }
