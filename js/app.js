@@ -1004,7 +1004,7 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
     const fillPoints = points + ` ${width - padding},${height - padding} ${padding},${height - padding}`;
     
     const svg = `
-        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display: block; border: 1px solid #ccc;">
             <defs>
                 <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:${lineColor};stop-opacity:0.3"/>
@@ -1017,6 +1017,10 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
     `;
     
     canvas.innerHTML = svg;
+    
+    // 디버깅: SVG가 제대로 생성되었는지 확인
+    console.log('SVG 생성 완료:', svg.substring(0, 100) + '...');
+    console.log('Canvas 내용:', canvas.innerHTML.substring(0, 100) + '...');
     
     // 로딩 메시지 제거
     const loadingNote = canvas.parentElement?.querySelector('.sparkline-note');
