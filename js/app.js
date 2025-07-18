@@ -775,10 +775,17 @@ class CoinRankingApp {
                 });
                 break;
             default: // 'all'
-                // 기본 정렬 (거래량 순) - 상위 50개 표시
+                // 거래량 우선, 등락률 보조 정렬 - 상위 30개 표시
                 filteredCoins = filteredCoins
-                    .sort((a, b) => b.volume - a.volume)
-                    .slice(0, 50);
+                    .sort((a, b) => {
+                        // 1차 정렬: 거래량 (내림차순)
+                        if (b.volume !== a.volume) {
+                            return b.volume - a.volume;
+                        }
+                        // 2차 정렬: 등락률 (내림차순) - 거래량이 같을 때
+                        return b.priceChangePercent - a.priceChangePercent;
+                    })
+                    .slice(0, 30);
                 // 순위 재정렬
                 filteredCoins.forEach((coin, index) => {
                     coin.displayRank = index + 1;
