@@ -773,11 +773,13 @@ body {
     height: 60px !important;
     min-width: 400px !important;
     min-height: 60px !important;
+    border: none !important;
 }
 
 .modal .sparkline-chart svg {
     width: 400px !important;
     height: 60px !important;
+    border: none !important;
 }
 
 .sparkline-note {
