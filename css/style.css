@@ -97,7 +97,7 @@ body {
 .theme-toggle {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 12px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -129,7 +129,7 @@ body {
 .stat-item {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 12px 20px;
     text-align: center;
     cursor: pointer;
