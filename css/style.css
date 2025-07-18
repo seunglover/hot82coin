@@ -258,15 +258,16 @@ body {
     border-color: var(--danger);
 }
 
-.coin-item:nth-child(1) { 
+/* 라이트 모드에서만 상위 3위 스타일 적용 */
+[data-theme="light"] .coin-item:nth-child(1) { 
     border-left: 4px solid #ffd700;
     background: linear-gradient(135deg, #fffbf0 0%, var(--bg-card) 100%);
 }
-.coin-item:nth-child(2) { 
+[data-theme="light"] .coin-item:nth-child(2) { 
     border-left: 4px solid #c0c0c0;
     background: linear-gradient(135deg, #f8f9fa 0%, var(--bg-card) 100%);
 }
-.coin-item:nth-child(3) { 
+[data-theme="light"] .coin-item:nth-child(3) { 
     border-left: 4px solid #cd7f32;
     background: linear-gradient(135deg, #fff8f0 0%, var(--bg-card) 100%);
 }
