@@ -344,6 +344,60 @@ class CoinRankingApp {
      * 거래량 급등 뱃지 생성
      */
     getVolumeSurgeBadge(coin) {
+        // 급등 코인 메뉴에서는 상승률 배지 표시
+        if (this.currentMenu === 'rising') {
+            if (coin.priceChangePercent >= 20) {
+                return '<span class="volume-surge-badge">🚀 급등</span>';
+            } else if (coin.priceChangePercent >= 10) {
+                return '<span class="volume-surge-badge">📈 상승</span>';
+            } else if (coin.priceChangePercent >= 5) {
+                return '<span class="volume-surge-badge">💹 양호</span>';
+            }
+            return '';
+        }
+        
+        // 거래량 급증 메뉴에서는 거래량 증가 배지 표시
+        if (this.currentMenu === 'volume') {
+            if (this.previousVolumes && this.previousVolumes[coin.symbol]) {
+                const previousVolume = this.previousVolumes[coin.symbol];
+                const currentVolume = coin.volume;
+                
+                if (previousVolume > 0) {
+                    const volumeChangePercent = ((currentVolume - previousVolume) / previousVolume) * 100;
+                    
+                    if (volumeChangePercent >= 100) {
+                        return '<span class="volume-surge-badge">🔥 폭증</span>';
+                    } else if (volumeChangePercent >= 50) {
+                        return '<span class="volume-surge-badge">📈 급증</span>';
+                    } else if (volumeChangePercent >= 30) {
+                        return '<span class="volume-surge-badge">💹 증가</span>';
+                    }
+                }
+            }
+            return '';
+        }
+        
+        // 롱/숏 비율 메뉴에서는 롱 비중 배지 표시
+        if (this.currentMenu === 'longshort') {
+            if (coin.longAccount && coin.longAccount >= 0.8) {
+                return '<span class="volume-surge-badge">🔥 강세</span>';
+            } else if (coin.longAccount && coin.longAccount >= 0.7) {
+                return '<span class="volume-surge-badge">📈 롱세</span>';
+            }
+            return '';
+        }
+        
+        // AI 추천 메뉴에서는 AI 점수 배지 표시
+        if (this.currentMenu === 'ai') {
+            if (coin.aiScore >= 6) {
+                return '<span class="volume-surge-badge">🤖 최고</span>';
+            } else if (coin.aiScore >= 4) {
+                return '<span class="volume-surge-badge">🔮 추천</span>';
+            }
+            return '';
+        }
+        
+        // 기본: 기존 거래량 급등 로직
         // 이전 거래량 데이터가 있으면 변화율 계산
         if (this.previousVolumes && this.previousVolumes[coin.symbol]) {
             const previousVolume = this.previousVolumes[coin.symbol];
@@ -361,7 +415,7 @@ class CoinRankingApp {
         
         // 거래량이 많은 코인에도 뱃지 표시 (상위 10개)
         if (coin.rank <= 10) {
-            return '<span class="volume-high-badge">🔥 거래량 급등</span>';
+            return '<span class="volume-surge-badge">🔥 거래량 급등</span>';
         }
         
         return '';
