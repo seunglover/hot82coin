@@ -398,6 +398,7 @@ class BybitAPI {
             // 디버깅: API 응답 확인
             console.log('바이비트 API 응답 샘플:', response.result.list.slice(0, 3));
             console.log('바이비트 API 응답 필드 확인:', Object.keys(response.result.list[0] || {}));
+            console.log('전체 USDT 페어 개수:', response.result.list.filter(item => item.symbol.endsWith('USDT')).length);
             
             // 전체 USDT 페어 거래량 순으로 정렬해서 확인
             const allUsdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
@@ -433,6 +434,9 @@ class BybitAPI {
                 const symbol = item.symbol.replace('USDT', '');
                 return !mainCoins.includes(symbol);
             });
+            
+            console.log('메인코인 목록 확인:', mainCoins);
+            console.log('실제 메인코인 페어들:', mainCoinPairs.map(item => item.symbol));
             
             console.log('메인코인 개수:', mainCoinPairs.length);
             console.log('밈코인 개수:', memeCoinPairs.length);
