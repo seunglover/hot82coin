@@ -552,6 +552,48 @@ window.addEventListener('beforeunload', () => {
     }
 }); 
 
+// 스파크라인 차트 그리기 함수
+async function drawSparkline(symbol, canvasId) {
+    try {
+        const url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.retCode === 0 && json.result && json.result.list) {
+            const closePrices = json.result.list.map(item => parseFloat(item[4])); // 종가
+            const canvas = document.getElementById(canvasId);
+            
+            if (canvas && closePrices.length > 0) {
+                const changeClass = closePrices[closePrices.length - 1] >= closePrices[0] ? 'positive' : 'negative';
+                const lineColor = changeClass === 'positive' ? '#10b981' : '#ef4444';
+                
+                Sparkline.draw(canvas, closePrices, {
+                    lineColor: lineColor,
+                    startColor: lineColor,
+                    endColor: lineColor,
+                    fillColor: changeClass === 'positive' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                    width: canvas.offsetWidth,
+                    height: 60
+                });
+                
+                // 로딩 메시지 제거
+                const loadingNote = canvas.parentElement.querySelector('.sparkline-note');
+                if (loadingNote) {
+                    loadingNote.style.display = 'none';
+                }
+            }
+        } else {
+            throw new Error('데이터를 가져올 수 없습니다.');
+        }
+    } catch (error) {
+        console.error('스파크라인 차트 오류:', error);
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+            canvas.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">차트 데이터를 불러올 수 없습니다.</div>';
+        }
+    }
+}
+
 // 모달 표시 함수 (전역)
 function showCoinModal(symbol) {
     const modal = document.getElementById('coinModal');
@@ -609,22 +651,7 @@ function showCoinModal(symbol) {
                     <h4>24시간 가격 변동</h4>
                     <div class="sparkline-container">
                         <div class="sparkline-placeholder">
-                            <div class="sparkline-chart">
-                                <svg width="100%" height="60" viewBox="0 0 300 60">
-                                    <defs>
-                                        <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                            <stop offset="0%" style="stop-color:${changeClass === 'positive' ? '#10b981' : '#ef4444'};stop-opacity:0.3"/>
-                                            <stop offset="100%" style="stop-color:${changeClass === 'positive' ? '#10b981' : '#ef4444'};stop-opacity:0.1"/>
-                                        </linearGradient>
-                                    </defs>
-                                    <path d="M0,30 L50,25 L100,35 L150,20 L200,40 L250,15 L300,30" 
-                                          stroke="${changeClass === 'positive' ? '#10b981' : '#ef4444'}" 
-                                          stroke-width="2" 
-                                          fill="none"/>
-                                    <path d="M0,30 L50,25 L100,35 L150,20 L200,40 L250,15 L300,30 L300,60 L0,60 Z" 
-                                          fill="url(#sparklineGradient)"/>
-                                </svg>
-                            </div>
+                            <canvas id="sparkline-${coin.symbol}" width="300" height="60"></canvas>
                             <div class="sparkline-note">실시간 차트 데이터 로딩 중...</div>
                         </div>
                     </div>
@@ -653,6 +680,12 @@ function showCoinModal(symbol) {
                 </div>
             </div>
         `;
+        
+        // 모달이 표시된 후 스파크라인 차트 그리기
+        setTimeout(() => {
+            drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+        }, 100);
+        
     } else {
         modalTitle.textContent = symbol + ' 정보';
         modalContent.innerHTML = '<div class="coin-detail"><p>이 코인에 대한 정보를 찾을 수 없습니다.</p></div>';

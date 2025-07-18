@@ -731,10 +731,17 @@ body {
     margin-bottom: 10px;
 }
 
+.sparkline-placeholder canvas {
+    width: 100%;
+    height: 60px;
+    border-radius: 4px;
+}
+
 .sparkline-note {
     font-size: 0.9rem;
     color: var(--text-secondary);
     font-style: italic;
+    margin-top: 10px;
 }
 
 .coin-info-section {
