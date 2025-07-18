@@ -686,12 +686,16 @@ class CoinRankingApp {
             coin.aiReasons = aiResult.reasons;
         });
 
-        // 메뉴별 필터링
+        // 메뉴별 필터링 및 순위 재정렬
         switch (this.currentMenu) {
             case 'rising':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.priceChangePercent > 0)
                     .sort((a, b) => b.priceChangePercent - a.priceChangePercent);
+                // 순위 재정렬
+                filteredCoins.forEach((coin, index) => {
+                    coin.displayRank = index + 1;
+                });
                 break;
             case 'volume':
                 filteredCoins = filteredCoins
@@ -705,20 +709,32 @@ class CoinRankingApp {
                         const bChange = this.previousVolumes[b.symbol] ? ((b.volume - this.previousVolumes[b.symbol]) / this.previousVolumes[b.symbol]) * 100 : 0;
                         return bChange - aChange;
                     });
+                // 순위 재정렬
+                filteredCoins.forEach((coin, index) => {
+                    coin.displayRank = index + 1;
+                });
                 break;
             case 'longshort':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.longAccount && coin.longAccount > 0.65)
                     .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0));
+                // 순위 재정렬
+                filteredCoins.forEach((coin, index) => {
+                    coin.displayRank = index + 1;
+                });
                 break;
             case 'ai':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.aiScore >= 4)
                     .sort((a, b) => b.aiScore - a.aiScore)
                     .slice(0, 10); // 상위 10개만 표시
+                // 순위 재정렬
+                filteredCoins.forEach((coin, index) => {
+                    coin.displayRank = index + 1;
+                });
                 break;
             default: // 'all'
-                // 기본 정렬 (거래량 순)
+                // 기본 정렬 (거래량 순) - 원래 순위 유지
                 break;
         }
 
