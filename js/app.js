@@ -19,7 +19,6 @@ class CoinRankingApp {
      */
     init() {
         this.bindEvents();
-        this.updateApiStatus('🔄 바이비트 API 연결 중...');
         this.loadCoinData();
         this.startAutoRefresh();
         this.updateNextUpdateTime();
@@ -48,11 +47,7 @@ class CoinRankingApp {
             searchInput.addEventListener('input', () => this.filterCoins());
         }
         
-        // 정렬 선택 이벤트
-        const sortSelect = document.getElementById('sortSelect');
-        if (sortSelect) {
-            sortSelect.addEventListener('change', () => this.changeSort());
-        }
+
     }
 
     /**
@@ -78,7 +73,6 @@ class CoinRankingApp {
         }
         
         try {
-            this.updateApiStatus('🔄 바이비트 API에서 데이터 가져오는 중...');
             
             // 거래량 기준 상위 50개 코인 데이터 가져오기
             const coins = await bybitAPI.getTopCoinsByVolume(50);
@@ -127,14 +121,13 @@ class CoinRankingApp {
             // 순위 업데이트
             this.updateRanks(coinsWithAllData);
             
-            // 필터링과 정렬 적용
-            this.applyFiltersAndSort();
+            // 필터링 적용
+            this.applyFilters();
             
             // 시장 통계 표시
             this.displayStats(marketStats);
             
-            // API 상태 업데이트
-            this.updateApiStatus('✅ 바이비트 API 연결 성공');
+
             
             // 마지막 업데이트 시간 기록
             this.lastUpdateTime = new Date();
@@ -150,9 +143,6 @@ class CoinRankingApp {
             
         } catch (error) {
             console.error('데이터 로딩 오류:', error);
-            
-            // API 상태 업데이트
-            this.updateApiStatus('❌ 바이비트 API 연결 실패');
             
             // 모바일 환경에서 발생할 수 있는 다양한 오류 처리
             if (error.message.includes('CORS') || error.message.includes('fetch') || 
@@ -470,15 +460,7 @@ class CoinRankingApp {
         }
     }
 
-    /**
-     * API 상태 업데이트
-     */
-    updateApiStatus(status) {
-        const statusElement = document.getElementById('apiStatus');
-        if (statusElement) {
-            statusElement.textContent = status;
-        }
-    }
+
 
     /**
      * 다음 업데이트 시간 계산
@@ -500,45 +482,20 @@ class CoinRankingApp {
         if (!searchInput) return;
         
         this.searchTerm = searchInput.value.toLowerCase().trim();
-        this.applyFiltersAndSort();
+        this.applyFilters();
     }
 
-    /**
-     * 정렬 기준 변경
-     */
-    changeSort() {
-        const sortSelect = document.getElementById('sortSelect');
-        if (!sortSelect) return;
-        
-        this.currentSort = sortSelect.value;
-        this.applyFiltersAndSort();
-    }
+
 
     /**
-     * 필터링과 정렬 적용
+     * 필터링 적용
      */
-    applyFiltersAndSort() {
+    applyFilters() {
         // 검색 필터링
         this.filteredCoins = this.currentCoins.filter(coin => {
             if (!this.searchTerm) return true;
             return coin.symbol.toLowerCase().includes(this.searchTerm) ||
                    coin.fullSymbol.toLowerCase().includes(this.searchTerm);
-        });
-
-        // 정렬 적용
-        this.filteredCoins.sort((a, b) => {
-            switch (this.currentSort) {
-                case 'volume':
-                    return b.volume - a.volume;
-                case 'price':
-                    return b.price - a.price;
-                case 'change':
-                    return b.priceChangePercent - a.priceChangePercent;
-                case 'marketcap':
-                    return (b.accurateMarketCap || b.marketCap) - (a.accurateMarketCap || a.marketCap);
-                default:
-                    return a.rank - b.rank;
-            }
         });
 
         // 순위 재계산

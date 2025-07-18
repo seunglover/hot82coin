@@ -86,21 +86,7 @@ body {
     display: block;
 }
 
-/* API Status */
-.api-status {
-    margin-top: 15px;
-    text-align: center;
-}
 
-.status-indicator {
-    display: inline-block;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-}
 
 /* Filter Controls */
 .filter-controls {
@@ -623,15 +609,7 @@ body {
         flex: 1;
     }
     
-    /* 모바일 API 상태 */
-    .api-status {
-        margin-top: 10px;
-    }
-    
-    .status-indicator {
-        font-size: 0.8rem;
-        padding: 6px 12px;
-    }
+
     
     /* 모바일 업데이트 정보 */
     .update-info {

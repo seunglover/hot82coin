@@ -31,9 +31,6 @@
         <div class="header">
             <h1>🔥 지금 핫한 코인 순위</h1>
             <p>바이비트 거래량 기준 상위 50개 코인</p>
-            <div class="api-status">
-                <span class="status-indicator" id="apiStatus">🔄 바이비트 API 연결 중...</span>
-            </div>
         </div>
         
         <div class="stats">
@@ -62,15 +59,6 @@
         </div>
         
         <div class="filter-controls">
-            <div class="filter-group">
-                <label for="sortSelect">정렬:</label>
-                <select id="sortSelect" onchange="window.coinApp.changeSort()">
-                    <option value="volume">거래량 순</option>
-                    <option value="price">가격 순</option>
-                    <option value="change">변동률 순</option>
-                    <option value="marketcap">시가총액 순</option>
-                </select>
-            </div>
             <div class="filter-group">
                 <label for="searchInput">검색:</label>
                 <input type="text" id="searchInput" placeholder="코인명 입력..." oninput="window.coinApp.filterCoins()">

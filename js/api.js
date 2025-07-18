@@ -134,11 +134,11 @@ class BybitAPI {
      */
     async getLongShortRatio(symbol = 'BTCUSDT') {
         try {
-            // 먼저 바이비트 API 시도
+            // 바이비트 공식 API 사용
             const response = await this.makeRequest('/account-ratio', { 
                 category: 'linear',
                 symbol: symbol,
-                interval: '5m',
+                period: '1h',  // 1시간 단위로 변경
                 limit: 1
             });
             
@@ -147,15 +147,15 @@ class BybitAPI {
             }
             
             const latest = response.result.list[0];
-            const longAccount = parseFloat(latest.longAccount);
-            const shortAccount = parseFloat(latest.shortAccount);
-            const longShortRatio = longAccount / shortAccount;
+            const buyRatio = parseFloat(latest.buyRatio);    // longAccount 대신 buyRatio 사용
+            const sellRatio = parseFloat(latest.sellRatio);  // shortAccount 대신 sellRatio 사용
+            const longShortRatio = buyRatio / sellRatio;
             
             return {
                 symbol,
                 longShortRatio,
-                longAccount,
-                shortAccount,
+                longAccount: buyRatio * 100,    // 백분율로 변환
+                shortAccount: sellRatio * 100,  // 백분율로 변환
                 timestamp: latest.timestamp
             };
         } catch (error) {
@@ -260,17 +260,47 @@ class BybitAPI {
         try {
             const longShortData = [];
             
-            for (const coin of coins.slice(0, 10)) { // 상위 10개만
+            // 메인 코인들 우선 처리
+            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI'];
+            const mainCoinSymbols = mainCoins.map(coin => coin + 'USDT');
+            
+            // 메인 코인들 먼저 처리
+            for (const symbol of mainCoinSymbols) {
+                try {
+                    const ratioData = await this.getLongShortRatio(symbol);
+                    if (ratioData.longShortRatio) {
+                        longShortData.push({
+                            symbol: symbol.replace('USDT', ''),
+                            fullSymbol: symbol,
+                            longShortRatio: ratioData.longShortRatio,
+                            longAccount: ratioData.longAccount,
+                            shortAccount: ratioData.shortAccount,
+                            timestamp: ratioData.timestamp
+                        });
+                    }
+                } catch (error) {
+                    console.warn(`${symbol} 롱숏 비율 데이터 가져오기 실패:`, error);
+                }
+            }
+            
+            // 상위 거래량 코인들 처리 (메인 코인 제외)
+            const topVolumeCoins = coins
+                .filter(coin => !mainCoins.includes(coin.symbol))
+                .slice(0, 5); // 추가 5개만
+            
+            for (const coin of topVolumeCoins) {
                 try {
                     const ratioData = await this.getLongShortRatio(coin.fullSymbol);
-                    longShortData.push({
-                        symbol: coin.symbol,
-                        fullSymbol: coin.fullSymbol,
-                        longShortRatio: ratioData.longShortRatio,
-                        longAccount: ratioData.longAccount,
-                        shortAccount: ratioData.shortAccount,
-                        timestamp: ratioData.timestamp
-                    });
+                    if (ratioData.longShortRatio) {
+                        longShortData.push({
+                            symbol: coin.symbol,
+                            fullSymbol: coin.fullSymbol,
+                            longShortRatio: ratioData.longShortRatio,
+                            longAccount: ratioData.longAccount,
+                            shortAccount: ratioData.shortAccount,
+                            timestamp: ratioData.timestamp
+                        });
+                    }
                 } catch (error) {
                     console.warn(`${coin.symbol} 롱숏 비율 데이터 가져오기 실패:`, error);
                 }
