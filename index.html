@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 지금 핫한 코인 순위 - 바이비트 거래량 TOP 50</title>
+    <title>🔥 지금 핫한 코인 순위 - 해외거래소 거래량 TOP 50</title>
     <link rel="stylesheet" href="css/style.css">
-    <meta name="description" content="바이비트 API를 사용한 실시간 코인 거래량 순위 - 모바일 최적화">
-    <meta name="keywords" content="코인, 암호화폐, 바이비트, 거래량, 순위, 실시간">
+    <meta name="description" content="해외거래소 API를 사용한 실시간 코인 거래량 순위 - 모바일 최적화">
+    <meta name="keywords" content="코인, 암호화폐, 해외거래소, 거래량, 순위, 실시간">
     <meta name="author" content="Coin Ranking App">
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="🔥 지금 핫한 코인 순위 - 바이비트 거래량 TOP 50">
-    <meta property="og:description" content="바이비트 API를 사용한 실시간 코인 거래량 순위 - 모바일 최적화">
+    <meta property="og:title" content="🔥 지금 핫한 코인 순위 - 해외거래소 거래량 TOP 50">
+    <meta property="og:description" content="해외거래소 API를 사용한 실시간 코인 거래량 순위 - 모바일 최적화">
     <meta property="og:type" content="website">
     <meta property="og:url" content="">
     
@@ -30,18 +30,10 @@
     <div class="container">
         <div class="header">
             <h1>🔥 지금 핫한 코인 순위</h1>
-            <p>바이비트 거래량 기준 상위 50개 코인</p>
+            <p>해외거래소 거래량 기준 상위 50개 코인</p>
         </div>
         
         <div class="stats">
-            <div class="stat-item" onclick="window.location.href='about.html'">
-                <div class="stat-icon">📊</div>
-                <div class="stat-label">사이트 소개</div>
-            </div>
-            <div class="stat-item" onclick="window.location.href='debug.html'">
-                <div class="stat-icon">🔧</div>
-                <div class="stat-label">디버그</div>
-            </div>
             <div class="stat-item" onclick="showApiInfo()">
                 <div class="stat-icon">ℹ️</div>
                 <div class="stat-label">API 정보</div>
@@ -58,24 +50,18 @@
             </button>
         </div>
         
-        <div class="filter-controls">
-            <div class="filter-group">
-                <label for="searchInput">검색:</label>
-                <input type="text" id="searchInput" placeholder="코인명 입력..." oninput="window.coinApp.filterCoins()">
-            </div>
-        </div>
+
         
         <div id="content">
             <div class="loading">
                 <div class="spinner"></div>
-                <p>바이비트 API에서 코인 데이터를 불러오는 중...</p>
+                <p>해외거래소 API에서 코인 데이터를 불러오는 중...</p>
                 <p class="loading-note">모바일에서는 잠시 기다려주세요</p>
             </div>
         </div>
         
         <div class="footer">
-            <p>💡 팁: R키를 누르면 새로고침됩니다</p>
-            <p>📱 모바일 최적화 | 🔄 5분마다 자동 업데이트</p>
+            <p>💡 R키로 새로고침 | 📱 모바일 최적화 | 🔄 5분 자동 업데이트</p>
         </div>
     </div>
 
@@ -105,14 +91,14 @@
                 <div class="api-info">
                     <h3>🌐 사용 중인 API</h3>
                     <div class="api-item">
-                        <strong>바이비트 API (메인)</strong>
+                        <strong>해외거래소 API (메인)</strong>
                         <p>• 거래량 기준 상위 코인 데이터</p>
                         <p>• 실시간 가격 및 변동률</p>
                         <p>• 롱숏 비율 정보</p>
                     </div>
                     <div class="api-item">
                         <strong>CoinGecko API (대체)</strong>
-                        <p>• 바이비트 API 실패 시 사용</p>
+                        <p>• 해외거래소 API 실패 시 사용</p>
                         <p>• 정확한 시가총액 정보</p>
                     </div>
                     <div class="api-item">

@@ -8,9 +8,7 @@ class CoinRankingApp {
         this.autoRefreshInterval = null;
         this.previousRanks = {}; // 이전 순위 저장
         this.currentCoins = []; // 현재 코인 데이터
-        this.filteredCoins = []; // 필터링된 코인 데이터
         this.currentSort = 'volume'; // 현재 정렬 기준
-        this.searchTerm = ''; // 현재 검색어
         this.init();
     }
 
@@ -41,11 +39,7 @@ class CoinRankingApp {
             }
         });
         
-        // 검색 입력 필드 이벤트
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('input', () => this.filterCoins());
-        }
+
         
 
     }
@@ -66,7 +60,7 @@ class CoinRankingApp {
             contentDiv.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>모바일 네트워크에서 데이터를 불러오는 중...</p>
+                    <p>해외거래소 API에서 코인 데이터를 불러오는 중...</p>
                     <p style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">잠시만 기다려주세요</p>
                 </div>
             `;
@@ -85,7 +79,7 @@ class CoinRankingApp {
             try {
                 longShortData = await bybitAPI.getTopCoinsLongShortRatio(coins);
             } catch (error) {
-                console.warn('롱숏 비율 데이터 가져오기 실패, 기본 데이터로 계속 진행:', error);
+                console.warn('해외거래소 롱숏 비율 데이터 가져오기 실패, 기본 데이터로 계속 진행:', error);
                 // 실패 시 빈 배열로 계속 진행
             }
             
@@ -103,7 +97,7 @@ class CoinRankingApp {
             try {
                 accurateMarketCapData = await coinGeckoAPI.getAccurateMarketCap(coins);
             } catch (error) {
-                console.warn('CoinGecko 시가총액 데이터 가져오기 실패, 기본 데이터 사용:', error);
+                console.warn('CoinGecko 시가총액 데이터 가져오기 실패, 해외거래소 기본 데이터 사용:', error);
                 // 실패 시 빈 배열로 계속 진행
             }
             
@@ -121,11 +115,10 @@ class CoinRankingApp {
             // 순위 업데이트
             this.updateRanks(coinsWithAllData);
             
-            // 필터링 적용
-            this.applyFilters();
+            // 코인 목록 표시
+            this.displayCoins(coinsWithAllData);
             
-            // 시장 통계 표시
-            this.displayStats(marketStats);
+
             
 
             
@@ -268,10 +261,7 @@ class CoinRankingApp {
      * 개별 코인 아이템 생성
      */
     createCoinItem(coin) {
-        // 모바일에서 데이터 검증
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
-        // 필수 데이터 검증
+        // 데이터 검증
         if (!coin || !coin.symbol || !coin.price) {
             console.warn('잘못된 코인 데이터:', coin);
             return '';
@@ -279,80 +269,41 @@ class CoinRankingApp {
         
         const changeClass = coin.priceChangePercent >= 0 ? 'positive' : 'negative';
         const changeSymbol = coin.priceChangePercent >= 0 ? '+' : '';
-        
-        // 순위 변동 화살표 (표시 순위 사용)
         const displayRank = coin.displayRank || coin.rank;
-        const rankArrow = this.getRankChangeArrow(coin.symbol, displayRank);
-        
-        // 롱숏 비율 표시 (데이터가 없어도 안전하게 처리)
-        let longShortDisplay = '';
-        if (coin.longShortRatio && coin.longAccount !== null && coin.shortAccount !== null && 
-            coin.longAccount > 0 && coin.shortAccount > 0) {
-            // 바이비트 API는 0~1 사이 값, CoinGecko는 이미 백분율
-            const longPercent = coin.longAccount <= 1 ? (coin.longAccount * 100).toFixed(1) : coin.longAccount.toFixed(1);
-            const shortPercent = coin.shortAccount <= 1 ? (coin.shortAccount * 100).toFixed(1) : coin.shortAccount.toFixed(1);
-            const ratioText = coin.note ? `(추정)` : '';
-            longShortDisplay = `
-                <div class="longshort-mini">
-                    <div class="mini-ratio-bar">
-                        <div class="mini-long-bar" style="width: ${longPercent}%"></div>
-                        <div class="mini-short-bar" style="width: ${shortPercent}%"></div>
-                    </div>
-                    <div class="mini-ratio-text">롱 ${longPercent}% / 숏 ${shortPercent}% ${ratioText}</div>
-                </div>
-            `;
-        } else {
-            longShortDisplay = '<div class="no-data">데이터 없음</div>';
-        }
         
         return `
             <div class="coin-item" data-symbol="${coin.fullSymbol}">
-                <div class="rank">
-                    ${displayRank}
-                    <div class="rank-arrow">${rankArrow}</div>
-                </div>
-                <div class="coin-info">
-                    <div>
+                <div class="coin-header">
+                    <div class="coin-name">
                         <div class="coin-symbol">${coin.symbol}</div>
-                        <div class="coin-name">${coin.symbol}</div>
+                        <div class="coin-full-name">${coin.symbol}</div>
+                    </div>
+                    <div class="coin-rank">${displayRank}</div>
+                </div>
+                <div class="coin-price">
+                    <div>
+                        <div class="price-usd">${this.formatUSDPrice(coin.price)}</div>
+                        <div class="price-krw">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
+                    </div>
+                    <div class="price-change ${changeClass}">
+                        ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%
                     </div>
                 </div>
-                <div class="longshort-column">
-                    ${longShortDisplay}
+                <div class="coin-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">거래량</span>
+                        <span class="stat-value">$${this.formatNumber(coin.volume)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">시가총액</span>
+                        <span class="stat-value">$${this.formatNumber(coin.accurateMarketCap || coin.marketCap)}</span>
+                    </div>
                 </div>
-                <div class="price">${this.formatUSDPrice(coin.price)}</div>
-                <div class="krw-price">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
-                <div class="volume">$${this.formatNumber(coin.volume)}</div>
-                <div class="change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
-                <div class="market-cap">$${this.formatNumber(coin.accurateMarketCap || coin.marketCap)}</div>
             </div>
         `;
     }
 
-    /**
-     * 통계 정보 표시
-     */
-    displayStats(stats) {
-        const statsContainer = document.querySelector('.stats');
-        if (!statsContainer) return;
 
-        const html = `
-            <div class="stat-item" onclick="window.location.href='about.html'">
-                <div class="stat-icon">🔥</div>
-                <div class="stat-label">사이트 소개</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">💎</div>
-                <div class="stat-label">임시 메뉴2</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-label">임시 메뉴3</div>
-            </div>
-        `;
-        
-        statsContainer.innerHTML = html;
-    }
 
     /**
      * 에러 메시지 표시
@@ -479,38 +430,7 @@ class CoinRankingApp {
         }
     }
 
-    /**
-     * 코인 검색 필터링
-     */
-    filterCoins() {
-        const searchInput = document.getElementById('searchInput');
-        if (!searchInput) return;
-        
-        this.searchTerm = searchInput.value.toLowerCase().trim();
-        this.applyFilters();
-    }
 
-
-
-    /**
-     * 필터링 적용
-     */
-    applyFilters() {
-        // 검색 필터링
-        this.filteredCoins = this.currentCoins.filter(coin => {
-            if (!this.searchTerm) return true;
-            return coin.symbol.toLowerCase().includes(this.searchTerm) ||
-                   coin.fullSymbol.toLowerCase().includes(this.searchTerm);
-        });
-
-        // 순위 재계산
-        this.filteredCoins.forEach((coin, index) => {
-            coin.displayRank = index + 1;
-        });
-
-        // UI 업데이트
-        this.displayCoins(this.filteredCoins);
-    }
 
     /**
      * 애플리케이션 정리
