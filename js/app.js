@@ -339,6 +339,7 @@ class CoinRankingApp {
             this.sortOrder = 'asc';
         }
 
+        // 현재 필터링된 코인 목록을 가져와서 정렬
         let sortedCoins = [...this.allCoins];
 
         // 현재 메뉴에 따라 필터링된 코인에만 정렬 적용
@@ -356,7 +357,11 @@ class CoinRankingApp {
                 sortedCoins = sortedCoins.filter(coin => coin.aiScore >= 4);
                 break;
             default: // 'all'
-                sortedCoins = sortedCoins;
+                // 메인코인 우선 표시 (displayFilteredCoins와 동일한 로직)
+                const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
+                const mainCoinList = sortedCoins.filter(coin => mainCoins.includes(coin.symbol));
+                const otherCoins = sortedCoins.filter(coin => !mainCoins.includes(coin.symbol));
+                sortedCoins = [...mainCoinList, ...otherCoins].slice(0, 30);
                 break;
         }
 
@@ -1065,7 +1070,7 @@ class CoinRankingApp {
                 break;
         }
 
-        // 필터링된 코인에 대해 AI 스코어 및 순위 재설정 (정렬 전)
+        // 필터링된 코인에 대해 AI 스코어 및 순위 재설정
         filteredCoins.forEach((coin, index) => {
             const aiResult = this.calculateAIScore(coin);
             coin.aiScore = aiResult.score;
@@ -1073,8 +1078,29 @@ class CoinRankingApp {
             coin.displayRank = index + 1; // 임시 순위
         });
 
-        // 현재 정렬 기준에 따라 코인 정렬
-        this.sortCoins(this.sortKey);
+        // 현재 정렬 기준에 따라 코인 정렬 (무한 루프 방지)
+        if (this.sortKey && this.sortKey !== 'rank') {
+            filteredCoins.sort((a, b) => {
+                let valA = a[this.sortKey];
+                let valB = b[this.sortKey];
+
+                // 문자열인 경우 소문자로 변환하여 비교
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+
+                if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // 정렬 후 순위 재설정
+            filteredCoins.forEach((coin, index) => {
+                coin.displayRank = index + 1;
+            });
+        }
+
+        // 코인 목록 표시
+        this.displayCoins(filteredCoins);
     }
 
     /**
