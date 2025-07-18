@@ -630,15 +630,16 @@ body {
 
 /* 푸터 */
 .footer {
-    text-align: center;
     margin-top: 40px;
-    padding: 20px 0;
-    border-top: 1px solid var(--border);
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    text-align: center;
 }
 
 .footer p {
+    color: var(--text-secondary);
     margin-bottom: 10px;
 }
 
@@ -652,20 +653,131 @@ body {
 .footer-link {
     color: var(--accent);
     text-decoration: none;
-    font-size: 0.9rem;
     font-weight: 500;
-    padding: 8px 16px;
+    transition: color 0.3s ease;
+    padding: 8px 12px;
     border-radius: 6px;
-    transition: all 0.3s ease;
     background: var(--bg-card);
     border: 1px solid var(--border);
 }
 
 .footer-link:hover {
+    color: var(--text-primary);
     background: var(--accent);
-    color: white;
     transform: translateY(-1px);
     box-shadow: var(--shadow);
+}
+
+/* 시장 심리 지표 스타일 */
+.market-sentiment {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.sentiment-header {
+    margin-bottom: 10px;
+}
+
+.sentiment-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.sentiment-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sentiment-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sentiment-emoji {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.sentiment-status {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.sentiment-ratio {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.sentiment-details {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.ratio-item {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+}
+
+.ratio-item:first-child {
+    color: var(--success);
+    font-weight: 500;
+}
+
+.ratio-item:last-child {
+    color: var(--danger);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .market-sentiment {
+        padding: 12px;
+        margin: 10px 0;
+    }
+    
+    .sentiment-main {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .sentiment-emoji {
+        font-size: 1.3rem;
+    }
+    
+    .sentiment-status {
+        font-size: 0.85rem;
+    }
+    
+    .sentiment-ratio {
+        font-size: 0.75rem;
+    }
+    
+    .sentiment-details {
+        gap: 10px;
+    }
+    
+    .ratio-item {
+        font-size: 0.75rem;
+    }
 }
 
 /* 모달 */

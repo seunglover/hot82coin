@@ -198,41 +198,22 @@ class CoinRankingApp {
             this.allCoins = coinsWithAllData; // 모든 코인 데이터 저장
             this.displayFilteredCoins(); // 필터링된 코인 표시
             
-            // 1위 코인 정보 표시 (실패해도 계속 진행)
-            try {
-                if (coinsWithAllData.length > 0) {
-                    const topCoin = coinsWithAllData[0];
-                    console.log('현재 1위 코인:', topCoin.symbol, topCoin.name);
-                    await this.displayTopCoinInfo(topCoin.symbol, topCoin);
-                }
-            } catch (error) {
-                console.warn('1위 코인 정보 가져오기 실패:', error);
+            // 1위 코인 정보 표시
+            if (coinsWithAllData.length > 0) {
+                const topCoin = coinsWithAllData[0];
+                this.displayTopCoinInfo(topCoin.symbol, topCoin);
             }
             
-            // 실시간 반영 상태 표시
+            // 시장 심리 지표 가져오기 및 표시
+            this.loadMarketSentiment();
+            
+            // 마지막 업데이트 시간 기록
             this.lastUpdateTime = new Date();
-            if (lastUpdateSpan) {
-                const updateText = isMobile ? 
-                    `실시간 반영중 (모바일)` :
-                    `실시간 반영중`;
-                lastUpdateSpan.textContent = updateText;
-            }
-            
-            // 다음 업데이트 시간 업데이트
-            this.updateNextUpdateTime();
+            this.updateLastUpdateTime();
             
         } catch (error) {
-            console.error('데이터 로딩 오류:', error);
-            
-            // 모바일 환경에서 발생할 수 있는 다양한 오류 처리
-            if (error.message.includes('CORS') || error.message.includes('fetch') || 
-                error.message.includes('NetworkError') || error.message.includes('timeout')) {
-                this.showError('모바일 네트워크 연결 문제가 발생했습니다. Wi-Fi 연결을 확인하고 잠시 후 다시 시도해주세요.');
-            } else if (error.message.includes('AbortError')) {
-                this.showError('요청 시간이 초과되었습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
-            } else {
-                this.showError(error.message);
-            }
+            console.error('코인 데이터 로드 실패:', error);
+            this.showError(`데이터 로드 실패: ${error.message}`);
         } finally {
             this.setLoading(false);
         }
@@ -877,6 +858,26 @@ class CoinRankingApp {
         }
     }
 
+    /**
+     * 마지막 업데이트 시간 표시
+     */
+    updateLastUpdateTime() {
+        const lastUpdateSpan = document.getElementById('last-update');
+        if (lastUpdateSpan && this.lastUpdateTime) {
+            const now = new Date();
+            const timeDiff = Math.floor((now - this.lastUpdateTime) / 1000);
+            
+            if (timeDiff < 60) {
+                lastUpdateSpan.textContent = '실시간 반영중';
+            } else if (timeDiff < 3600) {
+                const minutes = Math.floor(timeDiff / 60);
+                lastUpdateSpan.textContent = `${minutes}분 전 업데이트`;
+            } else {
+                const hours = Math.floor(timeDiff / 3600);
+                lastUpdateSpan.textContent = `${hours}시간 전 업데이트`;
+            }
+        }
+    }
 
 
     /**
@@ -992,6 +993,47 @@ class CoinRankingApp {
         }
 
         this.displayCoins(filteredCoins);
+    }
+
+    /**
+     * 시장 심리 지표 로드 및 표시
+     */
+    async loadMarketSentiment() {
+        try {
+            const sentimentData = await bybitAPI.getMarketSentiment();
+            this.displayMarketSentiment(sentimentData);
+        } catch (error) {
+            console.warn('시장 심리 지표 로드 실패:', error);
+            // 실패 시 시장 심리 지표 영역을 숨김
+            const sentimentElement = document.getElementById('market-sentiment');
+            if (sentimentElement) {
+                sentimentElement.style.display = 'none';
+            }
+        }
+    }
+
+    /**
+     * 시장 심리 지표 표시
+     */
+    displayMarketSentiment(data) {
+        const sentimentElement = document.getElementById('market-sentiment');
+        if (!sentimentElement) return;
+
+        // 시장 심리 지표 영역 표시
+        sentimentElement.style.display = 'block';
+
+        // 이모지, 상태, 비율 업데이트
+        const emojiElement = document.getElementById('sentiment-emoji');
+        const statusElement = document.getElementById('sentiment-status');
+        const ratioElement = document.getElementById('sentiment-ratio');
+        const longRatioElement = document.getElementById('long-ratio');
+        const shortRatioElement = document.getElementById('short-ratio');
+
+        if (emojiElement) emojiElement.textContent = data.sentimentEmoji;
+        if (statusElement) statusElement.textContent = data.sentimentStatus;
+        if (ratioElement) ratioElement.textContent = data.marketSentiment ? `비율: ${data.marketSentiment}` : '-';
+        if (longRatioElement) longRatioElement.textContent = data.totalLongRatio ? `롱: ${data.totalLongRatio}%` : '롱: -';
+        if (shortRatioElement) shortRatioElement.textContent = data.totalShortRatio ? `숏: ${data.totalShortRatio}%` : '숏: -';
     }
 }
 

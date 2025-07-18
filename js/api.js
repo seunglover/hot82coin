@@ -702,6 +702,81 @@ class BybitAPI {
             throw error;
         }
     }
+
+    /**
+     * 전체 시장 심리 지표 가져오기
+     */
+    async getMarketSentiment() {
+        try {
+            // 주요 코인들의 롱/숏 비율을 가져와서 시장 심리 분석
+            const topCoins = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'ADAUSDT'];
+            const sentimentData = [];
+            
+            for (const symbol of topCoins) {
+                try {
+                    const ratio = await this.getLongShortRatio(symbol);
+                    if (ratio.longShortRatio !== null) {
+                        sentimentData.push({
+                            symbol: symbol.replace('USDT', ''),
+                            longShortRatio: ratio.longShortRatio,
+                            longAccount: ratio.longAccount,
+                            shortAccount: ratio.shortAccount
+                        });
+                    }
+                } catch (error) {
+                    console.warn(`${symbol} 롱/숏 비율 가져오기 실패:`, error.message);
+                }
+            }
+            
+            if (sentimentData.length === 0) {
+                throw new Error('시장 심리 데이터를 가져올 수 없습니다.');
+            }
+            
+            // 전체 시장 심리 계산
+            const totalLongRatio = sentimentData.reduce((sum, coin) => sum + coin.longAccount, 0) / sentimentData.length;
+            const totalShortRatio = sentimentData.reduce((sum, coin) => sum + coin.shortAccount, 0) / sentimentData.length;
+            const marketSentiment = totalLongRatio / totalShortRatio;
+            
+            // 심리 상태 판단
+            let sentimentStatus = '중립';
+            let sentimentEmoji = '😐';
+            
+            if (marketSentiment > 1.1) {
+                sentimentStatus = '매우 낙관적';
+                sentimentEmoji = '🚀';
+            } else if (marketSentiment > 1.05) {
+                sentimentStatus = '낙관적';
+                sentimentEmoji = '📈';
+            } else if (marketSentiment < 0.9) {
+                sentimentStatus = '매우 비관적';
+                sentimentEmoji = '📉';
+            } else if (marketSentiment < 0.95) {
+                sentimentStatus = '비관적';
+                sentimentEmoji = '😰';
+            }
+            
+            return {
+                marketSentiment: marketSentiment.toFixed(2),
+                sentimentStatus,
+                sentimentEmoji,
+                totalLongRatio: (totalLongRatio * 100).toFixed(1),
+                totalShortRatio: (totalShortRatio * 100).toFixed(1),
+                coinData: sentimentData,
+                timestamp: Date.now()
+            };
+        } catch (error) {
+            console.error('시장 심리 지표 가져오기 실패:', error);
+            return {
+                marketSentiment: null,
+                sentimentStatus: '데이터 없음',
+                sentimentEmoji: '❓',
+                totalLongRatio: null,
+                totalShortRatio: null,
+                coinData: [],
+                timestamp: null
+            };
+        }
+    }
 }
 
 // 전역 API 인스턴스 생성
