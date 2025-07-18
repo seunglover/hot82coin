@@ -346,8 +346,12 @@ class CoinRankingApp {
             return '0';
         }
         
-        // 바이비트에서 받은 그대로 표시, 천단위만 쉼표 구분
-        return price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 8});
+        // 1원 이상일 때는 소수점 없이, 1원 미만일 때만 소수점 표시
+        if (price >= 1) {
+            return Math.floor(price).toLocaleString('ko-KR');
+        } else {
+            return price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 8});
+        }
     }
 
     /**
