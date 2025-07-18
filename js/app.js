@@ -753,18 +753,30 @@ class CoinRankingApp {
                 });
                 break;
             case 'volume':
-                filteredCoins = filteredCoins
-                    .filter(coin => {
-                        if (!this.previousVolumes[coin.symbol]) return false;
-                        const volumeChange = ((coin.volume - this.previousVolumes[coin.symbol]) / this.previousVolumes[coin.symbol]) * 100;
-                        return volumeChange > 0;
-                    })
-                    .sort((a, b) => {
-                        const aChange = this.previousVolumes[a.symbol] ? ((a.volume - this.previousVolumes[a.symbol]) / this.previousVolumes[a.symbol]) * 100 : 0;
-                        const bChange = this.previousVolumes[b.symbol] ? ((b.volume - this.previousVolumes[b.symbol]) / this.previousVolumes[b.symbol]) * 100 : 0;
-                        return bChange - aChange;
-                    })
-                    .slice(0, 10); // 상위 10개만 표시
+                // 이전 거래량 데이터가 있는 코인들만 필터링
+                const coinsWithVolumeData = filteredCoins.filter(coin => 
+                    this.previousVolumes[coin.symbol] && this.previousVolumes[coin.symbol] > 0
+                );
+                
+                if (coinsWithVolumeData.length > 0) {
+                    filteredCoins = coinsWithVolumeData
+                        .filter(coin => {
+                            const volumeChange = ((coin.volume - this.previousVolumes[coin.symbol]) / this.previousVolumes[coin.symbol]) * 100;
+                            return volumeChange > 0;
+                        })
+                        .sort((a, b) => {
+                            const aChange = ((a.volume - this.previousVolumes[a.symbol]) / this.previousVolumes[a.symbol]) * 100;
+                            const bChange = ((b.volume - this.previousVolumes[b.symbol]) / this.previousVolumes[b.symbol]) * 100;
+                            return bChange - aChange;
+                        })
+                        .slice(0, 10);
+                } else {
+                    // 이전 거래량 데이터가 없으면 현재 거래량 기준으로 정렬
+                    filteredCoins = filteredCoins
+                        .sort((a, b) => b.volume - a.volume)
+                        .slice(0, 10);
+                }
+                
                 // 순위 재정렬
                 filteredCoins.forEach((coin, index) => {
                     coin.displayRank = index + 1;
