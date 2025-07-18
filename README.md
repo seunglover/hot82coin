@@ -1,6 +1,6 @@
 # 🔥 지금 핫한 코인 순위 - 거래량 TOP 50
 
-바이낸스 API를 사용한 실시간 코인 거래량 순위 웹사이트입니다.
+바이비트 API를 사용한 실시간 코인 거래량 순위 웹사이트입니다.
 
 ## 🚀 배포
 
@@ -19,9 +19,10 @@
 
 ### API 키 관리
 - **현재 사용하는 API들은 모두 공개 API입니다**
-- 바이낸스 공개 API: API 키 불필요
+- 바이비트 공개 API: API 키 불필요 (메인)
+- 바이낸스 공개 API: API 키 불필요 (대체)
 - 환율 API: API 키 불필요
-- CoinGecko API: API 키 불필요
+- CoinGecko API: API 키 불필요 (최종 대체)
 
 ### 환경변수 (선택사항)
 만약 향후 프라이빗 API를 사용하게 된다면:
@@ -40,7 +41,7 @@ coin/
 ├── css/
 │   └── style.css      # 스타일시트
 ├── js/
-│   ├── api.js         # 바이낸스 API
+│   ├── api.js         # 바이비트 API (메인)
 │   ├── app.js         # 메인 애플리케이션
 │   ├── coingecko-api.js # CoinGecko API
 │   └── exchange-rate-api.js # 환율 API
@@ -58,9 +59,10 @@ open index.html
 ```
 
 ### API 제한
-- 바이낸스 API: 1분당 1200회 요청
+- 바이비트 API: 1분당 1200회 요청 (메인)
+- 바이낸스 API: 1분당 1200회 요청 (대체)
 - 환율 API: 1분당 100회 요청
-- CoinGecko API: 1분당 50회 요청
+- CoinGecko API: 1분당 50회 요청 (최종 대체)
 
 ## 📊 기능
 
