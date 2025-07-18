@@ -923,6 +923,37 @@ body {
         min-height: 40px;
         display: flex;
         align-items: center;
+        /* 모바일에서 헤더 텍스트 간격 조정 */
+        gap: 2px;
+    }
+    
+    /* 모바일에서 헤더 텍스트 크기 조정 */
+    .list-header .col-rank {
+        font-size: 0.7rem;
+    }
+    
+    .list-header .col-coin {
+        font-size: 0.7rem;
+    }
+    
+    .list-header .col-longshort {
+        font-size: 0.65rem;
+    }
+    
+    .list-header .col-volume {
+        font-size: 0.7rem;
+    }
+    
+    .list-header .col-change {
+        font-size: 0.7rem;
+    }
+    
+    .list-header .col-sparkline {
+        font-size: 0.7rem;
+    }
+    
+    .list-header .col-interest {
+        font-size: 0.7rem;
     }
     
     .coin-symbol {
@@ -1048,6 +1079,37 @@ body {
     .list-header {
         min-height: 35px;
         padding: 6px;
+        /* 매우 작은 화면에서 헤더 텍스트 크기 조정 */
+        gap: 1px;
+    }
+    
+    /* 매우 작은 화면에서 헤더 텍스트 크기 조정 */
+    .list-header .col-rank {
+        font-size: 0.6rem;
+    }
+    
+    .list-header .col-coin {
+        font-size: 0.6rem;
+    }
+    
+    .list-header .col-longshort {
+        font-size: 0.55rem;
+    }
+    
+    .list-header .col-volume {
+        font-size: 0.6rem;
+    }
+    
+    .list-header .col-change {
+        font-size: 0.6rem;
+    }
+    
+    .list-header .col-sparkline {
+        font-size: 0.6rem;
+    }
+    
+    .list-header .col-interest {
+        font-size: 0.6rem;
     }
     
     /* AI 배지 크기 조정 */

@@ -271,12 +271,12 @@ class CoinRankingApp {
             <div class="coin-list">
                 <div class="list-header">
                     <div class="col-rank">순위</div>
-                    <div class="col-coin">코인</div>
-                    <div class="col-longshort">롱숏 비율</div>
+                    <div class="col-coin">코인명</div>
+                    <div class="col-longshort">롱/숏</div>
                     <div class="col-volume">거래량</div>
                     <div class="col-change">변동률</div>
                     <div class="col-sparkline">차트</div>
-                    <div class="col-interest">관심도</div>
+                    <div class="col-interest">상태</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
