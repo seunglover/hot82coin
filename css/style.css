@@ -120,33 +120,35 @@ body {
 
 /* 통계 카드 */
 .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .stat-item {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 8px;
+    padding: 12px 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 150px;
 }
 
 .stat-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     border-color: var(--accent);
     box-shadow: var(--shadow);
 }
 
 .stat-icon {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    font-size: 1.2rem;
     display: block;
 }
 
@@ -602,8 +604,20 @@ body {
     }
     
     .stats {
-        grid-template-columns: 1fr;
-        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .stat-item {
+        padding: 8px 16px;
+        max-width: 120px;
+    }
+    
+    .stat-icon {
+        font-size: 1rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
     }
     
     .controls {
