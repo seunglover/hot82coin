@@ -833,6 +833,7 @@ body {
     }
     
     .coin-item, .list-header {
+        min-width: 600px;
         grid-template-columns: 35px 70px 70px 70px 70px 70px 70px 70px;
         gap: 3px;
         font-size: 0.75rem;
@@ -901,6 +902,7 @@ body {
 /* 매우 작은 화면 최적화 */
 @media (max-width: 480px) {
     .coin-item, .list-header {
+        min-width: 550px;
         grid-template-columns: 25px 60px 60px 60px 60px 60px 60px 60px;
         gap: 2px;
         font-size: 0.65rem;
@@ -1164,6 +1166,7 @@ body {
 
 @media (max-width: 768px) {
     .coin-item, .list-header {
+        min-width: 600px;
         grid-template-columns: 35px 70px 70px 70px 70px 70px 70px 70px;
         gap: 3px;
         font-size: 0.75rem;
