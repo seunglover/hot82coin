@@ -1122,7 +1122,7 @@ async function drawSparkline(symbol, canvasId) {
             console.log('모달 내부에서 크기 강제 설정');
         }
         
-        // 먼저 선물 거래로 시도
+        // 먼저 선물 거래로 시도 (24시간 데이터를 15분 간격으로)
         let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=96`;
         console.log('선물 API URL:', url);
         
