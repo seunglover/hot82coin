@@ -197,32 +197,21 @@ class CoinRankingApp {
         
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
-        if (isMobile) {
-            contentDiv.innerHTML = `
-                <div class="mobile-scroll-container">
-                    <div class="mobile-scroll-hint">← → 스와이프하여 모든 코인 보기</div>
-                    <div class="coin-list-mobile">
-                        ${coins.map(coin => this.createCoinItem(coin)).join('')}
-                    </div>
+        contentDiv.innerHTML = `
+            <div class="coin-list">
+                <div class="list-header">
+                    <div>순위</div>
+                    <div>코인</div>
+                    <div>롱숏 비율</div>
+                    <div>USD 가격</div>
+                    <div>KRW 가격</div>
+                    <div>거래량</div>
+                    <div>변동률</div>
+                    <div>시가총액</div>
                 </div>
-            `;
-        } else {
-            contentDiv.innerHTML = `
-                <div class="coin-list">
-                    <div class="list-header">
-                        <div>순위</div>
-                        <div>코인</div>
-                        <div>롱숏 비율</div>
-                        <div>USD 가격</div>
-                        <div>KRW 가격</div>
-                        <div>거래량</div>
-                        <div>변동률</div>
-                        <div>시가총액</div>
-                    </div>
-                    ${coins.map(coin => this.createCoinItem(coin)).join('')}
-                </div>
-            `;
-        }
+                ${coins.map(coin => this.createCoinItem(coin)).join('')}
+            </div>
+        `;
         
         // 코인 클릭 이벤트 바인딩
         document.querySelectorAll('.coin-item').forEach(item => {
