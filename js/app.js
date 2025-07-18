@@ -345,19 +345,23 @@ class CoinRankingApp {
         // 현재 메뉴에 따라 필터링된 코인에만 정렬 적용
         switch (this.currentMenu) {
             case 'rising':
+                // 급등 코인: 상승 중인 코인만 (밈코인 우선 가능)
                 sortedCoins = sortedCoins.filter(coin => coin.priceChangePercent > 0);
                 break;
             case 'volume':
+                // 거래량 급증: 모든 코인 (밈코인 우선 가능)
                 sortedCoins = sortedCoins;
                 break;
             case 'longshort':
+                // 롱/숏 비율: 롱 비중 높은 코인만
                 sortedCoins = sortedCoins.filter(coin => coin.longAccount && coin.longAccount > 0.65);
                 break;
             case 'ai':
+                // AI 추천: AI 점수 높은 코인만
                 sortedCoins = sortedCoins.filter(coin => coin.aiScore >= 4);
                 break;
             default: // 'all'
-                // 메인코인 우선 표시 (displayFilteredCoins와 동일한 로직)
+                // 전체: 메인코인 우선 표시 (displayFilteredCoins와 동일한 로직)
                 const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
                 const mainCoinList = sortedCoins.filter(coin => mainCoins.includes(coin.symbol));
                 const otherCoins = sortedCoins.filter(coin => !mainCoins.includes(coin.symbol));
@@ -1033,26 +1037,34 @@ class CoinRankingApp {
         // 메뉴별 필터링 및 순위 재정렬
         switch (this.currentMenu) {
             case 'rising':
+                // 급등 코인: 상승 중인 코인만 (밈코인 우선 가능)
                 filteredCoins = filteredCoins
                     .filter(coin => coin.priceChangePercent > 0)
-                    .slice(0, 10); // 상위 10개만 표시
+                    .sort((a, b) => b.priceChangePercent - a.priceChangePercent) // 변동률 높은 순
+                    .slice(0, 10);
                 break;
             case 'volume':
+                // 거래량 급증: 거래량 기준 (밈코인 우선 가능)
                 filteredCoins = filteredCoins
+                    .sort((a, b) => b.volume - a.volume) // 거래량 높은 순
                     .slice(0, 10);
                 break;
             case 'longshort':
+                // 롱/숏 비율: 롱 비중 높은 코인만
                 filteredCoins = filteredCoins
                     .filter(coin => coin.longAccount && coin.longAccount > 0.65)
-                    .slice(0, 10); // 상위 10개만 표시
+                    .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0)) // 롱 비중 높은 순
+                    .slice(0, 10);
                 break;
             case 'ai':
+                // AI 추천: AI 점수 높은 코인만
                 filteredCoins = filteredCoins
                     .filter(coin => coin.aiScore >= 4)
-                    .slice(0, 10); // 상위 10개만 표시
+                    .sort((a, b) => b.aiScore - a.aiScore) // AI 점수 높은 순
+                    .slice(0, 10);
                 break;
             default: // 'all'
-                // 메인코인 우선 표시 (상위 20개 메인코인 + 10개 밈코인)
+                // 전체: 메인코인 우선 표시 (상위 20개 메인코인 + 10개 밈코인)
                 const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
                 
                 const mainCoinList = filteredCoins.filter(coin => mainCoins.includes(coin.symbol));
