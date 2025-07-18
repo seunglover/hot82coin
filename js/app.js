@@ -198,9 +198,16 @@ class CoinRankingApp {
             this.allCoins = coinsWithAllData; // 모든 코인 데이터 저장
             this.displayFilteredCoins(); // 필터링된 코인 표시
             
-
-            
-
+            // 1위 코인 정보 표시 (실패해도 계속 진행)
+            try {
+                if (coinsWithAllData.length > 0) {
+                    const topCoin = coinsWithAllData[0];
+                    console.log('현재 1위 코인:', topCoin.symbol, topCoin.name);
+                    await this.displayTopCoinInfo(topCoin.symbol, topCoin);
+                }
+            } catch (error) {
+                console.warn('1위 코인 정보 가져오기 실패:', error);
+            }
             
             // 실시간 반영 상태 표시
             this.lastUpdateTime = new Date();
@@ -299,6 +306,223 @@ class CoinRankingApp {
 
         // 드래그 스크롤 다시 초기화
         this.initDragScroll();
+    }
+
+    /**
+     * 1위 코인 정보 표시
+     */
+    async displayTopCoinInfo(symbol, topCoinData) {
+        try {
+            const topCoinInfo = document.getElementById('top-coin-info');
+            const topCoinDetailsSpan = document.getElementById('top-coin-details');
+            
+            if (!topCoinInfo || !topCoinDetailsSpan) return;
+
+            // 현재 1위 코인 데이터로 1위 이유 분석
+            const reasons = this.analyzeCurrentTopCoinReasons(topCoinData);
+            
+            // 1위 코인 상세 정보 추가
+            let additionalInfo = '';
+            try {
+                additionalInfo = this.getTopCoinAdditionalInfo(topCoinData);
+            } catch (error) {
+                console.warn('추가 정보 가져오기 실패:', error);
+            }
+            
+            // 정보 표시
+            if (additionalInfo) {
+                topCoinDetailsSpan.innerHTML = reasons + '<br><span class="additional-info">' + additionalInfo + '</span>';
+            } else {
+                topCoinDetailsSpan.innerHTML = reasons;
+            }
+            topCoinInfo.style.display = 'block';
+            
+        } catch (error) {
+            console.error('1위 코인 정보 표시 오류:', error);
+        }
+    }
+
+    /**
+     * 현재 1위 코인 이유 분석 (거래량 기준)
+     */
+    analyzeCurrentTopCoinReasons(coin) {
+        const reasons = [];
+        
+        // 코인 심볼에 색상 적용
+        const symbolColor = this.getCoinSymbolColor(coin.symbol);
+        reasons.push(`<span class="coin-symbol-colored" style="color: ${symbolColor};">${coin.symbol}</span>`);
+        
+        // 거래량 정보
+        if (coin.volume) {
+            const volumeFormatted = this.formatNumber(coin.volume);
+            reasons.push(`거래량 ${volumeFormatted} USD`);
+        }
+        
+        // 가격 변동률
+        if (coin.priceChangePercent !== undefined) {
+            const change = coin.priceChangePercent;
+            const changeText = change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`;
+            const changeClass = change >= 0 ? 'positive' : 'negative';
+            reasons.push(`변동률 <span class="${changeClass}">${changeText}</span>`);
+        }
+        
+        // 현재 가격
+        if (coin.price) {
+            const priceFormatted = this.formatUSDPrice(coin.price);
+            reasons.push(`현재가 ${priceFormatted}`);
+        }
+        
+        return reasons.join(' • ');
+    }
+
+    /**
+     * 코인 심볼별 색상 반환
+     */
+    getCoinSymbolColor(symbol) {
+        const colors = {
+            'BTC': '#f7931a', // 비트코인 오렌지
+            'ETH': '#627eea', // 이더리움 파랑
+            'BNB': '#f3ba2f', // 바이낸스 노랑
+            'SOL': '#9945ff', // 솔라나 보라
+            'ADA': '#0033ad', // 카르다노 파랑
+            'AVAX': '#e84142', // 아발란체 빨강
+            'DOT': '#e6007a', // 폴카닷 핑크
+            'MATIC': '#8247e5', // 폴리곤 보라
+            'LINK': '#2a5ada', // 체인링크 파랑
+            'UNI': '#ff007a', // 유니스왑 핑크
+            'XRP': '#23292f', // 리플 검정
+            'DOGE': '#c2a633', // 도지코인 노랑
+            'SHIB': '#ff6b35', // 시바이누 오렌지
+            'LTC': '#a6a9aa', // 라이트코인 회색
+            'BCH': '#4cc947', // 비트코인캐시 초록
+            'ATOM': '#2e3148', // 코스모스 다크
+            'NEAR': '#000000', // 니어 검정
+            'FTM': '#1db954', // 팬텀 초록
+            'ALGO': '#000000', // 알고랜드 검정
+            'VET': '#15bdff'  // 비체인 하늘색
+        };
+        
+        return colors[symbol] || '#3b82f6'; // 기본 파랑색
+    }
+
+    /**
+     * 시간 경과 표시
+     */
+    getTimeAgo(timestamp) {
+        const now = Math.floor(Date.now() / 1000);
+        const diff = now - timestamp;
+        
+        if (diff < 60) return '방금 전';
+        if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+        if (diff < 2592000) return `${Math.floor(diff / 86400)}일 전`;
+        return `${Math.floor(diff / 2592000)}개월 전`;
+    }
+
+    /**
+     * 1위 코인 추가 정보 생성
+     */
+    getTopCoinAdditionalInfo(coin) {
+        const info = [];
+        
+        // 거래량 급증 여부
+        if (coin.volume > 1e9) { // 10억 달러 이상
+            info.push('🔥 거래량 폭등');
+        } else if (coin.volume > 1e8) { // 1억 달러 이상
+            info.push('📈 거래량 급증');
+        }
+        
+        // 가격 변동률에 따른 상태
+        if (coin.priceChangePercent > 20) {
+            info.push('🚀 급등 중');
+        } else if (coin.priceChangePercent > 10) {
+            info.push('📈 상승 중');
+        } else if (coin.priceChangePercent < -10) {
+            info.push('📉 하락 중');
+        }
+        
+        // 롱숏 비율 분석
+        if (coin.longShortRatio) {
+            if (coin.longShortRatio > 1.5) {
+                info.push('🐂 강세 (롱 우세)');
+            } else if (coin.longShortRatio < 0.7) {
+                info.push('🐻 약세 (숏 우세)');
+            } else {
+                info.push('⚖️ 균형');
+            }
+        }
+        
+        // 시가총액 규모
+        if (coin.marketCap > 1e11) { // 1000억 달러 이상
+            info.push('💎 대형주');
+        } else if (coin.marketCap > 1e9) { // 10억 달러 이상
+            info.push('🏢 중형주');
+        } else {
+            info.push('💫 소형주');
+        }
+        
+        // 현재 시간 기준 상태
+        const now = new Date();
+        const hour = now.getHours();
+        if (hour >= 9 && hour <= 17) {
+            info.push('🌞 거래 활발');
+        } else {
+            info.push('🌙 야간 거래');
+        }
+        
+        return info.join(' • ');
+    }
+
+
+
+    /**
+     * 1위 코인 이유 분석 (CoinGecko API 사용)
+     */
+    analyzeTopCoinReasons(details) {
+        const reasons = [];
+        
+        // 시가총액 정보
+        if (details.market_cap) {
+            const marketCapFormatted = this.formatNumber(details.market_cap);
+            reasons.push(`시가총액 ${marketCapFormatted} USD`);
+        }
+        
+        // 24시간 거래량
+        if (details.volume_24h) {
+            const volumeFormatted = this.formatNumber(details.volume_24h);
+            reasons.push(`24시간 거래량 ${volumeFormatted} USD`);
+        }
+        
+        // 가격 변동률
+        if (details.price_change_24h !== undefined) {
+            const change = details.price_change_24h;
+            const changeText = change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`;
+            const changeClass = change >= 0 ? 'positive' : 'negative';
+            reasons.push(`24시간 변동률 <span class="${changeClass}">${changeText}</span>`);
+        }
+        
+        // 커뮤니티 점수
+        if (details.community_score) {
+            reasons.push(`커뮤니티 점수 ${details.community_score}/100`);
+        }
+        
+        // 개발자 점수
+        if (details.developer_score) {
+            reasons.push(`개발자 점수 ${details.developer_score}/100`);
+        }
+        
+        // 유동성 점수
+        if (details.liquidity_score) {
+            reasons.push(`유동성 점수 ${details.liquidity_score}/100`);
+        }
+        
+        // 카테고리 정보
+        if (details.categories && details.categories.length > 0) {
+            const mainCategory = details.categories[0];
+            reasons.push(`카테고리: ${mainCategory}`);
+        }
+        
+        return reasons.join(' • ');
     }
 
     /**

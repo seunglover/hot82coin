@@ -119,6 +119,47 @@ class CoinGeckoAPI {
     }
 
     /**
+     * 1위 코인의 상세 정보 가져오기
+     */
+    async getTopCoinDetails(symbol) {
+        try {
+            // 심볼을 CoinGecko ID로 변환
+            const coinId = this.getCoinGeckoMapping()[symbol];
+            if (!coinId) {
+                console.warn(`${symbol}에 대한 CoinGecko ID를 찾을 수 없습니다.`);
+                return null;
+            }
+
+            const data = await this.getCoinDetail(coinId);
+            if (!data) return null;
+
+            // 1위 이유를 분석하는 정보 추출
+            const details = {
+                symbol: symbol,
+                name: data.name,
+                market_cap: data.market_data?.market_cap?.usd,
+                volume_24h: data.market_data?.total_volume?.usd,
+                price_change_24h: data.market_data?.price_change_percentage_24h,
+                price_change_7d: data.market_data?.price_change_percentage_7d,
+                price_change_30d: data.market_data?.price_change_percentage_30d,
+                market_cap_rank: data.market_cap_rank,
+                community_score: data.community_score,
+                developer_score: data.developer_score,
+                liquidity_score: data.liquidity_score,
+                public_interest_score: data.public_interest_score,
+                description: data.description?.en,
+                categories: data.categories,
+                last_updated: data.last_updated
+            };
+
+            return details;
+        } catch (error) {
+            console.error('1위 코인 상세 정보 가져오기 오류:', error);
+            return null;
+        }
+    }
+
+    /**
      * 바이낸스 심볼과 CoinGecko ID 매핑
      */
     getCoinGeckoMapping() {
