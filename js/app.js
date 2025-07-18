@@ -276,7 +276,7 @@ class CoinRankingApp {
                     <div class="col-volume">거래량</div>
                     <div class="col-change">변동률</div>
                     <div class="col-sparkline">차트</div>
-                    <div class="col-interest">상태</div>
+                    <div class="col-interest">관심도</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
