@@ -95,26 +95,24 @@ body {
 
 /* 테마 토글 버튼 */
 .theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 50px;
-    padding: 8px 16px;
+    border-radius: 8px;
+    padding: 12px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.9rem;
     color: var(--text-primary);
-    z-index: 1000;
     display: flex;
     align-items: center;
     gap: 8px;
+    max-width: 150px;
 }
 
 .theme-toggle:hover {
     background: var(--bg-secondary);
     transform: translateY(-1px);
+    border-color: var(--accent);
     box-shadow: var(--shadow);
 }
 
@@ -122,6 +120,8 @@ body {
 .stats {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
@@ -668,10 +668,9 @@ body {
     }
     
     .theme-toggle {
-        top: 15px;
-        right: 15px;
-        padding: 6px 12px;
+        padding: 8px 16px;
         font-size: 0.8rem;
+        max-width: 120px;
     }
 }
 
