@@ -61,8 +61,7 @@
 
             <div class="debug-info">
             <h3>🌐 API 테스트</h3>
-            <button onclick="testBybitAPI()">바이비트 API 테스트 (메인)</button>
-            <button onclick="testBinanceAPI()">바이낸스 API 테스트 (대체)</button>
+            <button onclick="testBybitAPI()">바이비트 API 테스트</button>
             <button onclick="testExchangeAPI()">환율 API 테스트</button>
             <button onclick="testCoinGeckoAPI()">CoinGecko API 테스트</button>
             <div id="apiResults"></div>
@@ -138,37 +137,8 @@
             } catch (error) {
                 logError(`바이비트 API 오류: ${error.message}`);
                 
-                // 바이비트 API 실패 시 바이낸스 API 테스트
-                logSuccess('바이비트 API 실패, 바이낸스 API 테스트...');
-                await testBinanceAPI();
-            }
-        }
-
-        // 바이낸스 API 테스트 (대체용)
-        async function testBinanceAPI() {
-            try {
-                logSuccess('바이낸스 API 테스트 시작...');
-                
-                const response = await fetch('https://api.binance.com/api/v3/ticker/24hr', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'User-Agent': 'CoinRankingApp/1.0'
-                    },
-                    mode: 'cors'
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                logSuccess(`바이낸스 API 성공: ${data.length}개 코인 데이터`);
-            } catch (error) {
-                logError(`바이낸스 API 오류: ${error.message}`);
-                
-                // 바이낸스 API도 실패 시 CoinGecko API 테스트
-                logSuccess('바이낸스 API 실패, CoinGecko API 테스트...');
+                // 바이비트 API 실패 시 CoinGecko API 테스트
+                logSuccess('바이비트 API 실패, CoinGecko API 테스트...');
                 await testFallbackAPI();
             }
         }

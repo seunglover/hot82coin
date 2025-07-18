@@ -1,10 +1,9 @@
 /**
- * 바이비트 API 관련 기능 (메인 API)
+ * 바이비트 API 관련 기능
  */
-class BinanceAPI {
+class BybitAPI {
     constructor() {
         this.BYBIT_URL = 'https://api.bybit.com/v5/market';
-        this.BINANCE_URL = 'https://api.binance.com/api/v3'; // 대체용
         this.rateLimit = {
             requests: 0,
             maxRequests: 1200, // 1분당 최대 요청 수
@@ -32,7 +31,7 @@ class BinanceAPI {
     /**
      * 바이비트 API 요청 실행
      */
-    async makeBybitRequest(endpoint, params = {}, retryCount = 0) {
+    async makeRequest(endpoint, params = {}, retryCount = 0) {
         const maxRetries = 2;
         
         try {
@@ -77,51 +76,9 @@ class BinanceAPI {
             )) {
                 console.log(`${retryCount + 1}초 후 재시도...`);
                 await new Promise(resolve => setTimeout(resolve, (retryCount + 1) * 1000));
-                return this.makeBybitRequest(endpoint, params, retryCount + 1);
+                return this.makeRequest(endpoint, params, retryCount + 1);
             }
             
-            throw error;
-        }
-    }
-
-    /**
-     * 바이낸스 API 요청 실행 (기존)
-     */
-    async makeRequest(endpoint, params = {}, retryCount = 0) {
-        const maxRetries = 2;
-        
-        try {
-            this.checkRateLimit();
-            
-            const url = new URL(`${this.BINANCE_URL}${endpoint}`);
-            Object.keys(params).forEach(key => {
-                url.searchParams.append(key, params[key]);
-            });
-
-            const controller = new AbortController();
-            const timeout = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 15000 : 10000;
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'User-Agent': 'CoinRankingApp/1.0'
-                },
-                mode: 'cors',
-                signal: controller.signal,
-                credentials: 'omit'
-            });
-            
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                throw new Error(`바이낸스 API 요청 실패: ${response.status} ${response.statusText}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error(`바이낸스 API 요청 오류 (시도 ${retryCount + 1}/${maxRetries + 1}):`, error);
             throw error;
         }
     }
@@ -167,15 +124,8 @@ class BinanceAPI {
     /**
      * 바이비트 24시간 티커 정보 가져오기
      */
-    async getBybit24hrTicker() {
-        return await this.makeBybitRequest('/tickers', { category: 'spot' });
-    }
-
-    /**
-     * 바이낸스 24시간 티커 정보 가져오기
-     */
     async get24hrTicker() {
-        return await this.makeRequest('/ticker/24hr');
+        return await this.makeRequest('/tickers', { category: 'spot' });
     }
 
     /**
@@ -270,44 +220,11 @@ class BinanceAPI {
      * 거래량 기준 상위 코인 가져오기 (기본값: 50개)
      */
     async getTopCoinsByVolume(limit = 50) {
-        // 바이비트 API를 메인으로 사용
         try {
             console.log('바이비트 API에서 거래량 기준 상위 코인 가져오는 중...');
             return await this.getTopCoinsFromBybit(limit);
         } catch (error) {
-            console.error('바이비트 API 실패, 바이낸스 API로 대체:', error);
-            return await this.getTopCoinsFromBinance(limit);
-        }
-    }
-
-    /**
-     * 바이낸스 API에서 거래량 기준 상위 코인 가져오기 (대체용)
-     */
-    async getTopCoinsFromBinance(limit = 50) {
-        try {
-            const tickerData = await this.get24hrTicker();
-            
-            // USDT 페어만 필터링하고 거래량 기준으로 정렬 (상위 50개만)
-            const usdtPairs = tickerData
-                .filter(item => item.symbol.endsWith('USDT'))
-                .sort((a, b) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume))
-                .slice(0, limit); // limit = 50으로 제한
-
-            return usdtPairs.map((coin, index) => ({
-                rank: index + 1,
-                symbol: coin.symbol.replace('USDT', ''),
-                fullSymbol: coin.symbol,
-                price: parseFloat(coin.lastPrice),
-                volume: parseFloat(coin.quoteVolume),
-                priceChange: parseFloat(coin.priceChange),
-                priceChangePercent: parseFloat(coin.priceChangePercent),
-                highPrice: parseFloat(coin.highPrice),
-                lowPrice: parseFloat(coin.lowPrice),
-                volume24h: parseFloat(coin.volume),
-                marketCap: parseFloat(coin.lastPrice) * parseFloat(coin.volume)
-            }));
-        } catch (error) {
-            console.error('바이낸스 API도 실패, CoinGecko API로 대체:', error);
+            console.error('바이비트 API 실패, CoinGecko API로 대체:', error);
             return await this.getTopCoinsFromCoinGecko(limit);
         }
     }
@@ -318,7 +235,7 @@ class BinanceAPI {
     async getTopCoinsFromBybit(limit = 50) {
         try {
             console.log('바이비트 API에서 거래량 기준 상위 코인 가져오는 중...');
-            const response = await this.getBybit24hrTicker();
+            const response = await this.get24hrTicker();
             
             if (!response.result || !response.result.list) {
                 throw new Error('바이비트 API 응답 형식 오류');
@@ -409,59 +326,11 @@ class BinanceAPI {
      * 시장 통계 정보 가져오기 (상위 50개 기준)
      */
     async getMarketStats() {
-        // 바이비트 API를 메인으로 사용
         try {
             console.log('바이비트 API에서 시장 통계 가져오는 중...');
             return await this.getMarketStatsFromBybit();
         } catch (error) {
-            console.error('바이비트 API 실패, 바이낸스 API로 대체:', error);
-            return await this.getMarketStatsFromBinance();
-        }
-    }
-
-    /**
-     * 바이낸스 API에서 시장 통계 가져오기 (대체용)
-     */
-    async getMarketStatsFromBinance() {
-        try {
-            const tickerData = await this.get24hrTicker();
-            const usdtPairs = tickerData.filter(item => item.symbol.endsWith('USDT'));
-            
-            // 상위 50개만 선택
-            const top50Pairs = usdtPairs
-                .sort((a, b) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume))
-                .slice(0, 50);
-            
-            // 상위 50개 기준으로 통계 계산
-            const totalVolume = top50Pairs.reduce((sum, coin) => sum + parseFloat(coin.quoteVolume), 0);
-            
-            // 총 시가총액 계산 - 상위 50개만 기준
-            const totalMarketCap = top50Pairs.reduce((sum, coin) => {
-                const price = parseFloat(coin.lastPrice);
-                const volume = parseFloat(coin.volume);
-                // 시가총액 추정: 가격 × (거래량 × 0.1) - 실제로는 총 유통량이 필요
-                return sum + (price * volume * 0.1);
-            }, 0);
-            
-            const gainers = usdtPairs
-                .filter(coin => parseFloat(coin.priceChangePercent) > 0)
-                .sort((a, b) => parseFloat(b.priceChangePercent) - parseFloat(a.priceChangePercent))
-                .slice(0, 5);
-                
-            const losers = usdtPairs
-                .filter(coin => parseFloat(coin.priceChangePercent) < 0)
-                .sort((a, b) => parseFloat(a.priceChangePercent) - parseFloat(b.priceChangePercent))
-                .slice(0, 5);
-
-            return {
-                totalCoins: 50, // 상위 50개만 표시
-                totalVolume: totalVolume,
-                totalMarketCap: totalMarketCap,
-                topGainers: gainers,
-                topLosers: losers
-            };
-        } catch (error) {
-            console.error('바이낸스 API도 실패, CoinGecko API로 대체:', error);
+            console.error('바이비트 API 실패, CoinGecko API로 대체:', error);
             return await this.getMarketStatsFromCoinGecko();
         }
     }
@@ -472,7 +341,7 @@ class BinanceAPI {
     async getMarketStatsFromBybit() {
         try {
             console.log('바이비트 API에서 시장 통계 가져오는 중...');
-            const response = await this.getBybit24hrTicker();
+            const response = await this.get24hrTicker();
             
             if (!response.result || !response.result.list) {
                 throw new Error('바이비트 API 응답 형식 오류');
@@ -562,9 +431,9 @@ class BinanceAPI {
 }
 
 // 전역 API 인스턴스 생성
-const binanceAPI = new BinanceAPI();
+const bybitAPI = new BybitAPI();
 
 // 모듈 내보내기 (Node.js 환경에서 사용할 경우)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = BinanceAPI;
+    module.exports = BybitAPI;
 } 

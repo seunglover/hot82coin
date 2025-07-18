@@ -61,15 +61,15 @@ class CoinRankingApp {
         
         try {
             // 거래량 기준 상위 50개 코인 데이터 가져오기
-            const coins = await binanceAPI.getTopCoinsByVolume(50);
+            const coins = await bybitAPI.getTopCoinsByVolume(50);
             
             // 시장 통계 가져오기
-            const marketStats = await binanceAPI.getMarketStats();
+            const marketStats = await bybitAPI.getMarketStats();
             
             // 상위 10개 코인의 롱숏 비율 데이터 가져오기 (실패해도 계속 진행)
             let longShortData = [];
             try {
-                longShortData = await binanceAPI.getTopCoinsLongShortRatio(coins);
+                longShortData = await bybitAPI.getTopCoinsLongShortRatio(coins);
             } catch (error) {
                 console.warn('롱숏 비율 데이터 가져오기 실패, 기본 데이터로 계속 진행:', error);
                 // 실패 시 빈 배열로 계속 진행
