@@ -527,7 +527,33 @@ body {
 }
 
 .footer p {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.footer-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.footer-link:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
 }
 
 /* 모달 */
@@ -989,6 +1015,17 @@ body {
     
     .coin-title h3 {
         font-size: 1.3rem;
+    }
+    
+    /* 모바일에서 푸터 링크 최적화 */
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .footer-link {
+        font-size: 0.85rem;
+        padding: 6px 12px;
     }
 }
 

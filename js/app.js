@@ -82,9 +82,6 @@ class CoinRankingApp {
                 this.currentMenu = 'ai';
                 this.displayFilteredCoins();
                 break;
-            case 'about':
-                window.location.href = 'about.html';
-                break;
             case 'theme':
                 this.toggleTheme();
                 break;
