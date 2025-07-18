@@ -463,29 +463,30 @@ class BybitAPI {
             
             let combinedCoins;
             
-            // 메인코인이 충분하지 않을 경우 대안 처리
-            if (sortedMainCoins.length < 10) {
-                console.warn('메인코인이 부족합니다. 전체 거래량 순으로 정렬합니다.');
-                combinedCoins = usdtPairs.sort((a, b) => {
-                    const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
-                    const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
-                    return bVolume - aVolume;
-                }).slice(0, limit);
-            } else {
-                // 1~10위는 메인코인만, 11위부터는 밈코인도 포함
-                const top10MainCoins = sortedMainCoins.slice(0, 10);
-                const remainingCoins = [...sortedMainCoins.slice(10), ...sortedMemeCoins]
-                    .sort((a, b) => {
-                        const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
-                        const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
-                        return bVolume - aVolume;
-                    })
-                    .slice(0, limit - 10);
-                
-                combinedCoins = [...top10MainCoins, ...remainingCoins];
-            }
+            // 메인코인 우선 정렬 (거래량 무관)
+            const mainCoinsPriority = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
             
-            console.log('최종 결과 상위 10개 (메인코인):', combinedCoins.slice(0, 10).map(item => ({
+            // 메인코인을 우선순위대로 정렬
+            const sortedMainCoinsByPriority = mainCoinPairs.sort((a, b) => {
+                const aSymbol = a.symbol.replace('USDT', '');
+                const bSymbol = b.symbol.replace('USDT', '');
+                const aIndex = mainCoinsPriority.indexOf(aSymbol);
+                const bIndex = mainCoinsPriority.indexOf(bSymbol);
+                return aIndex - bIndex; // 우선순위가 높은 것(인덱스가 작은 것)이 앞으로
+            });
+            
+            // 밈코인은 거래량 순으로 정렬
+            const sortedMemeCoinsByVolume = memeCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                return bVolume - aVolume;
+            });
+            
+            // 메인코인을 먼저, 그 다음 밈코인 순서로 결합
+            combinedCoins = [...sortedMainCoinsByPriority, ...sortedMemeCoinsByVolume].slice(0, limit);
+            
+            console.log('메인코인 우선순위 정렬 결과:', sortedMainCoinsByPriority.map(item => item.symbol));
+            console.log('최종 결과 상위 10개:', combinedCoins.slice(0, 10).map(item => ({
                 symbol: item.symbol,
                 volume: item.volume24h || item.volume || item.quoteVolume,
                 price: item.lastPrice
