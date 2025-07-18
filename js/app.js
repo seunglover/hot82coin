@@ -870,16 +870,28 @@ async function drawSparkline(symbol, canvasId) {
     try {
         console.log('스파크라인 차트 시작:', symbol, canvasId);
         
-        const url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
-        console.log('API URL:', url);
+        // 먼저 선물 거래로 시도
+        let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
+        console.log('선물 API URL:', url);
         
-        const res = await fetch(url);
-        const json = await res.json();
+        let res = await fetch(url);
+        let json = await res.json();
+        
+        // 선물 거래가 지원되지 않는 경우 스팟 거래로 시도
+        if (json.retCode !== 0 || !json.result || !json.result.list || json.result.list.length === 0) {
+            console.log(`${symbol} 선물 거래 지원 안됨, 스팟 거래로 시도...`);
+            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=15&limit=30`;
+            console.log('스팟 API URL:', url);
+            
+            res = await fetch(url);
+            json = await res.json();
+        }
         
         console.log('API 응답:', json);
 
-        if (json.retCode === 0 && json.result && json.result.list) {
-            const closePrices = json.result.list.map(item => parseFloat(item[4])); // 종가
+        if (json.retCode === 0 && json.result && json.result.list && json.result.list.length > 0) {
+            // 바이비트 V5 API 응답 구조: [timestamp, open, high, low, close, volume, turnover]
+            const closePrices = json.result.list.map(item => parseFloat(item[4])); // 종가 (인덱스 4)
             console.log('종가 데이터:', closePrices);
             
             const canvas = document.getElementById(canvasId);
@@ -909,7 +921,14 @@ async function drawSparkline(symbol, canvasId) {
                 throw new Error('Canvas 요소를 찾을 수 없거나 데이터가 없습니다.');
             }
         } else {
-            throw new Error('API 데이터를 가져올 수 없습니다.');
+            console.error('바이비트 API 응답 오류:', json);
+            if (json.retCode !== 0) {
+                throw new Error(`바이비트 API 오류: ${json.retMsg || '알 수 없는 오류'} (코드: ${json.retCode})`);
+            } else if (!json.result || !json.result.list) {
+                throw new Error('API 응답에 데이터가 없습니다.');
+            } else {
+                throw new Error('API 데이터를 가져올 수 없습니다.');
+            }
         }
     } catch (error) {
         console.error('스파크라인 차트 오류:', error);
