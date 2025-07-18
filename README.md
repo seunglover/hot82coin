@@ -20,9 +20,8 @@
 ### API 키 관리
 - **현재 사용하는 API들은 모두 공개 API입니다**
 - 바이비트 공개 API: API 키 불필요 (메인)
-- 바이낸스 공개 API: API 키 불필요 (대체)
+- CoinGecko API: API 키 불필요 (대체)
 - 환율 API: API 키 불필요
-- CoinGecko API: API 키 불필요 (최종 대체)
 
 ### 환경변수 (선택사항)
 만약 향후 프라이빗 API를 사용하게 된다면:
@@ -43,7 +42,7 @@ coin/
 ├── js/
 │   ├── api.js         # 바이비트 API (메인)
 │   ├── app.js         # 메인 애플리케이션
-│   ├── coingecko-api.js # CoinGecko API
+│   ├── coingecko-api.js # CoinGecko API (대체)
 │   └── exchange-rate-api.js # 환율 API
 ├── _headers           # Cloudflare 헤더 설정
 ├── netlify.toml       # 배포 설정
@@ -60,9 +59,8 @@ open index.html
 
 ### API 제한
 - 바이비트 API: 1분당 1200회 요청 (메인)
-- 바이낸스 API: 1분당 1200회 요청 (대체)
+- CoinGecko API: 1분당 50회 요청 (대체)
 - 환율 API: 1분당 100회 요청
-- CoinGecko API: 1분당 50회 요청 (최종 대체)
 
 ## 📊 기능
 

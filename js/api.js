@@ -104,7 +104,7 @@ class BybitAPI {
             
             const data = await response.json();
             
-            // 바이낸스 API 형식에 맞게 변환
+            // 바이비트 API 형식에 맞게 변환
             return data.map((coin, index) => ({
                 symbol: coin.symbol.toUpperCase() + 'USDT',
                 lastPrice: coin.current_price.toString(),
@@ -129,38 +129,27 @@ class BybitAPI {
     }
 
     /**
-     * 바이낸스 선물 롱숏 비율 API에서 데이터 가져오기
-     * https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=5m&limit=1
+     * 바이비트 선물 롱숏 비율 API에서 데이터 가져오기
+     * https://api.bybit.com/v5/market/account-ratio
      */
     async getLongShortRatio(symbol = 'BTCUSDT') {
         try {
-            const url = `https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=${symbol}&period=5m&limit=1`;
-            
-            const controller = new AbortController();
-            // 모바일에서는 더 짧은 타임아웃 사용
-            const timeout = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 10000 : 8000;
-            const timeoutId = setTimeout(() => controller.abort(), timeout);
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'User-Agent': 'CoinRankingApp/1.0'
-                },
-                mode: 'cors',
-                signal: controller.signal,
-                credentials: 'omit'
+            const response = await this.makeRequest('/account-ratio', { 
+                category: 'linear',
+                symbol: symbol,
+                interval: '5m',
+                limit: 1
             });
             
-            clearTimeout(timeoutId);
+            if (!response.result || !response.result.list || response.result.list.length === 0) {
+                throw new Error('롱숏 비율 데이터 없음');
+            }
             
-            if (!response.ok) throw new Error('롱숏 비율 API 요청 실패');
-            const data = await response.json();
-            if (!Array.isArray(data) || data.length === 0) throw new Error('롱숏 비율 데이터 없음');
-            const latest = data[data.length - 1];
+            const latest = response.result.list[0];
             const longAccount = parseFloat(latest.longAccount);
             const shortAccount = parseFloat(latest.shortAccount);
             const longShortRatio = longAccount / shortAccount;
+            
             return {
                 symbol,
                 longShortRatio,
@@ -170,7 +159,6 @@ class BybitAPI {
             };
         } catch (error) {
             if (error.message === '롱숏 비율 데이터 없음') {
-                // 데이터 없음은 경고만 출력
                 console.warn(`${symbol} 롱숏 비율 데이터 없음`);
             } else {
                 console.error('롱숏 비율 데이터 가져오기 오류:', error);
