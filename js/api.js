@@ -394,48 +394,42 @@ class BybitAPI {
             console.log('바이비트 V5 API에서 거래량 기준 상위 코인 가져오는 중...');
             const response = await this.get24hrTicker();
             
+            // 디버깅: API 응답 확인
+            console.log('바이비트 API 응답 샘플:', response.result.list.slice(0, 3));
+            
             if (!response.result || !response.result.list) {
                 throw new Error('바이비트 API 응답 형식 오류');
             }
             
-            // USDT 페어만 필터링하고 메인 코인 우선, 거래량 기준으로 정렬
-            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI'];
+            // USDT 페어만 필터링하고 거래량 기준으로 정렬
             const usdtPairs = response.result.list
                 .filter(item => item.symbol.endsWith('USDT'))
                 .sort((a, b) => {
-                    const aSymbol = a.symbol.replace('USDT', '');
-                    const bSymbol = b.symbol.replace('USDT', '');
-                    
-                    // 메인 코인 우선 정렬
-                    const aIsMain = mainCoins.includes(aSymbol);
-                    const bIsMain = mainCoins.includes(bSymbol);
-                    
-                    if (aIsMain && !bIsMain) return -1;
-                    if (!aIsMain && bIsMain) return 1;
-                    
-                    // 메인 코인끼리는 거래량 순
-                    if (aIsMain && bIsMain) {
-                        return parseFloat(b.volume24h) - parseFloat(a.volume24h);
-                    }
-                    
-                    // 밈코인끼리는 거래량 순
-                    return parseFloat(b.volume24h) - parseFloat(a.volume24h);
+                    // 거래량 필드 확인 (바이비트 API 응답에 따라 다를 수 있음)
+                    const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                    const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                    return bVolume - aVolume;
                 })
                 .slice(0, limit);
 
-            return usdtPairs.map((coin, index) => ({
-                rank: index + 1,
-                symbol: coin.symbol.replace('USDT', ''),
-                fullSymbol: coin.symbol,
-                price: parseFloat(coin.lastPrice),
-                volume: parseFloat(coin.volume24h),
-                priceChange: parseFloat(coin.price24hPcnt) * parseFloat(coin.lastPrice),
-                priceChangePercent: parseFloat(coin.price24hPcnt) * 100,
-                highPrice: parseFloat(coin.highPrice24h),
-                lowPrice: parseFloat(coin.lowPrice24h),
-                volume24h: parseFloat(coin.volume24h),
-                marketCap: parseFloat(coin.lastPrice) * parseFloat(coin.volume24h) * 0.1 // 추정치
-            }));
+            return usdtPairs.map((coin, index) => {
+                // 거래량 필드 확인 (바이비트 API 응답에 따라 다를 수 있음)
+                const volume = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
+                
+                return {
+                    rank: index + 1,
+                    symbol: coin.symbol.replace('USDT', ''),
+                    fullSymbol: coin.symbol,
+                    price: parseFloat(coin.lastPrice),
+                    volume: volume,
+                    priceChange: parseFloat(coin.price24hPcnt) * parseFloat(coin.lastPrice),
+                    priceChangePercent: parseFloat(coin.price24hPcnt) * 100,
+                    highPrice: parseFloat(coin.highPrice24h),
+                    lowPrice: parseFloat(coin.lowPrice24h),
+                    volume24h: volume,
+                    marketCap: parseFloat(coin.lastPrice) * volume * 0.1 // 추정치
+                };
+            });
         } catch (error) {
             console.error('바이비트 V5 API 오류, CoinGecko API로 대체:', error);
             return await this.getTopCoinsFromCoinGecko(limit);
@@ -525,13 +519,20 @@ class BybitAPI {
             
             const usdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
             const top50Pairs = usdtPairs
-                .sort((a, b) => parseFloat(b.volume24h) - parseFloat(a.volume24h))
+                .sort((a, b) => {
+                    const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                    const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                    return bVolume - aVolume;
+                })
                 .slice(0, 50);
             
-            const totalVolume = top50Pairs.reduce((sum, coin) => sum + parseFloat(coin.volume24h), 0);
+            const totalVolume = top50Pairs.reduce((sum, coin) => {
+                const volume = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
+                return sum + volume;
+            }, 0);
             const totalMarketCap = top50Pairs.reduce((sum, coin) => {
                 const price = parseFloat(coin.lastPrice);
-                const volume = parseFloat(coin.volume24h);
+                const volume = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
                 return sum + (price * volume * 0.1); // 추정치
             }, 0);
             
