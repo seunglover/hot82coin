@@ -399,6 +399,20 @@ class BybitAPI {
             console.log('바이비트 API 응답 샘플:', response.result.list.slice(0, 3));
             console.log('바이비트 API 응답 필드 확인:', Object.keys(response.result.list[0] || {}));
             
+            // 전체 USDT 페어 거래량 순으로 정렬해서 확인
+            const allUsdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
+            const sortedByVolume = allUsdtPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                return bVolume - aVolume;
+            });
+            
+            console.log('거래량 순 상위 10개:', sortedByVolume.slice(0, 10).map(item => ({
+                symbol: item.symbol,
+                volume: item.volume24h || item.volume || item.quoteVolume,
+                price: item.lastPrice
+            })));
+            
             if (!response.result || !response.result.list) {
                 throw new Error('바이비트 API 응답 형식 오류');
             }
@@ -423,6 +437,10 @@ class BybitAPI {
             console.log('메인코인 개수:', mainCoinPairs.length);
             console.log('밈코인 개수:', memeCoinPairs.length);
             console.log('메인코인 목록:', mainCoinPairs.map(item => item.symbol));
+            console.log('메인코인 거래량:', mainCoinPairs.map(item => ({
+                symbol: item.symbol,
+                volume: item.volume24h || item.volume || item.quoteVolume
+            })));
             
             // 메인코인은 거래량 기준으로 정렬
             const sortedMainCoins = mainCoinPairs.sort((a, b) => {
@@ -440,6 +458,12 @@ class BybitAPI {
             
             // 메인코인을 먼저, 그 다음 밈코인 순서로 결합
             const combinedCoins = [...sortedMainCoins, ...sortedMemeCoins].slice(0, limit);
+            
+            console.log('최종 결과 상위 10개:', combinedCoins.slice(0, 10).map(item => ({
+                symbol: item.symbol,
+                volume: item.volume24h || item.volume || item.quoteVolume,
+                price: item.lastPrice
+            })));
 
             return combinedCoins.map((coin, index) => {
                 // 거래량 필드 확인 (바이비트 API 응답에 따라 다를 수 있음)
