@@ -34,12 +34,29 @@
         </div>
         
         <div class="menu-bar">
-            <button class="menu-btn" onclick="window.location.href='about.html'">
+            <button class="menu-btn active" data-menu="all">
+                전체
+            </button>
+            <button class="menu-btn" data-menu="rising">
+                급등 코인
+            </button>
+            <button class="menu-btn" data-menu="volume">
+                거래량 급증
+            </button>
+            <button class="menu-btn" data-menu="longshort">
+                롱/숏 비율
+            </button>
+            <button class="menu-btn" data-menu="ai">
+                🔮 AI 추천
+            </button>
+            <button class="menu-btn" data-menu="about">
                 소개
             </button>
-            <button class="menu-btn" onclick="toggleTheme()">
+            <button class="menu-btn" data-menu="theme">
                 <span id="theme-icon">🌙</span>
-                <span id="theme-text">다크 모드</span>
+            </button>
+            <button class="menu-btn" data-menu="refresh">
+                🔁
             </button>
         </div>
         

@@ -128,22 +128,28 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
 }
 
 .menu-btn {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 10px 16px;
+    padding: 8px 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-primary);
-    min-width: 80px;
+    min-width: 60px;
     text-align: center;
+    white-space: nowrap;
 }
 
 .menu-btn:hover {
@@ -155,6 +161,17 @@ body {
 
 .menu-btn:active {
     transform: translateY(0);
+}
+
+.menu-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+}
+
+.menu-btn.active:hover {
+    opacity: 0.9;
 }
 
 /* 컨트롤 */
@@ -965,6 +982,55 @@ body {
     animation: rankChange 0.3s ease-in-out;
 }
 
+/* AI 추천 코인 스타일 */
+.coin-item.ai-recommendation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #4f46e5;
+    position: relative;
+    color: white;
+}
+
+.coin-item.ai-recommendation .coin-symbol,
+.coin-item.ai-recommendation .coin-name,
+.coin-item.ai-recommendation .price,
+.coin-item.ai-recommendation .krw-price,
+.coin-item.ai-recommendation .volume,
+.coin-item.ai-recommendation .change {
+    color: white;
+}
+
+.ai-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #f59e0b;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.ai-score {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.ai-reason {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 4px;
+    font-style: italic;
+}
+
 /* About 페이지 스타일 */
 .about-content {
     max-width: 800px;
@@ -1180,5 +1246,23 @@ body {
         grid-template-columns: 35px 70px 70px 70px 70px 70px 70px 70px;
         gap: 3px;
         font-size: 0.75rem;
+    }
+} 
+
+@media (max-width: 768px) {
+    .menu-bar {
+        gap: 4px;
+        padding: 8px;
+    }
+    
+    .menu-btn {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+        min-width: 50px;
+    }
+    
+    /* 모바일에서 일부 메뉴 숨김 */
+    .menu-btn[data-menu="longshort"] {
+        display: none;
     }
 } 

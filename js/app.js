@@ -11,6 +11,8 @@ class CoinRankingApp {
         this.currentCoins = []; // 현재 코인 데이터
         this.currentSort = 'volume'; // 현재 정렬 기준
         this.currentTheme = 'light'; // 현재 테마
+        this.currentMenu = 'all'; // 현재 선택된 메뉴
+        this.allCoins = []; // 모든 코인 데이터 저장
         this.init();
     }
 
@@ -37,16 +39,67 @@ class CoinRankingApp {
             });
         }
 
-        // 테마 토글 버튼
-        const themeBtn = document.getElementById('theme-btn');
-        if (themeBtn) {
-            themeBtn.addEventListener('click', () => {
-                this.toggleTheme();
-            });
-        }
+        // 메뉴 버튼 이벤트 바인딩
+        this.bindMenuEvents();
 
         // 마우스 드래그 스크롤 기능 추가
         this.initDragScroll();
+    }
+
+    /**
+     * 메뉴 이벤트 바인딩
+     */
+    bindMenuEvents() {
+        const menuButtons = document.querySelectorAll('.menu-btn');
+        menuButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const menuType = btn.getAttribute('data-menu');
+                this.handleMenuClick(menuType);
+            });
+        });
+    }
+
+    /**
+     * 메뉴 클릭 처리
+     */
+    handleMenuClick(menuType) {
+        // 메뉴 버튼 활성화 상태 변경
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-menu="${menuType}"]`).classList.add('active');
+
+        switch (menuType) {
+            case 'all':
+                this.currentMenu = 'all';
+                this.displayFilteredCoins();
+                break;
+            case 'rising':
+                this.currentMenu = 'rising';
+                this.displayFilteredCoins();
+                break;
+            case 'volume':
+                this.currentMenu = 'volume';
+                this.displayFilteredCoins();
+                break;
+            case 'longshort':
+                this.currentMenu = 'longshort';
+                this.displayFilteredCoins();
+                break;
+            case 'ai':
+                this.currentMenu = 'ai';
+                this.displayFilteredCoins();
+                break;
+            case 'about':
+                window.location.href = 'about.html';
+                break;
+            case 'theme':
+                this.toggleTheme();
+                break;
+            case 'refresh':
+                this.loadCoinData();
+                break;
+        }
     }
 
     /**
@@ -160,8 +213,9 @@ class CoinRankingApp {
             // 거래량 데이터 업데이트
             this.updateVolumes(coinsWithAllData);
             
-            // 코인 목록 표시
-            this.displayCoins(coinsWithAllData);
+            // 데이터 표시
+            this.allCoins = coinsWithAllData; // 모든 코인 데이터 저장
+            this.displayFilteredCoins(); // 필터링된 코인 표시
             
 
             
@@ -351,10 +405,17 @@ class CoinRankingApp {
             longShortDisplay = '<div class="no-data">데이터 없음</div>';
         }
         
-
+        // AI 추천 코인 스타일 적용
+        const isAIRecommendation = this.currentMenu === 'ai' && coin.aiScore >= 4;
+        const aiClass = isAIRecommendation ? 'ai-recommendation' : '';
+        const aiBadge = isAIRecommendation ? '<div class="ai-badge">AI PICK</div>' : '';
+        const aiScore = isAIRecommendation ? `<div class="ai-score">${coin.aiScore}점</div>` : '';
+        const aiReason = isAIRecommendation ? `<div class="ai-reason">${this.generateAIRecommendationReason(coin, coin.aiReasons)}</div>` : '';
         
         return `
-            <div class="coin-item" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
+            <div class="coin-item ${aiClass}" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
+                ${aiBadge}
+                ${aiScore}
                 <div class="col-rank rank">
                     ${displayRank}
                     <div class="rank-arrow">${rankArrow}</div>
@@ -375,6 +436,7 @@ class CoinRankingApp {
                 <div class="col-interest volume-surge">
                     ${this.getVolumeSurgeBadge(coin)}
                 </div>
+                ${aiReason}
             </div>
         `;
     }
@@ -483,6 +545,60 @@ class CoinRankingApp {
     }
 
     /**
+     * AI 스코어 계산
+     */
+    calculateAIScore(coin) {
+        let score = 0;
+        let reasons = [];
+        
+        // 가격 상승률 점수
+        if (coin.priceChangePercent >= 10) {
+            score += 2;
+            reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
+        } else if (coin.priceChangePercent >= 5) {
+            score += 1;
+            reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
+        }
+        
+        // 거래량 증가율 점수 (이전 거래량과 비교)
+        if (this.previousVolumes[coin.symbol]) {
+            const previousVolume = this.previousVolumes[coin.symbol];
+            const volumeChangePercent = ((coin.volume - previousVolume) / previousVolume) * 100;
+            
+            if (volumeChangePercent >= 60) {
+                score += 2;
+                reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
+            } else if (volumeChangePercent >= 30) {
+                score += 1;
+                reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
+            }
+        }
+        
+        // 롱/숏 비율 점수
+        if (coin.longAccount && coin.longAccount >= 0.8) {
+            score += 2;
+            reasons.push(`롱비중 ${(coin.longAccount * 100).toFixed(1)}%`);
+        } else if (coin.longAccount && coin.longAccount >= 0.7) {
+            score += 1;
+            reasons.push(`롱비중 ${(coin.longAccount * 100).toFixed(1)}%`);
+        }
+        
+        return { score, reasons };
+    }
+
+    /**
+     * AI 추천 사유 생성
+     */
+    generateAIRecommendationReason(coin, reasons) {
+        const score = coin.aiScore;
+        const topReasons = reasons.slice(0, 2).join(' | ');
+        
+        if (score >= 5) return `🚀 ${topReasons}`;
+        if (score >= 4) return `📈 ${topReasons}`;
+        return `💡 ${topReasons}`;
+    }
+
+    /**
      * 자동 새로고침 중지
      */
     stopAutoRefresh() {
@@ -550,6 +666,60 @@ class CoinRankingApp {
     destroy() {
         this.stopAutoRefresh();
         // 이벤트 리스너 제거 등 정리 작업
+    }
+
+    /**
+     * 필터링된 코인 표시
+     */
+    displayFilteredCoins() {
+        if (!this.allCoins.length) return;
+
+        let filteredCoins = [...this.allCoins];
+
+        // AI 스코어 계산 (모든 코인에 대해)
+        filteredCoins.forEach(coin => {
+            const aiResult = this.calculateAIScore(coin);
+            coin.aiScore = aiResult.score;
+            coin.aiReasons = aiResult.reasons;
+        });
+
+        // 메뉴별 필터링
+        switch (this.currentMenu) {
+            case 'rising':
+                filteredCoins = filteredCoins
+                    .filter(coin => coin.priceChangePercent > 0)
+                    .sort((a, b) => b.priceChangePercent - a.priceChangePercent);
+                break;
+            case 'volume':
+                filteredCoins = filteredCoins
+                    .filter(coin => {
+                        if (!this.previousVolumes[coin.symbol]) return false;
+                        const volumeChange = ((coin.volume - this.previousVolumes[coin.symbol]) / this.previousVolumes[coin.symbol]) * 100;
+                        return volumeChange > 0;
+                    })
+                    .sort((a, b) => {
+                        const aChange = this.previousVolumes[a.symbol] ? ((a.volume - this.previousVolumes[a.symbol]) / this.previousVolumes[a.symbol]) * 100 : 0;
+                        const bChange = this.previousVolumes[b.symbol] ? ((b.volume - this.previousVolumes[b.symbol]) / this.previousVolumes[b.symbol]) * 100 : 0;
+                        return bChange - aChange;
+                    });
+                break;
+            case 'longshort':
+                filteredCoins = filteredCoins
+                    .filter(coin => coin.longAccount && coin.longAccount > 0.65)
+                    .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0));
+                break;
+            case 'ai':
+                filteredCoins = filteredCoins
+                    .filter(coin => coin.aiScore >= 4)
+                    .sort((a, b) => b.aiScore - a.aiScore)
+                    .slice(0, 10); // 상위 10개만 표시
+                break;
+            default: // 'all'
+                // 기본 정렬 (거래량 순)
+                break;
+        }
+
+        this.displayCoins(filteredCoins);
     }
 }
 
