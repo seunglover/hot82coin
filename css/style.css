@@ -757,7 +757,7 @@ body {
 
 .sparkline-placeholder canvas,
 .sparkline-chart {
-    width: 100%;
+    width: 120px;
     height: 60px;
     border-radius: 4px;
 }
