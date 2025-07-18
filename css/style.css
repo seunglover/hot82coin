@@ -214,7 +214,7 @@ body {
 /* 코인 테이블 헤더 */
 .list-header {
     display: grid;
-    grid-template-columns: 60px 1fr 120px 120px 120px 120px 120px 100px;
+    grid-template-columns: 60px 1fr 120px 120px 120px 80px 100px;
     gap: 20px;
     padding: 20px;
     background: var(--bg-secondary);
@@ -225,12 +225,12 @@ body {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    min-width: 1000px;
+    min-width: 900px;
 }
 
 .coin-item {
     display: grid;
-    grid-template-columns: 60px 1fr 120px 120px 120px 120px 120px 100px;
+    grid-template-columns: 60px 1fr 120px 120px 120px 80px 100px;
     gap: 20px;
     align-items: center;
     padding: 20px;
@@ -243,7 +243,7 @@ body {
     position: relative;
     overflow: hidden;
     scroll-snap-align: start;
-    min-width: 1000px;
+    min-width: 900px;
     user-select: none;
 }
 
@@ -878,8 +878,8 @@ body {
     }
     
     .coin-item, .list-header {
-        min-width: 600px;
-        grid-template-columns: 35px 70px 70px 70px 70px 70px 70px 70px;
+        min-width: 500px;
+        grid-template-columns: 35px 70px 70px 70px 70px 70px 70px;
         gap: 3px;
         font-size: 0.75rem;
     }
@@ -896,7 +896,7 @@ body {
         font-size: 1rem;
     }
     
-    .price, .krw-price, .volume, .change, .volume-surge {
+    .volume, .change, .volume-surge {
         font-size: 0.7rem;
     }
     
@@ -947,8 +947,8 @@ body {
 /* 매우 작은 화면 최적화 */
 @media (max-width: 480px) {
     .coin-item, .list-header {
-        min-width: 550px;
-        grid-template-columns: 25px 60px 60px 60px 60px 60px 60px 60px;
+        min-width: 400px;
+        grid-template-columns: 25px 60px 60px 60px 60px 60px 60px;
         gap: 2px;
         font-size: 0.65rem;
     }

@@ -463,16 +463,18 @@ class BybitAPI {
             
             let combinedCoins;
             
-            // 메인코인 우선 정렬 (거래량 무관)
-            const mainCoinsPriority = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
-            
-            // 메인코인을 우선순위대로 정렬
-            const sortedMainCoinsByPriority = mainCoinPairs.sort((a, b) => {
-                const aSymbol = a.symbol.replace('USDT', '');
-                const bSymbol = b.symbol.replace('USDT', '');
-                const aIndex = mainCoinsPriority.indexOf(aSymbol);
-                const bIndex = mainCoinsPriority.indexOf(bSymbol);
-                return aIndex - bIndex; // 우선순위가 높은 것(인덱스가 작은 것)이 앞으로
+            // 메인코인을 거래량과 변동률 기준으로 정렬 (복합 점수)
+            const sortedMainCoinsByVolumeAndChange = mainCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                const aChange = Math.abs(parseFloat(a.price24hPcnt || 0));
+                const bChange = Math.abs(parseFloat(b.price24hPcnt || 0));
+                
+                // 거래량과 변동률의 복합 점수 계산 (거래량 70%, 변동률 30%)
+                const aScore = (aVolume * 0.7) + (aChange * 1000000 * 0.3);
+                const bScore = (bVolume * 0.7) + (bChange * 1000000 * 0.3);
+                
+                return bScore - aScore;
             });
             
             // 밈코인은 거래량 순으로 정렬
@@ -483,9 +485,9 @@ class BybitAPI {
             });
             
             // 메인코인을 먼저, 그 다음 밈코인 순서로 결합
-            combinedCoins = [...sortedMainCoinsByPriority, ...sortedMemeCoinsByVolume].slice(0, limit);
+            combinedCoins = [...sortedMainCoinsByVolumeAndChange, ...sortedMemeCoinsByVolume].slice(0, limit);
             
-            console.log('메인코인 우선순위 정렬 결과:', sortedMainCoinsByPriority.map(item => item.symbol));
+            console.log('메인코인 거래량+변동률 정렬 결과:', sortedMainCoinsByVolumeAndChange.map(item => item.symbol));
             console.log('최종 결과 상위 10개:', combinedCoins.slice(0, 10).map(item => ({
                 symbol: item.symbol,
                 volume: item.volume24h || item.volume || item.quoteVolume,

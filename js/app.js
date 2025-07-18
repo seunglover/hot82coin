@@ -178,14 +178,8 @@ class CoinRankingApp {
                 // 실패 시 빈 배열로 계속 진행
             }
             
-            // 실시간 환율로 USD 가격을 KRW로 변환 (실패해도 계속 진행)
+            // 바이비트 원본 데이터 그대로 사용 (환율 변환 제거)
             let coinsWithKRW = coins;
-            try {
-                coinsWithKRW = await exchangeRateAPI.convertMultipleUSDToKRW(coins);
-            } catch (error) {
-                console.warn('환율 변환 실패, USD 가격만 표시:', error);
-                // 실패 시 원본 데이터 사용
-            }
             
             // CoinGecko에서 정확한 시가총액 데이터 가져오기 (실패해도 계속 진행)
             let accurateMarketCapData = [];
@@ -300,10 +294,9 @@ class CoinRankingApp {
                     <div class="col-rank">순위</div>
                     <div class="col-coin">코인</div>
                     <div class="col-longshort">롱숏 비율</div>
-                    <div class="col-usd">USD 가격</div>
-                    <div class="col-krw">KRW 가격</div>
                     <div class="col-volume">거래량</div>
                     <div class="col-change">변동률</div>
+                    <div class="col-sparkline">차트</div>
                     <div class="col-interest">관심도</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
@@ -316,6 +309,13 @@ class CoinRankingApp {
                 const symbol = item.getAttribute('data-symbol');
                 showCoinModal(symbol);
             });
+        });
+
+        // 스파크라인 차트 그리기
+        coins.forEach(coin => {
+            setTimeout(() => {
+                drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+            }, 100);
         });
 
         // 드래그 스크롤 다시 초기화
@@ -388,8 +388,20 @@ class CoinRankingApp {
             return '';
         }
         
-        // 기본: 기존 거래량 급등 로직
-        // 이전 거래량 데이터가 있으면 변화율 계산
+        // 기본: 거래량 + 변동성 급등 로직
+        const volumeScore = coin.volume >= 1e8 ? 3 : coin.volume >= 1e7 ? 2 : coin.volume >= 1e6 ? 1 : 0;
+        const volatilityScore = Math.abs(coin.priceChangePercent) >= 20 ? 3 : Math.abs(coin.priceChangePercent) >= 10 ? 2 : Math.abs(coin.priceChangePercent) >= 5 ? 1 : 0;
+        const totalScore = volumeScore + volatilityScore;
+        
+        if (totalScore >= 5) {
+            return '<span class="volume-surge-badge">🔥 폭등중</span>';
+        } else if (totalScore >= 3) {
+            return '<span class="volume-surge-badge">📈 급등</span>';
+        } else if (totalScore >= 2) {
+            return '<span class="volume-surge-badge">💹 상승</span>';
+        }
+        
+        // 이전 거래량 데이터가 있으면 변화율도 고려
         if (this.previousVolumes && this.previousVolumes[coin.symbol]) {
             const previousVolume = this.previousVolumes[coin.symbol];
             const currentVolume = coin.volume;
@@ -402,11 +414,6 @@ class CoinRankingApp {
                     return '<span class="volume-surge-badge">📈 거래량 급등</span>';
                 }
             }
-        }
-        
-        // 거래량이 많은 코인에도 뱃지 표시 (상위 10개)
-        if (coin.rank <= 10) {
-            return '<span class="volume-surge-badge">🔥 거래량 급등</span>';
         }
         
         return '';
@@ -474,10 +481,12 @@ class CoinRankingApp {
                 <div class="col-longshort longshort-column">
                     ${longShortDisplay}
                 </div>
-                <div class="col-usd price">${this.formatUSDPrice(coin.price)}</div>
-                <div class="col-krw krw-price">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
+
                 <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
                 <div class="col-change change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
+                <div class="col-sparkline sparkline">
+                    <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
+                </div>
                 <div class="col-interest volume-surge">
                     ${this.getVolumeSurgeBadge(coin)}
                 </div>
@@ -1017,7 +1026,7 @@ function showCoinModal(symbol) {
                 <div class="coin-price-section">
                     <div class="current-price">
                         <div class="price-main">${window.coinApp.formatUSDPrice(coin.price)}</div>
-                        <div class="price-krw">₩${coin.krwPrice && coin.krwPrice > 0 ? window.coinApp.formatKRWPrice(coin.krwPrice) : '-'}</div>
+                        <div class="price-krw">₩${coin.price && coin.price > 0 ? (coin.price * 1350).toLocaleString('ko-KR') : '-'}</div>
                         <div class="price-change ${changeClass}">
                             ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%
                         </div>
@@ -1070,7 +1079,7 @@ function showCoinModal(symbol) {
                         </div>
                         <div class="info-item">
                             <span class="info-label">원화 가격:</span>
-                            <span class="info-value">₩${coin.krwPrice && coin.krwPrice > 0 ? window.coinApp.formatKRWPrice(coin.krwPrice) : '-'}</span>
+                            <span class="info-value">₩${coin.price && coin.price > 0 ? (coin.price * 1350).toLocaleString('ko-KR') : '-'}</span>
                         </div>
                     </div>
                 </div>
