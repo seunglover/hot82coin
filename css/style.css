@@ -217,6 +217,8 @@ body {
     scroll-snap-align: start;
     min-width: 900px;
     user-select: none;
+    /* 겹침 방지를 위한 최소 높이 설정 */
+    min-height: 80px;
 }
 
 .coin-item:hover {
@@ -753,6 +755,9 @@ body {
 
 .sparkline-chart {
     margin-bottom: 10px;
+    /* 겹침 방지를 위한 위치 설정 */
+    position: relative;
+    z-index: 1;
 }
 
 .sparkline-placeholder canvas,
@@ -862,6 +867,9 @@ body {
         overflow-y: visible;
         -webkit-overflow-scrolling: touch;
         max-height: none;
+        /* 모바일에서 겹침 방지 */
+        position: relative;
+        z-index: 1;
     }
     
     .coin-item, .list-header {
@@ -869,32 +877,85 @@ body {
         grid-template-columns: 35px 70px 70px 70px 70px 70px 70px;
         gap: 3px;
         font-size: 0.75rem;
+        /* 모바일에서 겹침 방지 */
+        position: relative;
+        z-index: 1;
+        margin-bottom: 8px;
     }
     
     .coin-item {
         padding: 8px;
+        /* 모바일에서 고정 높이 설정 */
+        min-height: 60px;
+        display: flex;
+        align-items: center;
     }
     
     .list-header {
         padding: 8px;
+        /* 헤더 고정 높이 */
+        min-height: 40px;
+        display: flex;
+        align-items: center;
     }
     
     .coin-symbol {
         font-size: 1rem;
+        /* 텍스트 겹침 방지 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     .volume, .change, .volume-surge {
         font-size: 0.7rem;
+        /* 텍스트 겹침 방지 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     
     .volume-high-badge {
         font-size: 0.45rem;
         padding: 1px 2px;
         min-width: 35px;
+        /* 배지 겹침 방지 */
+        position: relative;
+        z-index: 2;
     }
     
     .mini-ratio-text {
         font-size: 0.6rem;
+        /* 텍스트 겹침 방지 */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* 모바일에서 스파크라인 차트 크기 조정 */
+    .sparkline-chart {
+        width: 60px !important;
+        height: 30px !important;
+        margin-bottom: 5px;
+    }
+    
+    /* AI 배지 겹침 방지 */
+    .ai-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        z-index: 10;
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .ai-score {
+        position: absolute;
+        top: 28px;
+        right: 6px;
+        z-index: 10;
+        font-size: 0.6rem;
+        padding: 1px 4px;
     }
     
     .modal-content {
@@ -938,6 +999,53 @@ body {
         grid-template-columns: 25px 60px 60px 60px 60px 60px 60px;
         gap: 2px;
         font-size: 0.65rem;
+        /* 매우 작은 화면에서 겹침 방지 */
+        margin-bottom: 6px;
+    }
+    
+    .coin-item {
+        min-height: 50px;
+        padding: 6px;
+    }
+    
+    .list-header {
+        min-height: 35px;
+        padding: 6px;
+    }
+    
+    /* AI 배지 크기 조정 */
+    .ai-badge {
+        font-size: 0.6rem;
+        padding: 3px 6px;
+        top: 2px;
+        right: 2px;
+    }
+    
+    .ai-score {
+        font-size: 0.5rem;
+        padding: 1px 3px;
+        top: 22px;
+        right: 4px;
+    }
+    
+    /* 텍스트 겹침 방지 강화 */
+    .coin-symbol {
+        font-size: 0.9rem;
+    }
+    
+    .volume, .change, .volume-surge {
+        font-size: 0.6rem;
+    }
+    
+    .mini-ratio-text {
+        font-size: 0.5rem;
+    }
+    
+    /* 매우 작은 화면에서 스파크라인 차트 크기 조정 */
+    .sparkline-chart {
+        width: 50px !important;
+        height: 25px !important;
+        margin-bottom: 3px;
     }
 }
 
