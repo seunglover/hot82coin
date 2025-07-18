@@ -331,16 +331,24 @@ class CoinRankingApp {
             return '$0.00';
         }
         
-        // 바이낸스 실시간 가격 그대로 표시
-        if (price >= 10) {
-            // 10달러 이상: 소수점 제거
-            return `$${Math.floor(price).toLocaleString('en-US')}`;
-        } else if (price >= 1) {
-            // 1~9달러: 소수점 2자리 표시
+        // 적당한 소수점으로 표시
+        if (price >= 1000) {
+            // 1000달러 이상: 소수점 2자리
             return `$${price.toFixed(2)}`;
+        } else if (price >= 100) {
+            // 100~999달러: 소수점 2자리
+            return `$${price.toFixed(2)}`;
+        } else if (price >= 10) {
+            // 10~99달러: 소수점 2자리
+            return `$${price.toFixed(2)}`;
+        } else if (price >= 1) {
+            // 1~9달러: 소수점 3자리
+            return `$${price.toFixed(3)}`;
         } else if (price >= 0.01) {
+            // 0.01~0.99달러: 소수점 4자리
             return `$${price.toFixed(4)}`;
         } else {
+            // 0.01달러 미만: 소수점 6자리
             return `$${price.toFixed(6)}`;
         }
     }

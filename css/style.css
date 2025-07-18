@@ -107,6 +107,7 @@ body {
     align-items: center;
     gap: 8px;
     max-width: 150px;
+    height: fit-content;
 }
 
 .theme-toggle:hover {
