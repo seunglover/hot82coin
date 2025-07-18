@@ -871,7 +871,7 @@ async function drawSparkline(symbol, canvasId) {
         }
         
         // 먼저 선물 거래로 시도
-        let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
+        let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=60&limit=24`;
         console.log('선물 API URL:', url);
         
         let res = await fetch(url);
@@ -880,7 +880,7 @@ async function drawSparkline(symbol, canvasId) {
         // 선물 거래가 지원되지 않는 경우 스팟 거래로 시도
         if (json.retCode !== 0 || !json.result || !json.result.list || json.result.list.length === 0) {
             console.log(`${symbol} 선물 거래 지원 안됨, 스팟 거래로 시도...`);
-            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=15&limit=30`;
+            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=60&limit=24`;
             console.log('스팟 API URL:', url);
             
             res = await fetch(url);
@@ -890,7 +890,7 @@ async function drawSparkline(symbol, canvasId) {
         // 두 API 모두 실패한 경우 대체 데이터 생성
         if (json.retCode !== 0 || !json.result || !json.result.list || json.result.list.length === 0) {
             console.log(`${symbol} API 실패, 대체 데이터 생성`);
-            const mockPrices = Array.from({length: 30}, (_, i) => {
+            const mockPrices = Array.from({length: 24}, (_, i) => {
                 const basePrice = 100 + Math.random() * 50;
                 return basePrice + Math.sin(i * 0.2) * 10;
             });
