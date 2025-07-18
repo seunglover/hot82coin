@@ -745,7 +745,8 @@ class CoinRankingApp {
             case 'rising':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.priceChangePercent > 0)
-                    .sort((a, b) => b.priceChangePercent - a.priceChangePercent);
+                    .sort((a, b) => b.priceChangePercent - a.priceChangePercent)
+                    .slice(0, 10); // 상위 10개만 표시
                 // 순위 재정렬
                 filteredCoins.forEach((coin, index) => {
                     coin.displayRank = index + 1;
@@ -762,7 +763,8 @@ class CoinRankingApp {
                         const aChange = this.previousVolumes[a.symbol] ? ((a.volume - this.previousVolumes[a.symbol]) / this.previousVolumes[a.symbol]) * 100 : 0;
                         const bChange = this.previousVolumes[b.symbol] ? ((b.volume - this.previousVolumes[b.symbol]) / this.previousVolumes[b.symbol]) * 100 : 0;
                         return bChange - aChange;
-                    });
+                    })
+                    .slice(0, 10); // 상위 10개만 표시
                 // 순위 재정렬
                 filteredCoins.forEach((coin, index) => {
                     coin.displayRank = index + 1;
@@ -771,7 +773,8 @@ class CoinRankingApp {
             case 'longshort':
                 filteredCoins = filteredCoins
                     .filter(coin => coin.longAccount && coin.longAccount > 0.65)
-                    .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0));
+                    .sort((a, b) => (b.longAccount || 0) - (a.longAccount || 0))
+                    .slice(0, 10); // 상위 10개만 표시
                 // 순위 재정렬
                 filteredCoins.forEach((coin, index) => {
                     coin.displayRank = index + 1;
@@ -788,7 +791,8 @@ class CoinRankingApp {
                 });
                 break;
             default: // 'all'
-                // 기본 정렬 (거래량 순) - 원래 순위 유지
+                // 기본 정렬 (거래량 순) - 상위 10개만 표시
+                filteredCoins = filteredCoins.slice(0, 10);
                 break;
         }
 
