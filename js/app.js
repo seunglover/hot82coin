@@ -275,8 +275,8 @@ class CoinRankingApp {
                     <div class="col-longshort">롱/숏</div>
                     <div class="col-volume">거래량</div>
                     <div class="col-change">변동률</div>
-                    <div class="col-interest">상태</div>
                     <div class="col-sparkline">차트</div>
+                    <div class="col-interest">상태</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
@@ -307,15 +307,15 @@ class CoinRankingApp {
     getRankChangeArrow(symbol, currentRank) {
         const previousRank = this.previousRanks[symbol];
         if (!previousRank) {
-            return '<span class="rank-new">🆕</span>'; // 새로운 코인
+            return '<span class="rank-new">NEW</span>'; // 새로운 코인
         }
         
         if (currentRank < previousRank) {
-            return '<span class="rank-up">⬆️</span>'; // 순위 상승
+            return '<span class="rank-up">▲</span>'; // 순위 상승
         } else if (currentRank > previousRank) {
-            return '<span class="rank-down">⬇️</span>'; // 순위 하락
+            return '<span class="rank-down">▼</span>'; // 순위 하락
         } else {
-            return '<span class="rank-same">➖</span>'; // 순위 동일
+            return '<span class="rank-same">-</span>'; // 순위 동일
         }
     }
 
@@ -462,12 +462,11 @@ class CoinRankingApp {
                 </div>
                 <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
                 <div class="col-change change ${changeClass}">${changeArrow} ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
-                <div class="col-interest volume-surge">
-                    ${this.getVolumeSurgeBadge(coin)}
-                </div>
                 <div class="col-sparkline sparkline">
                     <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
                 </div>
+                <div class="col-interest volume-surge">
+                    ${this.getVolumeSurgeBadge(coin)}
                 </div>
             </div>
         `;
@@ -560,7 +559,7 @@ class CoinRankingApp {
     updateRanks(coins) {
         const newRanks = {};
         coins.forEach(coin => {
-            newRanks[coin.symbol] = coin.rank;
+            newRanks[coin.symbol] = coin.displayRank || coin.rank;
         });
         this.previousRanks = newRanks;
     }
