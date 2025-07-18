@@ -331,6 +331,11 @@ class CoinRankingApp {
             return '$0.00';
         }
         
+        // 디버깅: 매우 작은 값들 확인
+        if (price < 0.01) {
+            console.log(`USD 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}`);
+        }
+        
         // 적당한 소수점으로 표시하고 쉼표 구분 추가
         if (price >= 1000) {
             // 1000달러 이상: 소수점 2자리, 쉼표 구분
@@ -362,7 +367,15 @@ class CoinRankingApp {
                 }
                 // 최소 1자리는 표시 (0.0000001 같은 경우)
                 significantDigits = Math.max(significantDigits, 1);
-                return `$${price.toFixed(significantDigits)}`;
+                
+                // toFixed 대신 toPrecision 사용 (반올림 방지)
+                const precision = decimalIndex + significantDigits;
+                const result = `$${parseFloat(price.toPrecision(precision))}`;
+                
+                if (price < 0.01) {
+                    console.log(`USD 가격 결과 - 원본: ${price}, 결과: ${result}, significantDigits: ${significantDigits}, precision: ${precision}`);
+                }
+                return result;
             }
             return `$${price.toFixed(6)}`;
         }
@@ -375,6 +388,11 @@ class CoinRankingApp {
         // 모바일에서 안전한 숫자 처리
         if (!price || isNaN(price) || price <= 0) {
             return '0';
+        }
+        
+        // 디버깅: 매우 작은 값들 확인
+        if (price < 0.01) {
+            console.log(`KRW 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}`);
         }
         
         // 1원 이하일 때만 소수점 사용
@@ -395,7 +413,15 @@ class CoinRankingApp {
                 }
                 // 최소 1자리는 표시 (0.000024 같은 경우)
                 significantDigits = Math.max(significantDigits, 1);
-                return price.toFixed(significantDigits);
+                
+                // toFixed 대신 toPrecision 사용 (반올림 방지)
+                const precision = decimalIndex + significantDigits;
+                const result = parseFloat(price.toPrecision(precision));
+                
+                if (price < 0.01) {
+                    console.log(`KRW 가격 결과 - 원본: ${price}, 결과: ${result}, significantDigits: ${significantDigits}, precision: ${precision}`);
+                }
+                return result;
             }
             return price.toFixed(4);
         }
