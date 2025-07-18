@@ -555,35 +555,59 @@ window.addEventListener('beforeunload', () => {
 // 스파크라인 차트 그리기 함수
 async function drawSparkline(symbol, canvasId) {
     try {
+        console.log('스파크라인 차트 시작:', symbol, canvasId);
+        
         const url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
+        console.log('API URL:', url);
+        
         const res = await fetch(url);
         const json = await res.json();
+        
+        console.log('API 응답:', json);
 
         if (json.retCode === 0 && json.result && json.result.list) {
             const closePrices = json.result.list.map(item => parseFloat(item[4])); // 종가
+            console.log('종가 데이터:', closePrices);
+            
             const canvas = document.getElementById(canvasId);
+            console.log('Canvas 요소:', canvas);
             
             if (canvas && closePrices.length > 0) {
                 const changeClass = closePrices[closePrices.length - 1] >= closePrices[0] ? 'positive' : 'negative';
                 const lineColor = changeClass === 'positive' ? '#10b981' : '#ef4444';
                 
-                Sparkline.draw(canvas, closePrices, {
-                    lineColor: lineColor,
-                    startColor: lineColor,
-                    endColor: lineColor,
-                    fillColor: changeClass === 'positive' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                    width: canvas.offsetWidth,
-                    height: 60
-                });
+                // Canvas 크기 설정
+                canvas.width = canvas.offsetWidth;
+                canvas.height = 60;
+                
+                console.log('Sparkline 라이브러리 확인:', typeof Sparkline);
+                
+                if (typeof Sparkline !== 'undefined') {
+                    Sparkline.draw(canvas, closePrices, {
+                        lineColor: lineColor,
+                        startColor: lineColor,
+                        endColor: lineColor,
+                        fillColor: changeClass === 'positive' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        width: canvas.offsetWidth,
+                        height: 60
+                    });
+                } else {
+                    // Sparkline 라이브러리가 없으면 직접 SVG로 그리기
+                    drawSVGSparkline(canvas, closePrices, lineColor, changeClass);
+                }
                 
                 // 로딩 메시지 제거
                 const loadingNote = canvas.parentElement.querySelector('.sparkline-note');
                 if (loadingNote) {
                     loadingNote.style.display = 'none';
                 }
+                
+                console.log('차트 그리기 완료');
+            } else {
+                throw new Error('Canvas 요소를 찾을 수 없거나 데이터가 없습니다.');
             }
         } else {
-            throw new Error('데이터를 가져올 수 없습니다.');
+            throw new Error('API 데이터를 가져올 수 없습니다.');
         }
     } catch (error) {
         console.error('스파크라인 차트 오류:', error);
@@ -592,6 +616,40 @@ async function drawSparkline(symbol, canvasId) {
             canvas.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">차트 데이터를 불러올 수 없습니다.</div>';
         }
     }
+}
+
+// SVG로 직접 스파크라인 차트 그리기
+function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
+    const width = canvas.offsetWidth;
+    const height = 60;
+    const padding = 10;
+    
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceRange = maxPrice - minPrice;
+    
+    const points = prices.map((price, index) => {
+        const x = padding + (index / (prices.length - 1)) * (width - 2 * padding);
+        const y = height - padding - ((price - minPrice) / priceRange) * (height - 2 * padding);
+        return `${x},${y}`;
+    }).join(' ');
+    
+    const fillPoints = points + ` ${width - padding},${height - padding} ${padding},${height - padding}`;
+    
+    const svg = `
+        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+            <defs>
+                <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:${lineColor};stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:${lineColor};stop-opacity:0.1"/>
+                </linearGradient>
+            </defs>
+            <polyline points="${points}" stroke="${lineColor}" stroke-width="2" fill="none"/>
+            <polygon points="${fillPoints}" fill="url(#sparklineGradient)"/>
+        </svg>
+    `;
+    
+    canvas.innerHTML = svg;
 }
 
 // 모달 표시 함수 (전역)
@@ -677,7 +735,7 @@ function showCoinModal(symbol) {
                     <h4>24시간 가격 변동</h4>
                     <div class="sparkline-container">
                         <div class="sparkline-placeholder">
-                            <canvas id="sparkline-${coin.symbol}" width="300" height="60"></canvas>
+                            <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
                             <div class="sparkline-note">실시간 차트 데이터 로딩 중...</div>
                         </div>
                     </div>
