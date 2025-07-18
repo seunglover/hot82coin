@@ -195,42 +195,34 @@ class CoinRankingApp {
     displayCoins(coins) {
         const contentDiv = document.getElementById('content');
         
-        if (!coins || coins.length === 0) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
             contentDiv.innerHTML = `
-                <div class="no-data">
-                    <div class="no-data-icon">🔍</div>
-                    <h3>검색 결과가 없습니다</h3>
-                    <p>다른 검색어를 입력해보세요</p>
+                <div class="mobile-scroll-container">
+                    <div class="mobile-scroll-hint">← → 스와이프하여 모든 코인 보기</div>
+                    <div class="coin-list-mobile">
+                        ${coins.map(coin => this.createCoinItem(coin)).join('')}
+                    </div>
                 </div>
             `;
-            return;
-        }
-        
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const swipeHint = isMobile ? '<div class="swipe-hint">💡 좌우로 스와이프하여 모든 정보를 확인하세요</div>' : '';
-        
-        const html = `
-            ${swipeHint}
-            <div class="coin-list">
-                <div class="list-header">
-                    <div>순위</div>
-                    <div>코인</div>
-                    <div>롱숏 비율</div>
-                    <div>USD 가격</div>
-                    <div>KRW 가격</div>
-                    <div>거래량</div>
-                    <div>변동률</div>
-                    <div>시가총액</div>
+        } else {
+            contentDiv.innerHTML = `
+                <div class="coin-list">
+                    <div class="list-header">
+                        <div>순위</div>
+                        <div>코인</div>
+                        <div>롱숏 비율</div>
+                        <div>USD 가격</div>
+                        <div>KRW 가격</div>
+                        <div>거래량</div>
+                        <div>변동률</div>
+                        <div>시가총액</div>
+                    </div>
+                    ${coins.map(coin => this.createCoinItem(coin)).join('')}
                 </div>
-                ${coins.map(coin => this.createCoinItem(coin)).join('')}
-            </div>
-            <div class="coin-count">
-                총 ${coins.length}개 코인 표시 중
-                ${this.searchTerm ? `(검색어: "${this.searchTerm}")` : ''}
-            </div>
-        `;
-        
-        contentDiv.innerHTML = html;
+            `;
+        }
         
         // 코인 클릭 이벤트 바인딩
         document.querySelectorAll('.coin-item').forEach(item => {
@@ -271,36 +263,52 @@ class CoinRankingApp {
         
         const changeClass = coin.priceChangePercent >= 0 ? 'positive' : 'negative';
         const changeSymbol = coin.priceChangePercent >= 0 ? '+' : '';
+        
+        // 순위 변동 화살표 (표시 순위 사용)
         const displayRank = coin.displayRank || coin.rank;
+        const rankArrow = this.getRankChangeArrow(coin.symbol, displayRank);
+        
+        // 롱숏 비율 표시 (데이터가 없어도 안전하게 처리)
+        let longShortDisplay = '';
+        if (coin.longShortRatio && coin.longAccount !== null && coin.shortAccount !== null && 
+            coin.longAccount > 0 && coin.shortAccount > 0) {
+            // 바이비트 API는 0~1 사이 값, CoinGecko는 이미 백분율
+            const longPercent = coin.longAccount <= 1 ? (coin.longAccount * 100).toFixed(1) : coin.longAccount.toFixed(1);
+            const shortPercent = coin.shortAccount <= 1 ? (coin.shortAccount * 100).toFixed(1) : coin.shortAccount.toFixed(1);
+            const ratioText = coin.note ? `(추정)` : '';
+            longShortDisplay = `
+                <div class="longshort-mini">
+                    <div class="mini-ratio-bar">
+                        <div class="mini-long-bar" style="width: ${longPercent}%"></div>
+                        <div class="mini-short-bar" style="width: ${shortPercent}%"></div>
+                    </div>
+                    <div class="mini-ratio-text">롱 ${longPercent}% / 숏 ${shortPercent}% ${ratioText}</div>
+                </div>
+            `;
+        } else {
+            longShortDisplay = '<div class="no-data">데이터 없음</div>';
+        }
         
         return `
             <div class="coin-item" data-symbol="${coin.fullSymbol}">
-                <div class="coin-header">
-                    <div class="coin-name">
+                <div class="rank">
+                    ${displayRank}
+                    <div class="rank-arrow">${rankArrow}</div>
+                </div>
+                <div class="coin-info">
+                    <div>
                         <div class="coin-symbol">${coin.symbol}</div>
-                        <div class="coin-full-name">${coin.symbol}</div>
-                    </div>
-                    <div class="coin-rank">${displayRank}</div>
-                </div>
-                <div class="coin-price">
-                    <div class="price-info">
-                        <div class="price-usd">${this.formatUSDPrice(coin.price)}</div>
-                        <div class="price-krw">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
-                    </div>
-                    <div class="price-change ${changeClass}">
-                        ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%
+                        <div class="coin-name">${coin.symbol}</div>
                     </div>
                 </div>
-                <div class="coin-stats">
-                    <div class="stat-row">
-                        <span class="stat-label">거래량</span>
-                        <span class="stat-value">$${this.formatNumber(coin.volume)}</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">시가총액</span>
-                        <span class="stat-value">$${this.formatNumber(coin.accurateMarketCap || coin.marketCap)}</span>
-                    </div>
+                <div class="longshort-column">
+                    ${longShortDisplay}
                 </div>
+                <div class="price">${this.formatUSDPrice(coin.price)}</div>
+                <div class="krw-price">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
+                <div class="volume">$${this.formatNumber(coin.volume)}</div>
+                <div class="change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
+                <div class="market-cap">$${this.formatNumber(coin.accurateMarketCap || coin.marketCap)}</div>
             </div>
         `;
     }
