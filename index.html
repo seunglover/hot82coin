@@ -38,9 +38,9 @@
         </div>
         
         <div class="stats">
-            <div class="stat-item" onclick="showApiInfo()">
+            <div class="stat-item" onclick="window.location.href='about.html'">
                 <div class="stat-icon">ℹ️</div>
-                <div class="stat-label">API 정보</div>
+                <div class="stat-label">사이트 소개</div>
             </div>
         </div>
         
@@ -84,41 +84,7 @@
         </div>
     </div>
 
-    <!-- API 정보 모달 -->
-    <div id="apiInfoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>API 정보</h2>
-                <span class="close" onclick="closeApiInfo()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="api-info">
-                    <h3>🌐 사용 중인 API</h3>
-                    <div class="api-item">
-                        <strong>해외거래소 API (메인)</strong>
-                        <p>• 거래량 기준 상위 코인 데이터</p>
-                        <p>• 실시간 가격 및 변동률</p>
-                        <p>• 롱숏 비율 정보</p>
-                    </div>
-                    <div class="api-item">
-                        <strong>CoinGecko API (대체)</strong>
-                        <p>• 해외거래소 API 실패 시 사용</p>
-                        <p>• 정확한 시가총액 정보</p>
-                    </div>
-                    <div class="api-item">
-                        <strong>환율 API</strong>
-                        <p>• USD/KRW 실시간 환율</p>
-                        <p>• 한국 원화 가격 표시</p>
-                    </div>
-                    
-                    <h3>📊 데이터 업데이트</h3>
-                    <p>• 5분마다 자동 새로고침</p>
-                    <p>• 수동 새로고침 가능 (R키 또는 버튼)</p>
-                    <p>• 실시간 거래량 순위 반영</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- JavaScript Modules -->
     <script src="js/api.js"></script>
@@ -132,16 +98,6 @@
             if (window.coinApp) {
                 window.coinApp.toggleTheme();
             }
-        }
-        
-        // API 정보 모달 표시
-        function showApiInfo() {
-            document.getElementById('apiInfoModal').style.display = 'block';
-        }
-        
-        // API 정보 모달 닫기
-        function closeApiInfo() {
-            document.getElementById('apiInfoModal').style.display = 'none';
         }
         
         // 모달 닫기 이벤트
