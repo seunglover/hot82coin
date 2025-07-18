@@ -643,12 +643,15 @@ class CoinRankingApp {
         const themeText = document.getElementById('theme-text');
         const themeIcon = document.getElementById('theme-icon');
         
-        if (theme === 'dark') {
-            themeText.textContent = '라이트 모드';
-            themeIcon.textContent = '☀️';
-        } else {
-            themeText.textContent = '다크 모드';
-            themeIcon.textContent = '🌙';
+        // null 체크 추가
+        if (themeText && themeIcon) {
+            if (theme === 'dark') {
+                themeText.textContent = '라이트 모드';
+                themeIcon.textContent = '☀️';
+            } else {
+                themeText.textContent = '다크 모드';
+                themeIcon.textContent = '🌙';
+            }
         }
     }
 
@@ -821,19 +824,8 @@ async function drawSparkline(symbol, canvasId) {
                 
                 console.log('Sparkline 라이브러리 확인:', typeof Sparkline);
                 
-                if (typeof Sparkline !== 'undefined') {
-                    Sparkline.draw(canvas, closePrices, {
-                        lineColor: lineColor,
-                        startColor: lineColor,
-                        endColor: lineColor,
-                        fillColor: changeClass === 'positive' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                        width: canvas.offsetWidth,
-                        height: 60
-                    });
-                } else {
-                    // Sparkline 라이브러리가 없으면 직접 SVG로 그리기
-                    drawSVGSparkline(canvas, closePrices, lineColor, changeClass);
-                }
+                // 내장 SVG 차트 사용
+                drawSVGSparkline(canvas, closePrices, lineColor, changeClass);
                 
                 // 로딩 메시지 제거
                 const loadingNote = canvas.parentElement.querySelector('.sparkline-note');
