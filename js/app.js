@@ -348,7 +348,20 @@ class CoinRankingApp {
             // 0.01~0.99달러: 소수점 4자리
             return `$${price.toFixed(4)}`;
         } else {
-            // 0.01달러 미만: 소수점 6자리
+            // 0.01달러 미만: 의미있는 소수점 자릿수 보존
+            const priceStr = price.toString();
+            const decimalIndex = priceStr.indexOf('.');
+            if (decimalIndex !== -1) {
+                const decimalPart = priceStr.substring(decimalIndex + 1);
+                // 0이 아닌 첫 번째 자리까지 표시 (최대 8자리)
+                let significantDigits = 0;
+                for (let i = 0; i < Math.min(decimalPart.length, 8); i++) {
+                    if (decimalPart[i] !== '0') {
+                        significantDigits = i + 1;
+                    }
+                }
+                return `$${price.toFixed(significantDigits)}`;
+            }
             return `$${price.toFixed(6)}`;
         }
     }
@@ -366,6 +379,20 @@ class CoinRankingApp {
         if (price >= 1) {
             return Math.floor(price).toLocaleString('ko-KR');
         } else {
+            // 의미있는 소수점 자릿수 보존
+            const priceStr = price.toString();
+            const decimalIndex = priceStr.indexOf('.');
+            if (decimalIndex !== -1) {
+                const decimalPart = priceStr.substring(decimalIndex + 1);
+                // 0이 아닌 첫 번째 자리까지 표시 (최대 6자리)
+                let significantDigits = 0;
+                for (let i = 0; i < Math.min(decimalPart.length, 6); i++) {
+                    if (decimalPart[i] !== '0') {
+                        significantDigits = i + 1;
+                    }
+                }
+                return price.toFixed(significantDigits);
+            }
             return price.toFixed(4);
         }
     }
