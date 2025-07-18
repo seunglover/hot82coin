@@ -600,8 +600,34 @@ function showCoinModal(symbol) {
     const modalTitle = document.getElementById('modalTitle');
     const modalContent = document.getElementById('modalContent');
     
-    // 현재 코인 데이터에서 해당 코인 찾기
-    const coin = window.coinApp?.currentCoins?.find(c => c.symbol === symbol);
+    // 현재 코인 데이터에서 해당 코인 찾기 (여러 방법으로 매칭)
+    let coin = null;
+    if (window.coinApp?.currentCoins) {
+        // 1. 정확한 심볼 매칭
+        coin = window.coinApp.currentCoins.find(c => c.symbol === symbol);
+        
+        // 2. USDT 제거 후 매칭
+        if (!coin && symbol.endsWith('USDT')) {
+            const symbolWithoutUSDT = symbol.replace('USDT', '');
+            coin = window.coinApp.currentCoins.find(c => c.symbol === symbolWithoutUSDT);
+        }
+        
+        // 3. 대소문자 구분 없이 매칭
+        if (!coin) {
+            coin = window.coinApp.currentCoins.find(c => 
+                c.symbol.toLowerCase() === symbol.toLowerCase() ||
+                c.symbol.toLowerCase() === symbol.replace('USDT', '').toLowerCase()
+            );
+        }
+        
+        // 4. 전체 심볼에서 매칭
+        if (!coin) {
+            coin = window.coinApp.currentCoins.find(c => 
+                c.fullSymbol === symbol ||
+                c.fullSymbol === symbol.replace('USDT', '')
+            );
+        }
+    }
     
     if (coin) {
         modalTitle.textContent = `${coin.symbol} 상세 정보`;
@@ -688,7 +714,19 @@ function showCoinModal(symbol) {
         
     } else {
         modalTitle.textContent = symbol + ' 정보';
-        modalContent.innerHTML = '<div class="coin-detail"><p>이 코인에 대한 정보를 찾을 수 없습니다.</p></div>';
+        modalContent.innerHTML = `
+            <div class="coin-detail">
+                <p>이 코인에 대한 정보를 찾을 수 없습니다.</p>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">
+                    찾은 심볼: ${symbol}<br>
+                    사용 가능한 코인: ${window.coinApp?.currentCoins?.map(c => c.symbol).slice(0, 10).join(', ')}...
+                </p>
+            </div>
+        `;
+        
+        // 디버깅용 콘솔 출력
+        console.log('찾으려는 심볼:', symbol);
+        console.log('사용 가능한 코인들:', window.coinApp?.currentCoins?.map(c => c.symbol));
     }
     
     modal.style.display = 'block';
