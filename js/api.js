@@ -320,12 +320,12 @@ class BybitAPI {
         try {
             const longShortData = [];
             
-            // 메인 코인들 우선 처리
-            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI'];
-            const mainCoinSymbols = mainCoins.map(coin => coin + 'USDT');
+            // 바이비트에서 선물 거래를 지원하는 메인 코인들만 처리
+            const supportedMainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI'];
+            const supportedMainCoinSymbols = supportedMainCoins.map(coin => coin + 'USDT');
             
-            // 메인 코인들 먼저 처리
-            for (const symbol of mainCoinSymbols) {
+            // 지원되는 메인 코인들만 처리
+            for (const symbol of supportedMainCoinSymbols) {
                 try {
                     const ratioData = await this.getLongShortRatio(symbol);
                     if (ratioData.longShortRatio) {
@@ -343,10 +343,10 @@ class BybitAPI {
                 }
             }
             
-            // 상위 거래량 코인들 처리 (메인 코인 제외)
+            // 상위 거래량 코인들 중에서 선물 거래가 지원되는 것들만 처리
             const topVolumeCoins = coins
-                .filter(coin => !mainCoins.includes(coin.symbol))
-                .slice(0, 5); // 추가 5개만
+                .filter(coin => !supportedMainCoins.includes(coin.symbol))
+                .slice(0, 3); // 추가 3개만 (오류 줄이기)
             
             for (const coin of topVolumeCoins) {
                 try {
@@ -366,10 +366,11 @@ class BybitAPI {
                 }
             }
             
+            console.log('롱숏 비율 데이터 수집 완료:', longShortData.length, '개');
             return longShortData;
         } catch (error) {
             console.error('상위 코인 롱숏 비율 데이터 가져오기 오류:', error);
-            throw error;
+            return []; // 오류 시 빈 배열 반환
         }
     }
 
