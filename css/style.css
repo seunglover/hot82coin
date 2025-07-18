@@ -901,54 +901,9 @@ body {
 
 /* 매우 작은 화면 최적화 */
 @media (max-width: 480px) {
-    .container {
-        padding: 10px;
-    }
-    
-    .header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .menu-bar {
-        gap: 4px;
-    }
-    
-    .menu-btn {
-        padding: 6px 8px;
-        font-size: 0.7rem;
-        min-width: 60px;
-    }
-    
-    .coin-list {
-        padding: 10px;
-    }
-    
     .coin-item, .list-header {
-        grid-template-columns: 25px 60px 60px 60px 60px 60px 60px 60px;
-        gap: 2px;
-        font-size: 0.65rem;
-    }
-    
-    .coin-item {
-        padding: 6px;
-    }
-    
-    .list-header {
-        padding: 6px;
-    }
-    
-    .price, .krw-price, .volume, .change, .volume-surge {
+        grid-template-columns: 25px 1.2fr 0.8fr 0.8fr 0.8fr;
         font-size: 0.6rem;
-    }
-    
-    .volume-high-badge {
-        font-size: 0.4rem;
-        padding: 1px 2px;
-        min-width: 30px;
-    }
-    
-    .mini-ratio-text {
-        font-size: 0.55rem;
     }
 }
 
@@ -1204,5 +1159,14 @@ body {
     .feature-item,
     .tech-item {
         padding: 15px;
+    }
+} 
+
+@media (max-width: 768px) {
+    .coin-item, .list-header {
+        grid-template-columns: 35px 1.5fr 1fr 1fr 1fr;
+    }
+    .col-longshort, .col-volume, .col-change {
+        display: none !important;
     }
 } 

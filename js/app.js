@@ -204,14 +204,14 @@ class CoinRankingApp {
         contentDiv.innerHTML = `
             <div class="coin-list">
                 <div class="list-header">
-                    <div>순위</div>
-                    <div>코인</div>
-                    <div>롱숏 비율</div>
-                    <div>USD 가격</div>
-                    <div>KRW 가격</div>
-                    <div>거래량</div>
-                    <div>변동률</div>
-                    <div>관심도</div>
+                    <div class="col-rank">순위</div>
+                    <div class="col-coin">코인</div>
+                    <div class="col-longshort">롱숏 비율</div>
+                    <div class="col-usd">USD 가격</div>
+                    <div class="col-krw">KRW 가격</div>
+                    <div class="col-volume">거래량</div>
+                    <div class="col-change">변동률</div>
+                    <div class="col-interest">관심도</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
@@ -313,24 +313,24 @@ class CoinRankingApp {
         
         return `
             <div class="coin-item" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
-                <div class="rank">
+                <div class="col-rank rank">
                     ${displayRank}
                     <div class="rank-arrow">${rankArrow}</div>
                 </div>
-                <div class="coin-info">
+                <div class="col-coin coin-info">
                     <div>
                         <div class="coin-symbol">${coin.symbol}</div>
                         <div class="coin-name">${coin.symbol}</div>
                     </div>
                 </div>
-                <div class="longshort-column">
+                <div class="col-longshort longshort-column">
                     ${longShortDisplay}
                 </div>
-                <div class="price">${this.formatUSDPrice(coin.price)}</div>
-                <div class="krw-price">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
-                <div class="volume">$${this.formatNumber(coin.volume)}</div>
-                <div class="change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
-                <div class="volume-surge">
+                <div class="col-usd price">${this.formatUSDPrice(coin.price)}</div>
+                <div class="col-krw krw-price">₩${coin.krwPrice && coin.krwPrice > 0 ? this.formatKRWPrice(coin.krwPrice) : '-'}</div>
+                <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
+                <div class="col-change change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
+                <div class="col-interest volume-surge">
                     ${this.getVolumeSurgeBadge(coin)}
                 </div>
             </div>
