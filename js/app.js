@@ -142,7 +142,7 @@ class CoinRankingApp {
             contentDiv.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>해외거래소 API에서 코인 데이터를 불러오는 중...</p>
+                    <p>코인 데이터를 불러오는 중...</p>
                     <p style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">잠시만 기다려주세요</p>
                 </div>
             `;
@@ -410,6 +410,7 @@ class CoinRankingApp {
         
         const changeClass = coin.priceChangePercent >= 0 ? 'positive' : 'negative';
         const changeSymbol = coin.priceChangePercent >= 0 ? '+' : '';
+        const changeArrow = coin.priceChangePercent >= 0 ? '↗' : '↘';
         
         // 순위 변동 화살표 (표시 순위 사용)
         const displayRank = coin.displayRank || coin.rank;
@@ -460,7 +461,7 @@ class CoinRankingApp {
                     ${longShortDisplay}
                 </div>
                 <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
-                <div class="col-change change ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
+                <div class="col-change change ${changeClass}">${changeArrow} ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
                 <div class="col-sparkline sparkline">
                     <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
                 </div>
@@ -658,7 +659,7 @@ class CoinRankingApp {
      * 테마 로드
      */
     loadTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedTheme = localStorage.getItem('theme') || 'dark';
         this.setTheme(savedTheme);
     }
 
@@ -670,16 +671,13 @@ class CoinRankingApp {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
         
-        const themeText = document.getElementById('theme-text');
         const themeIcon = document.getElementById('theme-icon');
         
         // null 체크 추가
-        if (themeText && themeIcon) {
+        if (themeIcon) {
             if (theme === 'dark') {
-                themeText.textContent = '라이트 모드';
                 themeIcon.textContent = '☀️';
             } else {
-                themeText.textContent = '다크 모드';
                 themeIcon.textContent = '🌙';
             }
         }

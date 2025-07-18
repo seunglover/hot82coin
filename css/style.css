@@ -217,8 +217,6 @@ body {
     scroll-snap-align: start;
     min-width: 900px;
     user-select: none;
-    /* 겹침 방지를 위한 최소 높이 설정 */
-    min-height: 80px;
 }
 
 .coin-item:hover {
@@ -262,7 +260,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 4px;
+    height: 100%;
 }
 
 .rank-arrow {
@@ -303,7 +303,9 @@ body {
 .coin-info {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 12px;
+    height: 100%;
 }
 
 .coin-symbol {
@@ -323,7 +325,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    height: 100%;
 }
 
 .volume-display {
@@ -337,8 +341,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     width: 100%;
+    height: 100%;
 }
 
 .mini-ratio-bar {
@@ -396,14 +402,23 @@ body {
     font-weight: 700;
     color: var(--success);
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .change {
     font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.8rem;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    min-height: 20px;
 }
 
 .change.positive {
@@ -424,8 +439,10 @@ body {
     font-size: 1rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
     gap: 4px;
+    height: 100%;
 }
 
 .volume-surge-badge {
@@ -791,6 +808,10 @@ body {
     /* 겹침 방지를 위한 위치 설정 */
     position: relative;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 .sparkline-placeholder canvas,
@@ -807,16 +828,16 @@ body {
 
 /* 모달 내부 스파크차트 크기 강제 설정 */
 .modal .sparkline-chart {
-    width: 400px !important;
-    height: 60px !important;
-    min-width: 400px !important;
-    min-height: 60px !important;
+    width: 300px !important;
+    height: 50px !important;
+    min-width: 300px !important;
+    min-height: 50px !important;
     border: none !important;
 }
 
 .modal .sparkline-chart svg {
-    width: 400px !important;
-    height: 60px !important;
+    width: 300px !important;
+    height: 50px !important;
     border: none !important;
 }
 
@@ -916,12 +937,13 @@ body {
         margin-bottom: 8px;
     }
     
+    /* 모바일에서 헤더 숨김 */
+    .list-header {
+        display: none;
+    }
+    
     .coin-item {
         padding: 8px;
-        /* 모바일에서 고정 높이 설정 */
-        min-height: 60px;
-        display: flex;
-        align-items: center;
     }
     
     .list-header {
@@ -1030,6 +1052,19 @@ body {
         -webkit-overflow-scrolling: touch;
     }
     
+    /* 모바일에서 모달 내 스파크차트 크기 조정 */
+    .modal .sparkline-chart {
+        width: 250px !important;
+        height: 40px !important;
+        min-width: 250px !important;
+        min-height: 40px !important;
+    }
+    
+    .modal .sparkline-chart svg {
+        width: 250px !important;
+        height: 40px !important;
+    }
+    
     .modal {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -1078,8 +1113,12 @@ body {
         margin-bottom: 6px;
     }
     
+    /* 매우 작은 화면에서도 헤더 숨김 */
+    .list-header {
+        display: none;
+    }
+    
     .coin-item {
-        min-height: 50px;
         padding: 6px;
     }
     
@@ -1152,6 +1191,19 @@ body {
         width: 50px !important;
         height: 25px !important;
         margin-bottom: 3px;
+    }
+    
+    /* 매우 작은 화면에서 모달 내 스파크차트 크기 조정 */
+    .modal .sparkline-chart {
+        width: 200px !important;
+        height: 35px !important;
+        min-width: 200px !important;
+        min-height: 35px !important;
+    }
+    
+    .modal .sparkline-chart svg {
+        width: 200px !important;
+        height: 35px !important;
     }
 }
 
