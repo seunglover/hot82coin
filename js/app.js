@@ -444,7 +444,6 @@ class CoinRankingApp {
         const aiClass = isAIRecommendation ? 'ai-recommendation' : '';
         const aiBadge = isAIRecommendation ? '<div class="ai-badge">AI PICK</div>' : '';
         const aiScore = isAIRecommendation ? `<div class="ai-score">${coin.aiScore}점</div>` : '';
-        const aiReason = isAIRecommendation ? `<div class="ai-reason">${this.generateAIRecommendationReason(coin, coin.aiReasons)}</div>` : '';
         
         return `
             <div class="coin-item ${aiClass}" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
@@ -471,7 +470,6 @@ class CoinRankingApp {
                 <div class="col-interest volume-surge">
                     ${this.getVolumeSurgeBadge(coin)}
                 </div>
-                ${aiReason}
             </div>
         `;
     }
@@ -858,6 +856,11 @@ async function drawSparkline(symbol, canvasId) {
             return;
         }
         
+        // Canvas가 모달 내부에 있는지 확인
+        const isInModal = canvas.closest('.modal');
+        console.log('Canvas가 모달 내부에 있음:', isInModal);
+        console.log('Canvas 크기:', canvas.offsetWidth, 'x', canvas.offsetHeight);
+        
         // 먼저 선물 거래로 시도
         let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
         console.log('선물 API URL:', url);
@@ -928,6 +931,13 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
         width = 300; // 기본 너비
         console.log('Canvas 너비가 0이므로 기본값 사용:', width);
     }
+    
+    // 모달 내부에서 더 큰 크기 사용
+    if (canvas.closest('.modal')) {
+        width = Math.max(width, 400);
+        console.log('모달 내부에서 더 큰 크기 사용:', width);
+    }
+    
     const height = 60;
     const padding = 10;
     
@@ -1075,7 +1085,7 @@ function showCoinModal(symbol) {
         // 모달이 표시된 후 스파크라인 차트 그리기
         setTimeout(() => {
             drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
-        }, 300);
+        }, 500);
         
     } else {
         modalTitle.textContent = symbol + ' 정보';
