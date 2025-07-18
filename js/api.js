@@ -402,18 +402,45 @@ class BybitAPI {
                 throw new Error('바이비트 API 응답 형식 오류');
             }
             
-            // USDT 페어만 필터링하고 거래량 기준으로 정렬
-            const usdtPairs = response.result.list
-                .filter(item => item.symbol.endsWith('USDT'))
-                .sort((a, b) => {
-                    // 거래량 필드 확인 (바이비트 API 응답에 따라 다를 수 있음)
-                    const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
-                    const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
-                    return bVolume - aVolume;
-                })
-                .slice(0, limit);
+            // 메인코인 우선 필터링
+            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH'];
+            
+            // USDT 페어만 필터링
+            const usdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
+            
+            // 메인코인과 밈코인 분리
+            const mainCoinPairs = usdtPairs.filter(item => {
+                const symbol = item.symbol.replace('USDT', '');
+                return mainCoins.includes(symbol);
+            });
+            
+            const memeCoinPairs = usdtPairs.filter(item => {
+                const symbol = item.symbol.replace('USDT', '');
+                return !mainCoins.includes(symbol);
+            });
+            
+            console.log('메인코인 개수:', mainCoinPairs.length);
+            console.log('밈코인 개수:', memeCoinPairs.length);
+            console.log('메인코인 목록:', mainCoinPairs.map(item => item.symbol));
+            
+            // 메인코인은 거래량 기준으로 정렬
+            const sortedMainCoins = mainCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                return bVolume - aVolume;
+            });
+            
+            // 밈코인도 거래량 기준으로 정렬
+            const sortedMemeCoins = memeCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                return bVolume - aVolume;
+            });
+            
+            // 메인코인을 먼저, 그 다음 밈코인 순서로 결합
+            const combinedCoins = [...sortedMainCoins, ...sortedMemeCoins].slice(0, limit);
 
-            return usdtPairs.map((coin, index) => {
+            return combinedCoins.map((coin, index) => {
                 // 거래량 필드 확인 (바이비트 API 응답에 따라 다를 수 있음)
                 const volume = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
                 
