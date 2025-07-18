@@ -25,6 +25,9 @@ class CoinRankingApp {
         this.loadCoinData();
         this.startAutoRefresh();
         this.updateNextUpdateTime();
+        
+        // 언어 설정 초기화
+        this.initLanguage();
     }
 
     /**
@@ -36,6 +39,9 @@ class CoinRankingApp {
 
         // 마우스 드래그 스크롤 기능 추가
         this.initDragScroll();
+        
+        // 언어 전환 버튼 이벤트 바인딩
+        this.bindLanguageEvents();
     }
 
     /**
@@ -194,9 +200,14 @@ class CoinRankingApp {
             // 거래량 데이터 업데이트
             this.updateVolumes(coinsWithAllData);
             
-            // 데이터 표시
-            this.allCoins = coinsWithAllData; // 모든 코인 데이터 저장
-            this.displayFilteredCoins(); // 필터링된 코인 표시
+                    // 데이터 표시
+        this.allCoins = coinsWithAllData; // 모든 코인 데이터 저장
+        this.displayFilteredCoins(); // 필터링된 코인 표시
+        
+        // 다국어 텍스트 업데이트
+        if (window.languageManager) {
+            this.updateTextsForLanguage();
+        }
             
             // 1위 코인 정보 표시
             if (coinsWithAllData.length > 0) {
@@ -255,16 +266,25 @@ class CoinRankingApp {
         
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
+        // 다국어 지원을 위한 헤더 텍스트
+        const rankText = window.languageManager ? window.languageManager.t('rank') : '순위';
+        const coinText = window.languageManager ? window.languageManager.t('coin') : '코인명';
+        const longshortText = window.languageManager ? window.languageManager.t('longshort') : '롱/숏';
+        const volumeText = window.languageManager ? window.languageManager.t('volume') : '거래량';
+        const changeText = window.languageManager ? window.languageManager.t('change') : '변동률';
+        const chartText = window.languageManager ? window.languageManager.t('chart') : '차트';
+        const interestText = window.languageManager ? window.languageManager.t('interest') : '관심도';
+        
         contentDiv.innerHTML = `
             <div class="coin-list">
                 <div class="list-header">
-                    <div class="col-rank">순위</div>
-                    <div class="col-coin">코인명</div>
-                    <div class="col-longshort">롱/숏</div>
-                    <div class="col-volume">거래량</div>
-                    <div class="col-change">변동률</div>
-                    <div class="col-sparkline">차트</div>
-                    <div class="col-interest">관심도</div>
+                    <div class="col-rank">${rankText}</div>
+                    <div class="col-coin">${coinText}</div>
+                    <div class="col-longshort">${longshortText}</div>
+                    <div class="col-volume">${volumeText}</div>
+                    <div class="col-change">${changeText}</div>
+                    <div class="col-sparkline">${chartText}</div>
+                    <div class="col-interest">${interestText}</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
@@ -859,13 +879,16 @@ class CoinRankingApp {
             const timeDiff = Math.floor((now - this.lastUpdateTime) / 1000);
             
             if (timeDiff < 60) {
-                lastUpdateSpan.textContent = '실시간 반영중';
+                const realtimeText = window.languageManager ? window.languageManager.t('realtime_updating') : '실시간 반영중';
+                lastUpdateSpan.textContent = realtimeText;
             } else if (timeDiff < 3600) {
                 const minutes = Math.floor(timeDiff / 60);
-                lastUpdateSpan.textContent = `${minutes}분 전 업데이트`;
+                const minutesText = window.languageManager && window.languageManager.currentLang === 'en' ? 'min ago' : '분 전 업데이트';
+                lastUpdateSpan.textContent = `${minutes}${minutesText}`;
             } else {
                 const hours = Math.floor(timeDiff / 3600);
-                lastUpdateSpan.textContent = `${hours}시간 전 업데이트`;
+                const hoursText = window.languageManager && window.languageManager.currentLang === 'en' ? 'hours ago' : '시간 전 업데이트';
+                lastUpdateSpan.textContent = `${hours}${hoursText}`;
             }
         }
     }
@@ -1022,9 +1045,16 @@ class CoinRankingApp {
 
         if (emojiElement) emojiElement.textContent = data.sentimentEmoji;
         if (statusElement) statusElement.textContent = data.sentimentStatus;
-        if (ratioElement) ratioElement.textContent = data.marketSentiment ? `비율: ${data.marketSentiment}` : '-';
-        if (longRatioElement) longRatioElement.textContent = data.totalLongRatio ? `롱: ${data.totalLongRatio}%` : '롱: -';
-        if (shortRatioElement) shortRatioElement.textContent = data.totalShortRatio ? `숏: ${data.totalShortRatio}%` : '숏: -';
+        
+        // 다국어 지원을 위한 비율 텍스트
+        const ratioText = window.languageManager && window.languageManager.currentLang === 'en' ? 'Ratio' : '비율';
+        if (ratioElement) ratioElement.textContent = data.marketSentiment ? `${ratioText}: ${data.marketSentiment}` : '-';
+        
+        const longText = window.languageManager ? window.languageManager.t('long_label') : '롱:';
+        const shortText = window.languageManager ? window.languageManager.t('short_label') : '숏:';
+        
+        if (longRatioElement) longRatioElement.textContent = data.totalLongRatio ? `${longText} ${data.totalLongRatio}%` : `${longText} -`;
+        if (shortRatioElement) shortRatioElement.textContent = data.totalShortRatio ? `${shortText} ${data.totalShortRatio}%` : `${shortText} -`;
     }
 }
 
@@ -1474,4 +1504,105 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style.display = 'none';
         }
     };
-}); 
+});
+
+// 언어 관련 함수들
+CoinRankingApp.prototype.initLanguage = function() {
+    // 언어 관리자가 있으면 초기 텍스트 업데이트
+    if (window.languageManager) {
+        window.languageManager.updateLanguageButtons();
+        window.languageManager.updateAllTexts();
+        
+        // IP 기반 언어 감지 완료 후 추가 업데이트
+        setTimeout(() => {
+            if (window.languageManager) {
+                window.languageManager.updateAllTexts();
+                this.updateTextsForLanguage();
+            }
+        }, 1000);
+    }
+};
+
+CoinRankingApp.prototype.bindLanguageEvents = function() {
+    const langButtons = document.querySelectorAll('.lang-btn');
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            if (window.languageManager) {
+                window.languageManager.changeLanguage(lang);
+            }
+        });
+    });
+};
+
+// 다국어 지원을 위한 텍스트 업데이트 함수들
+CoinRankingApp.prototype.updateTextsForLanguage = function() {
+    if (!window.languageManager) return;
+    
+    const lang = window.languageManager.currentLang;
+    
+    // 시장 심리 지표 텍스트 업데이트
+    const sentimentElements = document.querySelectorAll('.sentiment-status');
+    sentimentElements.forEach(element => {
+        const text = element.textContent;
+        if (text === '중립' || text === 'Neutral') {
+            element.textContent = window.languageManager.t('sentiment_neutral');
+        } else if (text === '강세' || text === 'Bullish') {
+            element.textContent = window.languageManager.t('sentiment_bullish');
+        } else if (text === '약세' || text === 'Bearish') {
+            element.textContent = window.languageManager.t('sentiment_bearish');
+        }
+    });
+    
+    // 롱/숏 라벨 업데이트
+    const longLabels = document.querySelectorAll('#long-ratio');
+    const shortLabels = document.querySelectorAll('#short-ratio');
+    
+    longLabels.forEach(element => {
+        if (element.textContent.startsWith('롱:') || element.textContent.startsWith('Long:')) {
+            const ratio = element.textContent.split(':')[1] || '';
+            element.textContent = `${window.languageManager.t('long_label')} ${ratio}`;
+        }
+    });
+    
+    shortLabels.forEach(element => {
+        if (element.textContent.startsWith('숏:') || element.textContent.startsWith('Short:')) {
+            const ratio = element.textContent.split(':')[1] || '';
+            element.textContent = `${window.languageManager.t('short_label')} ${ratio}`;
+        }
+    });
+    
+    // AI 배지 텍스트 업데이트
+    const aiBadges = document.querySelectorAll('.ai-badge');
+    aiBadges.forEach(badge => {
+        if (badge.textContent === 'AI PICK') {
+            badge.textContent = window.languageManager.t('ai_pick');
+        }
+    });
+    
+    // 거래량 급증 배지 텍스트 업데이트
+    const volumeBadges = document.querySelectorAll('.volume-surge-badge');
+    volumeBadges.forEach(badge => {
+        if (badge.textContent === '거래량 급증' || badge.textContent === 'Volume Surge') {
+            badge.textContent = window.languageManager.t('volume_surge');
+        } else if (badge.textContent === '거래량 높음' || badge.textContent === 'High Volume') {
+            badge.textContent = window.languageManager.t('volume_high');
+        }
+    });
+    
+    // NEW 배지 텍스트 업데이트
+    const newBadges = document.querySelectorAll('.rank-new');
+    newBadges.forEach(badge => {
+        if (badge.textContent === 'NEW') {
+            badge.textContent = window.languageManager.t('rank_new');
+        }
+    });
+    
+    // 데이터 없음 텍스트 업데이트
+    const noDataElements = document.querySelectorAll('.no-data');
+    noDataElements.forEach(element => {
+        if (element.textContent === '데이터 없음' || element.textContent === 'No data') {
+            element.textContent = window.languageManager.t('no_data');
+        }
+    });
+}; 

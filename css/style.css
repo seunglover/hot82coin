@@ -668,6 +668,78 @@ body {
     box-shadow: var(--shadow);
 }
 
+/* 언어 선택기 */
+.language-selector {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.lang-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.lang-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--accent);
+}
+
+.lang-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.lang-btn.active:hover {
+    background: var(--accent);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .language-selector {
+        justify-content: center;
+        margin-top: 8px;
+    }
+    
+    .lang-btn {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* 언어 변경 알림 애니메이션 */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
 /* 시장 심리 지표 스타일 */
 .market-sentiment {
     background: var(--bg-card);

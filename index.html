@@ -101,6 +101,10 @@
             <div class="footer-links">
                 <a href="about.html" class="footer-link">📖 사이트 소개</a>
             </div>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="ko">한국어</button>
+                <button class="lang-btn" data-lang="en">English</button>
+            </div>
         </div>
     </div>
 
@@ -120,6 +124,7 @@
     </div>
 
     <!-- JavaScript Modules -->
+    <script src="js/i18n.js"></script>
     <script src="js/api.js"></script>
     <script src="js/exchange-rate-api.js"></script>
     <script src="js/coingecko-api.js"></script>
@@ -151,6 +156,17 @@
                     }
                 });
             };
+            
+            // 언어 전환 버튼 이벤트
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.getAttribute('data-lang');
+                    if (window.languageManager) {
+                        window.languageManager.changeLanguage(lang);
+                    }
+                });
+            });
         });
     </script>
 </body>
