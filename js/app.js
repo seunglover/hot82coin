@@ -296,13 +296,14 @@ class CoinRankingApp {
             coin.longAccount > 0 && coin.shortAccount > 0) {
             const longPercent = (coin.longAccount * 100).toFixed(1);
             const shortPercent = (coin.shortAccount * 100).toFixed(1);
+            const ratioText = coin.note ? `(추정)` : '';
             longShortDisplay = `
                 <div class="longshort-mini">
                     <div class="mini-ratio-bar">
                         <div class="mini-long-bar" style="width: ${longPercent}%"></div>
                         <div class="mini-short-bar" style="width: ${shortPercent}%"></div>
                     </div>
-                    <div class="mini-ratio-text">롱 ${longPercent}% / 숏 ${shortPercent}%</div>
+                    <div class="mini-ratio-text">롱 ${longPercent}% / 숏 ${shortPercent}% ${ratioText}</div>
                 </div>
             `;
         } else {

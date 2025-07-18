@@ -134,6 +134,7 @@ class BybitAPI {
      */
     async getLongShortRatio(symbol = 'BTCUSDT') {
         try {
+            // 먼저 바이비트 API 시도
             const response = await this.makeRequest('/account-ratio', { 
                 category: 'linear',
                 symbol: symbol,
@@ -158,20 +159,98 @@ class BybitAPI {
                 timestamp: latest.timestamp
             };
         } catch (error) {
-            if (error.message === '롱숏 비율 데이터 없음') {
-                console.warn(`${symbol} 롱숏 비율 데이터 없음`);
-            } else {
-                console.error('롱숏 비율 데이터 가져오기 오류:', error);
+            console.warn(`바이비트 롱숏 비율 API 실패 (${symbol}):`, error.message);
+            
+            // 바이비트 API 실패 시 CoinGecko에서 대체 데이터 가져오기
+            try {
+                return await this.getLongShortRatioFromCoinGecko(symbol);
+            } catch (fallbackError) {
+                console.warn(`CoinGecko 롱숏 비율도 실패 (${symbol}):`, fallbackError.message);
+                // 최종적으로 null 반환
+                return {
+                    symbol,
+                    longShortRatio: null,
+                    longAccount: null,
+                    shortAccount: null,
+                    timestamp: null
+                };
             }
-            // 실패 시 null 반환
+        }
+    }
+
+    /**
+     * CoinGecko에서 롱숏 비율 대체 데이터 가져오기
+     */
+    async getLongShortRatioFromCoinGecko(symbol) {
+        try {
+            const coinId = this.getCoinGeckoId(symbol);
+            if (!coinId) {
+                throw new Error('CoinGecko ID 없음');
+            }
+            
+            const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=false&sparkline=false`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15'
+                },
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`CoinGecko API 요청 실패: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // CoinGecko에서는 직접적인 롱숏 비율이 없으므로 시장 데이터 기반 추정
+            const marketCap = data.market_data?.market_cap?.usd || 0;
+            const volume = data.market_data?.total_volume?.usd || 0;
+            const priceChange = data.market_data?.price_change_percentage_24h || 0;
+            
+            // 간단한 추정 로직 (실제 롱숏 비율이 아님)
+            const estimatedRatio = priceChange > 0 ? 1.2 : 0.8;
+            const totalAccounts = 100;
+            const longAccount = totalAccounts * (estimatedRatio / (1 + estimatedRatio));
+            const shortAccount = totalAccounts - longAccount;
+            
             return {
                 symbol,
-                longShortRatio: null,
-                longAccount: null,
-                shortAccount: null,
-                timestamp: null
+                longShortRatio: estimatedRatio,
+                longAccount: longAccount,
+                shortAccount: shortAccount,
+                timestamp: Date.now(),
+                note: 'CoinGecko 추정 데이터'
             };
+        } catch (error) {
+            throw error;
         }
+    }
+
+    /**
+     * 심볼을 CoinGecko ID로 변환
+     */
+    getCoinGeckoId(symbol) {
+        const symbolMap = {
+            'BTC': 'bitcoin',
+            'ETH': 'ethereum',
+            'BNB': 'binancecoin',
+            'SOL': 'solana',
+            'ADA': 'cardano',
+            'AVAX': 'avalanche-2',
+            'DOT': 'polkadot',
+            'MATIC': 'matic-network',
+            'LINK': 'chainlink',
+            'UNI': 'uniswap',
+            'DOGE': 'dogecoin',
+            'SHIB': 'shiba-inu',
+            'XRP': 'ripple',
+            'LTC': 'litecoin',
+            'BCH': 'bitcoin-cash'
+        };
+        
+        const cleanSymbol = symbol.replace('USDT', '');
+        return symbolMap[cleanSymbol] || null;
     }
 
     /**
@@ -229,10 +308,29 @@ class BybitAPI {
                 throw new Error('바이비트 API 응답 형식 오류');
             }
             
-            // USDT 페어만 필터링하고 거래량 기준으로 정렬
+            // USDT 페어만 필터링하고 메인 코인 우선, 거래량 기준으로 정렬
+            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI'];
             const usdtPairs = response.result.list
                 .filter(item => item.symbol.endsWith('USDT'))
-                .sort((a, b) => parseFloat(b.volume24h) - parseFloat(a.volume24h))
+                .sort((a, b) => {
+                    const aSymbol = a.symbol.replace('USDT', '');
+                    const bSymbol = b.symbol.replace('USDT', '');
+                    
+                    // 메인 코인 우선 정렬
+                    const aIsMain = mainCoins.includes(aSymbol);
+                    const bIsMain = mainCoins.includes(bSymbol);
+                    
+                    if (aIsMain && !bIsMain) return -1;
+                    if (!aIsMain && bIsMain) return 1;
+                    
+                    // 메인 코인끼리는 거래량 순
+                    if (aIsMain && bIsMain) {
+                        return parseFloat(b.volume24h) - parseFloat(a.volume24h);
+                    }
+                    
+                    // 밈코인끼리는 거래량 순
+                    return parseFloat(b.volume24h) - parseFloat(a.volume24h);
+                })
                 .slice(0, limit);
 
             return usdtPairs.map((coin, index) => ({
