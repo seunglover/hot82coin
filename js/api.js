@@ -396,6 +396,7 @@ class BybitAPI {
             
             // 디버깅: API 응답 확인
             console.log('바이비트 API 응답 샘플:', response.result.list.slice(0, 3));
+            console.log('바이비트 API 응답 필드 확인:', Object.keys(response.result.list[0] || {}));
             
             if (!response.result || !response.result.list) {
                 throw new Error('바이비트 API 응답 형식 오류');
@@ -415,6 +416,16 @@ class BybitAPI {
             return usdtPairs.map((coin, index) => {
                 // 거래량 필드 확인 (바이비트 API 응답에 따라 다를 수 있음)
                 const volume = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
+                
+                // 디버깅: 상위 5개 코인의 거래량 확인
+                if (index < 5) {
+                    console.log(`${coin.symbol} 거래량 데이터:`, {
+                        volume24h: coin.volume24h,
+                        volume: coin.volume,
+                        quoteVolume: coin.quoteVolume,
+                        parsedVolume: volume
+                    });
+                }
                 
                 return {
                     rank: index + 1,
