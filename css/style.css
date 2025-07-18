@@ -184,6 +184,7 @@ body {
 .coin-list {
     padding: 20px;
     overflow-x: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -201,6 +202,7 @@ body {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-width: 1000px;
 }
 
 .coin-item {
@@ -218,6 +220,7 @@ body {
     position: relative;
     overflow: hidden;
     scroll-snap-align: start;
+    min-width: 1000px;
 }
 
 .coin-item:hover {
