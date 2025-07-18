@@ -1123,7 +1123,7 @@ async function drawSparkline(symbol, canvasId) {
         }
         
         // 먼저 선물 거래로 시도
-        let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=60&limit=24`;
+        let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=96`;
         console.log('선물 API URL:', url);
         
         let res = await fetch(url);
@@ -1132,7 +1132,7 @@ async function drawSparkline(symbol, canvasId) {
         // 선물 거래가 지원되지 않는 경우 스팟 거래로 시도
         if (json.retCode !== 0 || !json.result || !json.result.list || json.result.list.length === 0) {
             console.log(`${symbol} 선물 거래 지원 안됨, 스팟 거래로 시도...`);
-            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=60&limit=24`;
+            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=15&limit=96`;
             console.log('스팟 API URL:', url);
             
             res = await fetch(url);
