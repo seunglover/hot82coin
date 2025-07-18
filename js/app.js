@@ -861,6 +861,15 @@ async function drawSparkline(symbol, canvasId) {
         console.log('Canvas가 모달 내부에 있음:', isInModal);
         console.log('Canvas 크기:', canvas.offsetWidth, 'x', canvas.offsetHeight);
         
+        // 모달 내부에서 크기가 작으면 강제로 설정
+        if (isInModal && canvas.offsetWidth < 200) {
+            canvas.style.width = '400px';
+            canvas.style.height = '60px';
+            canvas.style.minWidth = '400px';
+            canvas.style.minHeight = '60px';
+            console.log('모달 내부에서 크기 강제 설정');
+        }
+        
         // 먼저 선물 거래로 시도
         let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=30`;
         console.log('선물 API URL:', url);
@@ -1131,23 +1140,36 @@ function showCoinModal(symbol) {
         
         // 모달이 표시된 후 스파크라인 차트 그리기
         setTimeout(() => {
-            drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
-        }, 500);
+            console.log('모달 스파크차트 첫 번째 시도');
+            const canvas = document.getElementById(`sparkline-${coin.symbol}`);
+            if (canvas) {
+                // 강제로 크기 설정
+                canvas.style.width = '400px';
+                canvas.style.height = '60px';
+                canvas.style.minWidth = '400px';
+                canvas.style.minHeight = '60px';
+                drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+            }
+        }, 300);
         
         // 모달이 완전히 표시된 후 다시 시도
         setTimeout(() => {
+            console.log('모달 스파크차트 두 번째 시도');
             const canvas = document.getElementById(`sparkline-${coin.symbol}`);
             if (canvas) {
                 console.log('Canvas 크기 확인:', canvas.offsetWidth, 'x', canvas.offsetHeight);
-                if (canvas.offsetWidth === 0) {
-                    console.log('Canvas 크기가 0이므로 다시 시도');
+                if (canvas.offsetWidth < 200) {
+                    console.log('Canvas 크기가 작아서 다시 시도');
+                    canvas.style.width = '400px';
+                    canvas.style.height = '60px';
                     drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
                 }
             }
-        }, 1000);
+        }, 800);
         
         // 최종 시도
         setTimeout(() => {
+            console.log('모달 스파크차트 최종 시도');
             const canvas = document.getElementById(`sparkline-${coin.symbol}`);
             if (canvas) {
                 console.log('최종 시도 - 강제로 차트 그리기');
@@ -1158,7 +1180,7 @@ function showCoinModal(symbol) {
                 canvas.style.minHeight = '60px';
                 drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
             }
-        }, 2000);
+        }, 1500);
         
     } else {
         modalTitle.textContent = symbol + ' 정보';
