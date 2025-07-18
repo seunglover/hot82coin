@@ -827,21 +827,24 @@ body {
     .coin-list {
         padding: 15px;
         overflow-x: auto;
+        overflow-y: visible;
         -webkit-overflow-scrolling: touch;
+        max-height: none;
     }
     
     .coin-item, .list-header {
-        min-width: 800px;
-        grid-template-columns: 50px 120px 100px 100px 100px 100px 100px 120px;
-        gap: 8px;
+        min-width: 100%;
+        grid-template-columns: 40px 80px 80px 80px 80px 80px 80px 80px;
+        gap: 4px;
+        font-size: 0.8rem;
     }
     
     .coin-item {
-        padding: 12px;
+        padding: 8px;
     }
     
     .list-header {
-        padding: 12px;
+        padding: 8px;
     }
     
     .coin-symbol {
@@ -849,17 +852,17 @@ body {
     }
     
     .price, .krw-price, .volume, .change, .volume-surge {
-        font-size: 0.9rem;
+        font-size: 0.75rem;
     }
     
     .volume-high-badge {
-        font-size: 0.6rem;
-        padding: 1px 4px;
-        min-width: 50px;
+        font-size: 0.5rem;
+        padding: 1px 3px;
+        min-width: 40px;
     }
     
     .mini-ratio-text {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
     }
     
     .modal-content {
@@ -893,6 +896,59 @@ body {
     
     .coin-title h3 {
         font-size: 1.3rem;
+    }
+}
+
+/* 매우 작은 화면 최적화 */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .menu-bar {
+        gap: 4px;
+    }
+    
+    .menu-btn {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+        min-width: 60px;
+    }
+    
+    .coin-list {
+        padding: 10px;
+    }
+    
+    .coin-item, .list-header {
+        grid-template-columns: 30px 70px 70px 70px 70px 70px 70px 70px;
+        gap: 2px;
+        font-size: 0.7rem;
+    }
+    
+    .coin-item {
+        padding: 6px;
+    }
+    
+    .list-header {
+        padding: 6px;
+    }
+    
+    .price, .krw-price, .volume, .change, .volume-surge {
+        font-size: 0.65rem;
+    }
+    
+    .volume-high-badge {
+        font-size: 0.45rem;
+        padding: 1px 2px;
+        min-width: 35px;
+    }
+    
+    .mini-ratio-text {
+        font-size: 0.55rem;
     }
 }
 
