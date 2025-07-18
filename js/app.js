@@ -279,7 +279,7 @@ class CoinRankingApp {
         }
         
         return `
-            <div class="coin-item" data-symbol="${coin.fullSymbol}">
+            <div class="coin-item" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
                 <div class="rank">
                     ${displayRank}
                     <div class="rank-arrow">${rankArrow}</div>
@@ -558,8 +558,106 @@ function showCoinModal(symbol) {
     const modalTitle = document.getElementById('modalTitle');
     const modalContent = document.getElementById('modalContent');
     
-    modalTitle.textContent = symbol + ' 정보';
-    modalContent.innerHTML = '<div class="coin-detail"><p>이 코인에 대한 정보가 준비 중입니다.</p></div>';
+    // 현재 코인 데이터에서 해당 코인 찾기
+    const coin = window.coinApp?.currentCoins?.find(c => c.symbol === symbol);
+    
+    if (coin) {
+        modalTitle.textContent = `${coin.symbol} 상세 정보`;
+        
+        const changeClass = coin.priceChangePercent >= 0 ? 'positive' : 'negative';
+        const changeSymbol = coin.priceChangePercent >= 0 ? '+' : '';
+        
+        modalContent.innerHTML = `
+            <div class="coin-detail">
+                <div class="coin-header">
+                    <div class="coin-title">
+                        <h3>${coin.symbol}</h3>
+                        <span class="coin-rank">#${coin.rank}</span>
+                    </div>
+                </div>
+                
+                <div class="coin-price-section">
+                    <div class="current-price">
+                        <div class="price-main">${window.coinApp.formatUSDPrice(coin.price)}</div>
+                        <div class="price-krw">₩${coin.krwPrice && coin.krwPrice > 0 ? window.coinApp.formatKRWPrice(coin.krwPrice) : '-'}</div>
+                        <div class="price-change ${changeClass}">
+                            ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="coin-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">시가총액</div>
+                        <div class="stat-value">$${window.coinApp.formatNumber(coin.accurateMarketCap || coin.marketCap)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">24시간 거래량</div>
+                        <div class="stat-value">$${window.coinApp.formatNumber(coin.volume)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">순위</div>
+                        <div class="stat-value">#${coin.rank}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">변동률</div>
+                        <div class="stat-value ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
+                    </div>
+                </div>
+                
+                <div class="sparkline-section">
+                    <h4>24시간 가격 변동</h4>
+                    <div class="sparkline-container">
+                        <div class="sparkline-placeholder">
+                            <div class="sparkline-chart">
+                                <svg width="100%" height="60" viewBox="0 0 300 60">
+                                    <defs>
+                                        <linearGradient id="sparklineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:${changeClass === 'positive' ? '#10b981' : '#ef4444'};stop-opacity:0.3"/>
+                                            <stop offset="100%" style="stop-color:${changeClass === 'positive' ? '#10b981' : '#ef4444'};stop-opacity:0.1"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0,30 L50,25 L100,35 L150,20 L200,40 L250,15 L300,30" 
+                                          stroke="${changeClass === 'positive' ? '#10b981' : '#ef4444'}" 
+                                          stroke-width="2" 
+                                          fill="none"/>
+                                    <path d="M0,30 L50,25 L100,35 L150,20 L200,40 L250,15 L300,30 L300,60 L0,60 Z" 
+                                          fill="url(#sparklineGradient)"/>
+                                </svg>
+                            </div>
+                            <div class="sparkline-note">실시간 차트 데이터 로딩 중...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="coin-info-section">
+                    <h4>코인 정보</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">심볼:</span>
+                            <span class="info-value">${coin.symbol}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">전체 심볼:</span>
+                            <span class="info-value">${coin.fullSymbol || coin.symbol}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">현재가:</span>
+                            <span class="info-value">${window.coinApp.formatUSDPrice(coin.price)}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">원화 가격:</span>
+                            <span class="info-value">₩${coin.krwPrice && coin.krwPrice > 0 ? window.coinApp.formatKRWPrice(coin.krwPrice) : '-'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        modalTitle.textContent = symbol + ' 정보';
+        modalContent.innerHTML = '<div class="coin-detail"><p>이 코인에 대한 정보를 찾을 수 없습니다.</p></div>';
+    }
+    
     modal.style.display = 'block';
 }
 
