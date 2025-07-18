@@ -861,7 +861,7 @@ async function drawSparkline(symbol, canvasId) {
         console.log('Canvas가 모달 내부에 있음:', isInModal);
         console.log('Canvas 크기:', canvas.offsetWidth, 'x', canvas.offsetHeight);
         
-        // 모달 내부에서 크기가 작으면 강제로 설정
+        // 모달 내부에서만 크기 강제 설정 (메인 리스트는 원래대로)
         if (isInModal && canvas.offsetWidth < 200) {
             canvas.style.width = '400px';
             canvas.style.height = '60px';
@@ -982,10 +982,10 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
         console.log('모달 내부에서 안정적인 크기로 설정:', width);
     }
     
-    // 크기가 너무 작은 경우 강제로 확대
-    if (width < 200) {
+    // 모달 내부에서만 크기 강제 확대 (메인 리스트는 원래대로)
+    if (canvas.closest('.modal') && width < 200) {
         width = 400;
-        console.log('크기가 너무 작아서 강제로 확대:', width);
+        console.log('모달 내부에서 크기 강제 확대:', width);
     }
     
     const height = 60;
