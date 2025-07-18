@@ -360,6 +360,8 @@ class CoinRankingApp {
                         significantDigits = i + 1;
                     }
                 }
+                // 최소 1자리는 표시 (0.0000001 같은 경우)
+                significantDigits = Math.max(significantDigits, 1);
                 return `$${price.toFixed(significantDigits)}`;
             }
             return `$${price.toFixed(6)}`;
@@ -391,6 +393,8 @@ class CoinRankingApp {
                         significantDigits = i + 1;
                     }
                 }
+                // 최소 1자리는 표시 (0.000024 같은 경우)
+                significantDigits = Math.max(significantDigits, 1);
                 return price.toFixed(significantDigits);
             }
             return price.toFixed(4);
