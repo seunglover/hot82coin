@@ -211,7 +211,7 @@ class CoinRankingApp {
                     <div>KRW 가격</div>
                     <div>거래량</div>
                     <div>변동률</div>
-                    <div>거래량</div>
+                    <div>관심도</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
@@ -378,9 +378,8 @@ class CoinRankingApp {
         if (!price || isNaN(price) || price <= 0) {
             return '0';
         }
-        
-        // 1원 이상일 때는 소수점 없이, 1원 미만일 때만 소수점 표시
-        if (price >= 1) {
+        // 10원 이상일 때는 소수점 없이, 10원 미만일 때만 소수점 표시
+        if (price >= 10) {
             return Math.floor(price).toLocaleString('ko-KR');
         } else {
             return price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 8});
