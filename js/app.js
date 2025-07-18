@@ -278,6 +278,14 @@ class CoinRankingApp {
             longShortDisplay = '<div class="no-data">데이터 없음</div>';
         }
         
+        // 디버깅: 매우 작은 가격들 확인
+        if (coin.price < 0.01) {
+            console.log(`메인 리스트 USD 가격 - 코인: ${coin.symbol}, 원본: ${coin.price}, 포맷된: ${this.formatUSDPrice(coin.price)}`);
+        }
+        if (coin.krwPrice && coin.krwPrice < 0.01) {
+            console.log(`메인 리스트 KRW 가격 - 코인: ${coin.symbol}, 원본: ${coin.krwPrice}, 포맷된: ${this.formatKRWPrice(coin.krwPrice)}`);
+        }
+        
         return `
             <div class="coin-item" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
                 <div class="rank">
