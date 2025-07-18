@@ -186,7 +186,7 @@ body {
 /* 코인 테이블 헤더 */
 .list-header {
     display: grid;
-    grid-template-columns: 60px 1fr 100px 100px 100px 80px 100px;
+    grid-template-columns: 60px 1fr 100px 100px 100px 100px 80px;
     gap: 15px;
     padding: 20px;
     background: var(--bg-secondary);
@@ -202,7 +202,7 @@ body {
 
 .coin-item {
     display: grid;
-    grid-template-columns: 60px 1fr 100px 100px 100px 80px 100px;
+    grid-template-columns: 60px 1fr 100px 100px 100px 100px 80px;
     gap: 15px;
     align-items: center;
     padding: 20px;

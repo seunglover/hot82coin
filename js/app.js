@@ -275,8 +275,8 @@ class CoinRankingApp {
                     <div class="col-longshort">롱/숏</div>
                     <div class="col-volume">거래량</div>
                     <div class="col-change">변동률</div>
-                    <div class="col-sparkline">차트</div>
                     <div class="col-interest">상태</div>
+                    <div class="col-sparkline">차트</div>
                 </div>
                 ${coins.map(coin => this.createCoinItem(coin)).join('')}
             </div>
@@ -462,11 +462,12 @@ class CoinRankingApp {
                 </div>
                 <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
                 <div class="col-change change ${changeClass}">${changeArrow} ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
+                <div class="col-interest volume-surge">
+                    ${this.getVolumeSurgeBadge(coin)}
+                </div>
                 <div class="col-sparkline sparkline">
                     <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
                 </div>
-                <div class="col-interest volume-surge">
-                    ${this.getVolumeSurgeBadge(coin)}
                 </div>
             </div>
         `;
