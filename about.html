@@ -55,33 +55,39 @@
                 <h2>🔍 핵심 기능 요약</h2>
                 <div class="feature-grid">
                     <div class="feature-item">
-                        <h3>📊 실시간 많이 거래되는 TOP 50</h3>
+                        <h3>📊 실시간 거래량 TOP 50</h3>
                         <p>해외거래소 기준, 가장 많이 거래되는 코인을 실시간으로 추출</p>
                         <p class="feature-highlight">현재 시장의 '핫한' 코인을 빠르게 파악 가능</p>
                     </div>
                     
                     <div class="feature-item">
-                        <h3>💱 USD / KRW 실시간 가격</h3>
-                        <p>글로벌 시세 + 실시간 환율 적용</p>
-                        <p class="feature-highlight">투자자 성향에 맞게 직관적인 원화 정보 제공</p>
+                        <h3>📈 스파크라인 차트</h3>
+                        <p>24시간 가격 변동을 1시간 간격으로 시각화</p>
+                        <p class="feature-highlight">메인 리스트와 모달에서 각각 최적화된 차트 제공</p>
                     </div>
                     
                     <div class="feature-item">
-                        <h3>📈 선물 시장 롱숏 비율</h3>
-                        <p>상위 10개 코인의 투자 심리 분석</p>
-                        <p class="feature-highlight">시각적 그래프로 트레이더의 방향성을 빠르게 캐치</p>
+                        <h3>🔮 AI 추천 시스템</h3>
+                        <p>거래량, 변동성, 상승률을 종합한 AI 점수 제공</p>
+                        <p class="feature-highlight">4점 이상의 코인을 AI PICK으로 추천</p>
                     </div>
                     
                     <div class="feature-item">
-                        <h3>🔄 순위 변동 추적</h3>
-                        <p>코인별 상승 ⬆️, 하락 ⬇️, 유지 ➖, 신규 🆕 여부를 컬러와 아이콘으로 구분</p>
-                        <p class="feature-highlight">직관적인 UI로 한눈에 흐름 파악 가능</p>
+                        <h3>📊 롱숏 비율 분석</h3>
+                        <p>상위 코인들의 투자 심리 분석</p>
+                        <p class="feature-highlight">시각적 그래프로 트레이더의 방향성 파악</p>
                     </div>
                     
                     <div class="feature-item">
-                        <h3>📱 모바일 최적화 & UX</h3>
-                        <p>깔끔하고 직관적인 레이아웃</p>
-                        <p class="feature-highlight">반응형 디자인으로 모바일에서도 쾌적한 사용성</p>
+                        <h3>🔄 실시간 순위 변동</h3>
+                        <p>코인별 상승 ⬆️, 하락 ⬇️, 유지 ➖, 신규 🆕 표시</p>
+                        <p class="feature-highlight">직관적인 UI로 시장 흐름 한눈에 파악</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>📱 모바일 최적화</h3>
+                        <p>반응형 디자인으로 모든 기기에서 쾌적한 사용성</p>
+                        <p class="feature-highlight">드래그 스크롤과 터치 최적화</p>
                     </div>
                 </div>
             </div>
@@ -95,13 +101,15 @@
                             <li>HTML5 - 시맨틱 마크업과 접근성 고려</li>
                             <li>CSS3 - 모던한 디자인과 반응형 레이아웃</li>
                             <li>JavaScript ES6+ - 모듈화된 구조와 비동기 처리</li>
+                            <li>SVG 차트 - 커스텀 스파크라인 차트 구현</li>
                         </ul>
                     </div>
                     
                     <div class="tech-item">
                         <h3>API & 데이터</h3>
                         <ul>
-                            <li>해외거래소 API - 실시간 암호화폐 데이터</li>
+                            <li>Bybit API - 실시간 암호화폐 데이터</li>
+                            <li>CoinGecko API - 정확한 시가총액 정보</li>
                             <li>Exchange Rate API - 실시간 USD/KRW 환율</li>
                             <li>RESTful API 통신 - 효율적인 데이터 처리</li>
                         </ul>
@@ -110,9 +118,10 @@
                     <div class="tech-item">
                         <h3>성능 최적화</h3>
                         <ul>
-                            <li>캐싱 시스템 - API 호출 최적화</li>
                             <li>자동 새로고침 - 5분마다 데이터 업데이트</li>
                             <li>로딩 상태 관리 - 사용자 경험 향상</li>
+                            <li>에러 처리 - API 실패 시 대체 데이터 제공</li>
+                            <li>모바일 최적화 - 터치 인터페이스 지원</li>
                         </ul>
                     </div>
                 </div>
@@ -123,10 +132,19 @@
                 <p>
                     이 사이트는 사용자 중심의 디자인 철학을 바탕으로 제작되었습니다. 
                     깔끔하고 직관적인 인터페이스, 빠른 로딩 속도, 그리고 모바일 친화적인 반응형 디자인을 통해 
-                    다양한 기기에서 편리하게 이용할 수 있습니다. 
-                    실시간 데이터 업데이트와 시각적 피드백을 통해 사용자가 시장 동향을 빠르게 파악할 수 있도록 
-                    최적화된 사용자 경험을 제공합니다.
+                    다양한 기기에서 편리하게 이용할 수 있습니다.
                 </p>
+                <p>
+                    <strong>주요 UX 특징:</strong>
+                </p>
+                <ul>
+                    <li>🌙 다크/라이트 모드 지원</li>
+                    <li>📱 모바일 드래그 스크롤 최적화</li>
+                    <li>📊 실시간 스파크라인 차트</li>
+                    <li>🔮 AI 추천 시스템</li>
+                    <li>⚡ 5분 자동 업데이트</li>
+                    <li>🎯 직관적인 메뉴 시스템</li>
+                </ul>
             </div>
 
             <div class="about-section">
