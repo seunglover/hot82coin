@@ -399,6 +399,7 @@ class BybitAPI {
             console.log('바이비트 API 응답 샘플:', response.result.list.slice(0, 3));
             console.log('바이비트 API 응답 필드 확인:', Object.keys(response.result.list[0] || {}));
             console.log('전체 USDT 페어 개수:', response.result.list.filter(item => item.symbol.endsWith('USDT')).length);
+            console.log('상위 20개 USDT 페어:', response.result.list.filter(item => item.symbol.endsWith('USDT')).slice(0, 20).map(item => item.symbol));
             
             // 전체 USDT 페어 거래량 순으로 정렬해서 확인
             const allUsdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
@@ -418,8 +419,8 @@ class BybitAPI {
                 throw new Error('바이비트 API 응답 형식 오류');
             }
             
-            // 메인코인 우선 필터링
-            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH'];
+            // 메인코인 우선 필터링 (더 많은 메인코인 추가)
+            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
             
             // USDT 페어만 필터링
             const usdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
@@ -460,17 +461,29 @@ class BybitAPI {
                 return bVolume - aVolume;
             });
             
-            // 1~10위는 메인코인만, 11위부터는 밈코인도 포함
-            const top10MainCoins = sortedMainCoins.slice(0, 10);
-            const remainingCoins = [...sortedMainCoins.slice(10), ...sortedMemeCoins]
-                .sort((a, b) => {
+            let combinedCoins;
+            
+            // 메인코인이 충분하지 않을 경우 대안 처리
+            if (sortedMainCoins.length < 10) {
+                console.warn('메인코인이 부족합니다. 전체 거래량 순으로 정렬합니다.');
+                combinedCoins = usdtPairs.sort((a, b) => {
                     const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
                     const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
                     return bVolume - aVolume;
-                })
-                .slice(0, limit - 10);
-            
-            const combinedCoins = [...top10MainCoins, ...remainingCoins];
+                }).slice(0, limit);
+            } else {
+                // 1~10위는 메인코인만, 11위부터는 밈코인도 포함
+                const top10MainCoins = sortedMainCoins.slice(0, 10);
+                const remainingCoins = [...sortedMainCoins.slice(10), ...sortedMemeCoins]
+                    .sort((a, b) => {
+                        const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                        const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                        return bVolume - aVolume;
+                    })
+                    .slice(0, limit - 10);
+                
+                combinedCoins = [...top10MainCoins, ...remainingCoins];
+            }
             
             console.log('최종 결과 상위 10개 (메인코인):', combinedCoins.slice(0, 10).map(item => ({
                 symbol: item.symbol,
