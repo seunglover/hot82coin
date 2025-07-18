@@ -168,6 +168,25 @@ body {
     opacity: 0.8;
 }
 
+/* Swipe Hint */
+.swipe-hint {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    padding: 12px 20px;
+    margin: 0 30px 15px 30px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid #fbbf24;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
 /* Footer */
 .footer {
     padding: 20px 30px;
@@ -283,6 +302,27 @@ body {
 /* Coin List */
 .coin-list {
     padding: 30px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 스크롤바 스타일 */
+.coin-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.coin-list::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.coin-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.coin-list::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .coin-item {
@@ -828,13 +868,16 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .coin-item, .list-header {
-        grid-template-columns: 50px 1fr 80px 100px;
-        gap: 15px;
+    .coin-list {
+        padding: 20px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
-    .volume, .market-cap, .longshort-column {
-        display: none;
+    .coin-item, .list-header {
+        grid-template-columns: 60px 120px 100px 100px 100px 100px 100px 100px;
+        gap: 12px;
+        min-width: 800px; /* 최소 너비 설정 */
     }
     
     .header h1 {
@@ -846,8 +889,17 @@ body {
         gap: 15px;
     }
     
-    .coin-list {
-        padding: 20px;
+    /* 모바일에서 텍스트 크기 조정 */
+    .coin-symbol {
+        font-size: 1rem;
+    }
+    
+    .price, .krw-price, .volume, .change, .market-cap {
+        font-size: 0.9rem;
+    }
+    
+    .mini-ratio-text {
+        font-size: 0.8rem;
     }
 }
 
@@ -870,23 +922,29 @@ body {
         padding: 20px;
     }
     
-    .coin-item, .list-header {
-        grid-template-columns: 40px 1fr 80px;
-        gap: 12px;
-        padding: 15px;
-    }
-    
-    .price {
-        font-size: 1rem;
-    }
-    
-    .change {
-        font-size: 0.8rem;
-        padding: 4px 8px;
-    }
-    
     .coin-list {
         padding: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .coin-item, .list-header {
+        grid-template-columns: 50px 100px 80px 80px 80px 80px 80px 80px;
+        gap: 8px;
+        padding: 12px;
+        min-width: 650px; /* 작은 화면용 최소 너비 */
+    }
+    
+    .price, .krw-price, .volume, .change, .market-cap {
+        font-size: 0.8rem;
+    }
+    
+    .mini-ratio-text {
+        font-size: 0.7rem;
+    }
+    
+    .coin-symbol {
+        font-size: 0.9rem;
     }
 } 
 

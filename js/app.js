@@ -211,7 +211,11 @@ class CoinRankingApp {
             return;
         }
         
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const swipeHint = isMobile ? '<div class="swipe-hint">💡 좌우로 스와이프하여 모든 정보를 확인하세요</div>' : '';
+        
         const html = `
+            ${swipeHint}
             <div class="coin-list">
                 <div class="list-header">
                     <div>순위</div>
