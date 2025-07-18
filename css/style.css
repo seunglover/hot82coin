@@ -767,6 +767,19 @@ body {
     height: 100%;
 }
 
+/* 모달 내부 스파크차트 크기 강제 설정 */
+.modal .sparkline-chart {
+    width: 400px !important;
+    height: 60px !important;
+    min-width: 400px !important;
+    min-height: 60px !important;
+}
+
+.modal .sparkline-chart svg {
+    width: 400px !important;
+    height: 60px !important;
+}
+
 .sparkline-note {
     font-size: 0.9rem;
     color: var(--text-secondary);

@@ -955,6 +955,18 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
         console.log('강제로 크기 설정:', width);
     }
     
+    // 모달 내부에서 더 안정적인 크기 처리
+    if (canvas.closest('.modal') && width < 200) {
+        width = 400;
+        console.log('모달 내부에서 안정적인 크기로 설정:', width);
+    }
+    
+    // 크기가 너무 작은 경우 강제로 확대
+    if (width < 200) {
+        width = 400;
+        console.log('크기가 너무 작아서 강제로 확대:', width);
+    }
+    
     const height = 60;
     const padding = 10;
     
@@ -1102,16 +1114,33 @@ function showCoinModal(symbol) {
         // 모달이 표시된 후 스파크라인 차트 그리기
         setTimeout(() => {
             drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
-        }, 1000);
+        }, 500);
         
-        // 추가로 모달이 완전히 표시된 후 다시 시도
+        // 모달이 완전히 표시된 후 다시 시도
         setTimeout(() => {
             const canvas = document.getElementById(`sparkline-${coin.symbol}`);
-            if (canvas && canvas.offsetWidth === 0) {
-                console.log('Canvas 크기가 0이므로 다시 시도');
+            if (canvas) {
+                console.log('Canvas 크기 확인:', canvas.offsetWidth, 'x', canvas.offsetHeight);
+                if (canvas.offsetWidth === 0) {
+                    console.log('Canvas 크기가 0이므로 다시 시도');
+                    drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+                }
+            }
+        }, 1000);
+        
+        // 최종 시도
+        setTimeout(() => {
+            const canvas = document.getElementById(`sparkline-${coin.symbol}`);
+            if (canvas) {
+                console.log('최종 시도 - 강제로 차트 그리기');
+                // 강제로 크기 설정 후 차트 그리기
+                canvas.style.width = '400px';
+                canvas.style.height = '60px';
+                canvas.style.minWidth = '400px';
+                canvas.style.minHeight = '60px';
                 drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
             }
-        }, 1500);
+        }, 2000);
         
     } else {
         modalTitle.textContent = symbol + ' 정보';
