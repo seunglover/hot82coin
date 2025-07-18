@@ -150,10 +150,13 @@ class BybitAPI {
      */
     async getLongShortRatio(symbol = 'BTCUSDT') {
         try {
+            // 스팟 심볼을 선물 심볼로 변환 (바이비트 V5 API 지원 형식)
+            const futuresSymbol = this.convertToFuturesSymbol(symbol);
+            
             // 바이비트 V5 공식 API 사용
             const response = await this.makeRequest('/market/account-ratio', { 
                 category: this.categories.linear,
-                symbol: symbol,
+                symbol: futuresSymbol,
                 period: '1h',  // 1시간 단위로 변경
                 limit: 1
             });
@@ -177,6 +180,11 @@ class BybitAPI {
             };
         } catch (error) {
             console.warn(`바이비트 V5 롱숏 비율 API 실패 (${symbol}):`, error.message);
+            
+            // 심볼 지원 오류인 경우 더 자세한 정보 제공
+            if (error.message.includes('symbol not support')) {
+                console.warn(`바이비트 V5에서 지원하지 않는 선물 심볼: ${symbol}`);
+            }
             
             // 바이비트 V5 API 실패 시 CoinGecko에서 대체 데이터 가져오기
             try {
@@ -242,6 +250,41 @@ class BybitAPI {
         } catch (error) {
             throw error;
         }
+    }
+
+    /**
+     * 스팟 심볼을 바이비트 V5 선물 심볼로 변환
+     */
+    convertToFuturesSymbol(spotSymbol) {
+        // 바이비트 V5 선물 API에서 지원하는 심볼들
+        const supportedFuturesSymbols = [
+            'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT', 
+            'AVAXUSDT', 'DOTUSDT', 'MATICUSDT', 'LINKUSDT', 'UNIUSDT',
+            'DOGEUSDT', 'SHIBUSDT', 'XRPUSDT', 'LTCUSDT', 'BCHUSDT',
+            'ATOMUSDT', 'NEARUSDT', 'FTMUSDT', 'ALGOUSDT', 'VETUSDT',
+            'ICPUSDT', 'FILUSDT', 'TRXUSDT', 'ETCUSDT', 'XLMUSDT',
+            'APTUSDT', 'OPUSDT', 'ARBUSDT', 'SUIUSDT', 'SEIUSDT',
+            'INJUSDT', 'TIAUSDT', 'JUPUSDT', 'PYTHUSDT', 'WIFUSDT',
+            'BONKUSDT', 'PEPEUSDT', 'FLOKIUSDT', 'MEMEUSDT', 'WIFUSDT'
+        ];
+        
+        // 이미 선물 심볼인 경우 그대로 반환
+        if (supportedFuturesSymbols.includes(spotSymbol)) {
+            return spotSymbol;
+        }
+        
+        // 스팟 심볼을 선물 심볼로 변환 시도
+        const cleanSymbol = spotSymbol.replace('USDT', '');
+        const futuresSymbol = cleanSymbol + 'USDT';
+        
+        // 지원되는 선물 심볼인지 확인
+        if (supportedFuturesSymbols.includes(futuresSymbol)) {
+            return futuresSymbol;
+        }
+        
+        // 지원되지 않는 심볼인 경우 기본값 반환
+        console.warn(`지원되지 않는 선물 심볼: ${spotSymbol}, BTCUSDT로 대체`);
+        return 'BTCUSDT';
     }
 
     /**

@@ -124,12 +124,12 @@ class CoinRankingApp {
             
 
             
-            // 마지막 업데이트 시간 기록
+            // 실시간 반영 상태 표시
             this.lastUpdateTime = new Date();
             if (lastUpdateSpan) {
                 const updateText = isMobile ? 
-                    `마지막 업데이트: ${this.lastUpdateTime.toLocaleString('ko-KR')} (모바일)` :
-                    `마지막 업데이트: ${this.lastUpdateTime.toLocaleString('ko-KR')}`;
+                    `실시간 반영중 (모바일)` :
+                    `실시간 반영중`;
                 lastUpdateSpan.textContent = updateText;
             }
             
