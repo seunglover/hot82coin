@@ -775,8 +775,14 @@ class CoinRankingApp {
                 });
                 break;
             default: // 'all'
-                // 기본 정렬 (거래량 순) - 상위 10개만 표시
-                filteredCoins = filteredCoins.slice(0, 10);
+                // 기본 정렬 (거래량 순) - 상위 50개 표시
+                filteredCoins = filteredCoins
+                    .sort((a, b) => b.volume - a.volume)
+                    .slice(0, 50);
+                // 순위 재정렬
+                filteredCoins.forEach((coin, index) => {
+                    coin.displayRank = index + 1;
+                });
                 break;
         }
 
