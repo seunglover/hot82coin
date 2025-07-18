@@ -356,23 +356,14 @@ class CoinRankingApp {
             return '';
         }
         
-        // 거래량 급증 메뉴에서는 거래량 증가 배지 표시
+        // 거래량 급증 메뉴에서는 거래량 배지 표시
         if (this.currentMenu === 'volume') {
-            if (this.previousVolumes && this.previousVolumes[coin.symbol]) {
-                const previousVolume = this.previousVolumes[coin.symbol];
-                const currentVolume = coin.volume;
-                
-                if (previousVolume > 0) {
-                    const volumeChangePercent = ((currentVolume - previousVolume) / previousVolume) * 100;
-                    
-                    if (volumeChangePercent >= 100) {
-                        return '<span class="volume-surge-badge">🔥 폭증</span>';
-                    } else if (volumeChangePercent >= 50) {
-                        return '<span class="volume-surge-badge">📈 급증</span>';
-                    } else if (volumeChangePercent >= 30) {
-                        return '<span class="volume-surge-badge">💹 증가</span>';
-                    }
-                }
+            if (coin.volume >= 1e8) {
+                return '<span class="volume-surge-badge">🔥 폭증</span>';
+            } else if (coin.volume >= 1e7) {
+                return '<span class="volume-surge-badge">📈 급증</span>';
+            } else if (coin.volume >= 1e6) {
+                return '<span class="volume-surge-badge">💹 증가</span>';
             }
             return '';
         }
@@ -753,29 +744,10 @@ class CoinRankingApp {
                 });
                 break;
             case 'volume':
-                // 이전 거래량 데이터가 있는 코인들만 필터링
-                const coinsWithVolumeData = filteredCoins.filter(coin => 
-                    this.previousVolumes[coin.symbol] && this.previousVolumes[coin.symbol] > 0
-                );
-                
-                if (coinsWithVolumeData.length > 0) {
-                    filteredCoins = coinsWithVolumeData
-                        .filter(coin => {
-                            const volumeChange = ((coin.volume - this.previousVolumes[coin.symbol]) / this.previousVolumes[coin.symbol]) * 100;
-                            return volumeChange > 0;
-                        })
-                        .sort((a, b) => {
-                            const aChange = ((a.volume - this.previousVolumes[a.symbol]) / this.previousVolumes[a.symbol]) * 100;
-                            const bChange = ((b.volume - this.previousVolumes[b.symbol]) / this.previousVolumes[b.symbol]) * 100;
-                            return bChange - aChange;
-                        })
-                        .slice(0, 10);
-                } else {
-                    // 이전 거래량 데이터가 없으면 현재 거래량 기준으로 정렬
-                    filteredCoins = filteredCoins
-                        .sort((a, b) => b.volume - a.volume)
-                        .slice(0, 10);
-                }
+                // 24시간 거래량 많은 순으로 정렬
+                filteredCoins = filteredCoins
+                    .sort((a, b) => b.volume - a.volume)
+                    .slice(0, 10);
                 
                 // 순위 재정렬
                 filteredCoins.forEach((coin, index) => {
