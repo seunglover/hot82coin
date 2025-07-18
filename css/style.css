@@ -435,12 +435,14 @@ body {
 .volume-high-badge {
     background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.65rem;
     font-weight: 600;
     white-space: nowrap;
     box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+    min-width: 60px;
+    text-align: center;
 }
 
 
@@ -830,7 +832,7 @@ body {
     
     .coin-item, .list-header {
         min-width: 800px;
-        grid-template-columns: 50px 120px 100px 100px 100px 100px 100px 100px;
+        grid-template-columns: 50px 120px 100px 100px 100px 100px 100px 120px;
         gap: 8px;
     }
     
@@ -846,8 +848,14 @@ body {
         font-size: 1rem;
     }
     
-    .price, .krw-price, .volume, .change, .market-cap {
+    .price, .krw-price, .volume, .change, .volume-surge {
         font-size: 0.9rem;
+    }
+    
+    .volume-high-badge {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+        min-width: 50px;
     }
     
     .mini-ratio-text {
