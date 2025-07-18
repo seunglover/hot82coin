@@ -886,6 +886,12 @@ async function drawSparkline(symbol, canvasId) {
                 return basePrice + Math.sin(i * 0.2) * 10;
             });
             drawSVGSparkline(canvas, mockPrices, '#10b981', 'positive');
+            
+            // 로딩 메시지 제거
+            const loadingNote = canvas.parentElement?.querySelector('.sparkline-note');
+            if (loadingNote) {
+                loadingNote.style.display = 'none';
+            }
             return;
         }
         
@@ -930,6 +936,12 @@ async function drawSparkline(symbol, canvasId) {
         const canvas = document.getElementById(canvasId);
         if (canvas) {
             canvas.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">차트 데이터를 불러올 수 없습니다.</div>';
+            
+            // 로딩 메시지 제거
+            const loadingNote = canvas.parentElement?.querySelector('.sparkline-note');
+            if (loadingNote) {
+                loadingNote.style.display = 'none';
+            }
         }
     }
 }
@@ -996,6 +1008,12 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
     `;
     
     canvas.innerHTML = svg;
+    
+    // 로딩 메시지 제거
+    const loadingNote = canvas.parentElement?.querySelector('.sparkline-note');
+    if (loadingNote) {
+        loadingNote.style.display = 'none';
+    }
 }
 
 // 모달 표시 함수 (전역)
