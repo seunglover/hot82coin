@@ -1,10 +1,10 @@
 /**
- * 바이비트 API 관련 기능 (모바일 호환성 향상)
+ * 바이비트 API 관련 기능 (메인 API)
  */
 class BinanceAPI {
     constructor() {
-        this.BINANCE_URL = 'https://api.binance.com/api/v3';
         this.BYBIT_URL = 'https://api.bybit.com/v5/market';
+        this.BINANCE_URL = 'https://api.binance.com/api/v3'; // 대체용
         this.rateLimit = {
             requests: 0,
             maxRequests: 1200, // 1분당 최대 요청 수
@@ -270,15 +270,20 @@ class BinanceAPI {
      * 거래량 기준 상위 코인 가져오기 (기본값: 50개)
      */
     async getTopCoinsByVolume(limit = 50) {
-        // 모바일이나 카카오톡에서는 바이비트 API 우선 사용
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isKakaoTalk = navigator.userAgent.includes('KAKAOTALK');
-        
-        if (isMobile || isKakaoTalk) {
-            console.log('모바일/인앱 브라우저 감지, 바이비트 API 우선 사용');
+        // 바이비트 API를 메인으로 사용
+        try {
+            console.log('바이비트 API에서 거래량 기준 상위 코인 가져오는 중...');
             return await this.getTopCoinsFromBybit(limit);
+        } catch (error) {
+            console.error('바이비트 API 실패, 바이낸스 API로 대체:', error);
+            return await this.getTopCoinsFromBinance(limit);
         }
-        
+    }
+
+    /**
+     * 바이낸스 API에서 거래량 기준 상위 코인 가져오기 (대체용)
+     */
+    async getTopCoinsFromBinance(limit = 50) {
         try {
             const tickerData = await this.get24hrTicker();
             
@@ -302,8 +307,8 @@ class BinanceAPI {
                 marketCap: parseFloat(coin.lastPrice) * parseFloat(coin.volume)
             }));
         } catch (error) {
-            console.error('바이낸스 API 실패, 바이비트 API로 대체:', error);
-            return await this.getTopCoinsFromBybit(limit);
+            console.error('바이낸스 API도 실패, CoinGecko API로 대체:', error);
+            return await this.getTopCoinsFromCoinGecko(limit);
         }
     }
 
@@ -404,14 +409,20 @@ class BinanceAPI {
      * 시장 통계 정보 가져오기 (상위 50개 기준)
      */
     async getMarketStats() {
-        // 모바일이나 카카오톡에서는 바이비트 API 사용
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isKakaoTalk = navigator.userAgent.includes('KAKAOTALK');
-        
-        if (isMobile || isKakaoTalk) {
+        // 바이비트 API를 메인으로 사용
+        try {
+            console.log('바이비트 API에서 시장 통계 가져오는 중...');
             return await this.getMarketStatsFromBybit();
+        } catch (error) {
+            console.error('바이비트 API 실패, 바이낸스 API로 대체:', error);
+            return await this.getMarketStatsFromBinance();
         }
-        
+    }
+
+    /**
+     * 바이낸스 API에서 시장 통계 가져오기 (대체용)
+     */
+    async getMarketStatsFromBinance() {
         try {
             const tickerData = await this.get24hrTicker();
             const usdtPairs = tickerData.filter(item => item.symbol.endsWith('USDT'));
@@ -450,8 +461,8 @@ class BinanceAPI {
                 topLosers: losers
             };
         } catch (error) {
-            console.error('바이낸스 API 실패, 바이비트 API로 대체:', error);
-            return await this.getMarketStatsFromBybit();
+            console.error('바이낸스 API도 실패, CoinGecko API로 대체:', error);
+            return await this.getMarketStatsFromCoinGecko();
         }
     }
 
