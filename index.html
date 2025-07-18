@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 지금 핫한 코인 순위 - 거래량 TOP 50</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="바이낸스 API를 사용한 실시간 코인 거래량 순위">
+    <meta name="keywords" content="코인, 암호화폐, 바이낸스, 거래량, 순위">
+    <meta name="author" content="Coin Ranking App">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="🔥 지금 핫한 코인 순위 - 거래량 TOP 50">
+    <meta property="og:description" content="바이낸스 API를 사용한 실시간 코인 거래량 순위">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 지금 핫한 코인 순위</h1>
+            <p>거래량 기준 상위 50개 코인</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-label">임시 메뉴1</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">💎</div>
+                <div class="stat-label">임시 메뉴2</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-label">임시 메뉴3</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div>
+                <span id="last-update">마지막 업데이트: -</span>
+            </div>
+            <button class="refresh-btn">
+                🔄 새로고침
+            </button>
+        </div>
+        
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>코인 데이터를 불러오는 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 코인 상세 정보 모달 -->
+    <div id="coinModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">코인 정보</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- 모달 내용이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/api.js"></script>
+    <script src="js/exchange-rate-api.js"></script>
+    <script src="js/coingecko-api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 

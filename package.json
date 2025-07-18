@@ -1,0 +1,29 @@
+{
+  "name": "coin-ranking-app",
+  "version": "1.0.0",
+  "description": "바이낸스 API를 사용한 실시간 코인 거래량 순위 웹사이트",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo '정적 사이트 - 브라우저에서 index.html을 열어주세요'",
+    "dev": "echo '정적 사이트 - 브라우저에서 index.html을 열어주세요'",
+    "build": "echo '정적 사이트 - 빌드 불필요'",
+    "deploy": "echo '폴더를 웹 서버에 업로드하세요'"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "binance",
+    "api",
+    "trading",
+    "volume",
+    "ranking"
+  ],
+  "author": "Coin Ranking App",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/coin-ranking-app.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
