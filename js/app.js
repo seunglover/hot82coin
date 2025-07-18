@@ -278,13 +278,7 @@ class CoinRankingApp {
             longShortDisplay = '<div class="no-data">데이터 없음</div>';
         }
         
-        // 디버깅: 매우 작은 가격들 확인
-        if (coin.price < 0.01) {
-            console.log(`메인 리스트 USD 가격 - 코인: ${coin.symbol}, 원본: ${coin.price}, 포맷된: ${this.formatUSDPrice(coin.price)}`);
-        }
-        if (coin.krwPrice && coin.krwPrice < 0.01) {
-            console.log(`메인 리스트 KRW 가격 - 코인: ${coin.symbol}, 원본: ${coin.krwPrice}, 포맷된: ${this.formatKRWPrice(coin.krwPrice)}`);
-        }
+
         
         return `
             <div class="coin-item" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
@@ -339,73 +333,8 @@ class CoinRankingApp {
             return '$0.00';
         }
         
-        // 과학적 표기법을 일반 소수점 표기법으로 변환
-        let priceStr = price.toString();
-        if (priceStr.includes('e-')) {
-            const [base, exponent] = priceStr.split('e-');
-            const exp = parseInt(exponent);
-            const decimalPlaces = exp - 1;
-            priceStr = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
-            price = parseFloat(priceStr);
-        }
-        
-        // 디버깅: 매우 작은 값들 확인
-        if (price < 0.01) {
-            console.log(`USD 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}, 변환된: ${priceStr}`);
-        }
-        
-        // 적당한 소수점으로 표시하고 쉼표 구분 추가
-        if (price >= 1000) {
-            // 1000달러 이상: 소수점 2자리, 쉼표 구분
-            return `$${parseFloat(price.toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        } else if (price >= 100) {
-            // 100~999달러: 소수점 2자리
-            return `$${price.toFixed(2)}`;
-        } else if (price >= 10) {
-            // 10~99달러: 소수점 2자리
-            return `$${price.toFixed(2)}`;
-        } else if (price >= 1) {
-            // 1~9달러: 소수점 3자리
-            return `$${price.toFixed(3)}`;
-        } else if (price >= 0.01) {
-            // 0.01~0.99달러: 소수점 4자리
-            return `$${price.toFixed(4)}`;
-        } else {
-            // 0.01달러 미만: 의미있는 소수점 자릿수 보존
-            const priceStr = price.toString();
-            const decimalIndex = priceStr.indexOf('.');
-            if (decimalIndex !== -1) {
-                const decimalPart = priceStr.substring(decimalIndex + 1);
-                // 0이 아닌 첫 번째 자리까지 표시 (최대 8자리)
-                let significantDigits = 0;
-                for (let i = 0; i < Math.min(decimalPart.length, 8); i++) {
-                    if (decimalPart[i] !== '0') {
-                        significantDigits = i + 1;
-                    }
-                }
-                // 최소 1자리는 표시 (0.0000001 같은 경우)
-                significantDigits = Math.max(significantDigits, 1);
-                
-                // 과학적 표기법 방지를 위해 toFixed 사용
-                let result = price.toFixed(significantDigits);
-                
-                // 결과가 여전히 과학적 표기법이면 강제로 변환
-                if (result.includes('e-')) {
-                    const [base, exponent] = result.split('e-');
-                    const exp = parseInt(exponent);
-                    const decimalPlaces = exp - 1;
-                    result = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
-                }
-                
-                const finalResult = `$${result}`;
-                
-                if (price < 0.01) {
-                    console.log(`USD 가격 결과 - 원본: ${price}, 결과: ${finalResult}, significantDigits: ${significantDigits}`);
-                }
-                return finalResult;
-            }
-            return `$${price.toFixed(6)}`;
-        }
+        // 바이비트에서 받은 그대로 표시, 천단위만 쉼표 구분
+        return `$${price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 8})}`;
     }
 
     /**
@@ -417,58 +346,8 @@ class CoinRankingApp {
             return '0';
         }
         
-        // 과학적 표기법을 일반 소수점 표기법으로 변환
-        let priceStr = price.toString();
-        if (priceStr.includes('e-')) {
-            const [base, exponent] = priceStr.split('e-');
-            const exp = parseInt(exponent);
-            const decimalPlaces = exp - 1;
-            priceStr = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
-            price = parseFloat(priceStr);
-        }
-        
-        // 디버깅: 매우 작은 값들 확인
-        if (price < 0.01) {
-            console.log(`KRW 가격 디버깅 - 원본값: ${price}, 타입: ${typeof price}, 변환된: ${priceStr}`);
-        }
-        
-        // 1원 이하일 때만 소수점 사용
-        if (price >= 1) {
-            return Math.floor(price).toLocaleString('ko-KR');
-        } else {
-            // 의미있는 소수점 자릿수 보존
-            const priceStr = price.toString();
-            const decimalIndex = priceStr.indexOf('.');
-            if (decimalIndex !== -1) {
-                const decimalPart = priceStr.substring(decimalIndex + 1);
-                // 0이 아닌 첫 번째 자리까지 표시 (최대 6자리)
-                let significantDigits = 0;
-                for (let i = 0; i < Math.min(decimalPart.length, 6); i++) {
-                    if (decimalPart[i] !== '0') {
-                        significantDigits = i + 1;
-                    }
-                }
-                // 최소 1자리는 표시 (0.000024 같은 경우)
-                significantDigits = Math.max(significantDigits, 1);
-                
-                // 과학적 표기법 방지를 위해 toFixed 사용
-                let result = price.toFixed(significantDigits);
-                
-                // 결과가 여전히 과학적 표기법이면 강제로 변환
-                if (result.includes('e-')) {
-                    const [base, exponent] = result.split('e-');
-                    const exp = parseInt(exponent);
-                    const decimalPlaces = exp - 1;
-                    result = '0.' + '0'.repeat(decimalPlaces) + base.replace('.', '');
-                }
-                
-                if (price < 0.01) {
-                    console.log(`KRW 가격 결과 - 원본: ${price}, 결과: ${result}, significantDigits: ${significantDigits}`);
-                }
-                return result;
-            }
-            return price.toFixed(4);
-        }
+        // 바이비트에서 받은 그대로 표시, 천단위만 쉼표 구분
+        return price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 8});
     }
 
     /**
