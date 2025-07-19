@@ -77,7 +77,39 @@ const i18n = {
         // 모달 에러 메시지
         coin_not_found: "이 코인에 대한 정보를 찾을 수 없습니다.",
         searched_symbol: "찾은 심볼",
-        available_coins: "사용 가능한 코인"
+        available_coins: "사용 가능한 코인",
+        
+        // 리스트 관련
+        long_percent: "롱",
+        short_percent: "숏",
+        estimated: "추정",
+        no_data: "데이터 없음",
+        volume_usd: "거래량",
+        change_rate: "변동률",
+        current_price: "현재가",
+        market_cap_usd: "시가총액",
+        volume_24h_usd: "24시간 거래량",
+        change_24h: "24시간 변동률",
+        community_score: "커뮤니티 점수",
+        developer_score: "개발자 점수",
+        liquidity_score: "유동성 점수",
+        category: "카테고리",
+        
+        // 1위 코인 상태
+        volume_explosion: "거래량 폭등",
+        volume_surge_status: "거래량 급증",
+        skyrocketing: "급등 중",
+        rising: "상승 중",
+        falling: "하락 중",
+        bullish_long: "강세 (롱 우세)",
+        bearish_short: "약세 (숏 우세)",
+        balanced: "균형",
+        active_trading: "거래 활발",
+        night_trading: "야간 거래",
+        
+        // AI 관련
+        ai_score: "점",
+        long_ratio: "롱비중"
     },
     
     en: {
@@ -155,7 +187,39 @@ const i18n = {
         // 모달 에러 메시지
         coin_not_found: "Information for this coin could not be found.",
         searched_symbol: "Searched Symbol",
-        available_coins: "Available Coins"
+        available_coins: "Available Coins",
+        
+        // 리스트 관련
+        long_percent: "Long",
+        short_percent: "Short",
+        estimated: "Est.",
+        no_data: "No data",
+        volume_usd: "Volume",
+        change_rate: "Change",
+        current_price: "Current Price",
+        market_cap_usd: "Market Cap",
+        volume_24h_usd: "24h Volume",
+        change_24h: "24h Change",
+        community_score: "Community Score",
+        developer_score: "Developer Score",
+        liquidity_score: "Liquidity Score",
+        category: "Category",
+        
+        // 1위 코인 상태
+        volume_explosion: "Volume Explosion",
+        volume_surge_status: "Volume Surge",
+        skyrocketing: "Skyrocketing",
+        rising: "Rising",
+        falling: "Falling",
+        bullish_long: "Bullish (Long Dominant)",
+        bearish_short: "Bearish (Short Dominant)",
+        balanced: "Balanced",
+        active_trading: "Active Trading",
+        night_trading: "Night Trading",
+        
+        // AI 관련
+        ai_score: "pts",
+        long_ratio: "Long Ratio"
     }
 };
 

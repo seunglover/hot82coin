@@ -564,7 +564,9 @@ class CoinRankingApp {
         // 거래량 정보
         if (coin.volume) {
             const volumeFormatted = this.formatNumber(coin.volume);
-            reasons.push(`거래량 ${volumeFormatted} USD`);
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            reasons.push(`${t('volume_usd')} ${volumeFormatted} USD`);
         }
         
         // 가격 변동률
@@ -572,13 +574,17 @@ class CoinRankingApp {
             const change = coin.priceChangePercent;
             const changeText = change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`;
             const changeClass = change >= 0 ? 'positive' : 'negative';
-            reasons.push(`변동률 <span class="${changeClass}">${changeText}</span>`);
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            reasons.push(`${t('change_rate')} <span class="${changeClass}">${changeText}</span>`);
         }
         
         // 현재 가격
         if (coin.price) {
             const priceFormatted = this.formatUSDPrice(coin.price);
-            reasons.push(`현재가 ${priceFormatted}`);
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            reasons.push(`${t('current_price')} ${priceFormatted}`);
         }
         
         return reasons.join(' • ');
@@ -633,31 +639,33 @@ class CoinRankingApp {
      */
     getTopCoinAdditionalInfo(coin) {
         const info = [];
+        const langManager = window.languageManager;
+        const t = langManager ? langManager.t.bind(langManager) : (key) => key;
         
         // 거래량 급증 여부
         if (coin.volume > 1e9) { // 10억 달러 이상
-            info.push('🔥 거래량 폭등');
+            info.push(`🔥 ${t('volume_explosion')}`);
         } else if (coin.volume > 1e8) { // 1억 달러 이상
-            info.push('📈 거래량 급증');
+            info.push(`📈 ${t('volume_surge_status')}`);
         }
         
         // 가격 변동률에 따른 상태
         if (coin.priceChangePercent > 20) {
-            info.push('🚀 급등 중');
+            info.push(`🚀 ${t('skyrocketing')}`);
         } else if (coin.priceChangePercent > 10) {
-            info.push('📈 상승 중');
+            info.push(`📈 ${t('rising')}`);
         } else if (coin.priceChangePercent < -10) {
-            info.push('📉 하락 중');
+            info.push(`📉 ${t('falling')}`);
         }
         
         // 롱숏 비율 분석
         if (coin.longShortRatio) {
             if (coin.longShortRatio > 1.5) {
-                info.push('🐂 강세 (롱 우세)');
+                info.push(`🐂 ${t('bullish_long')}`);
             } else if (coin.longShortRatio < 0.7) {
-                info.push('🐻 약세 (숏 우세)');
+                info.push(`🐻 ${t('bearish_short')}`);
             } else {
-                info.push('⚖️ 균형');
+                info.push(`⚖️ ${t('balanced')}`);
             }
         }
         
@@ -665,9 +673,9 @@ class CoinRankingApp {
         const now = new Date();
         const hour = now.getHours();
         if (hour >= 9 && hour <= 17) {
-            info.push('🌞 거래 활발');
+            info.push(`🌞 ${t('active_trading')}`);
         } else {
-            info.push('🌙 야간 거래');
+            info.push(`🌙 ${t('night_trading')}`);
         }
         
         return info.join(' • ');
@@ -847,14 +855,16 @@ class CoinRankingApp {
             // 바이비트 API는 0~1 사이 값, CoinGecko는 이미 백분율
             const longPercent = coin.longAccount <= 1 ? (coin.longAccount * 100).toFixed(1) : coin.longAccount.toFixed(1);
             const shortPercent = coin.shortAccount <= 1 ? (coin.shortAccount * 100).toFixed(1) : coin.shortAccount.toFixed(1);
-            const ratioText = coin.note ? `(추정)` : '';
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            const ratioText = coin.note ? `(${t('estimated')})` : '';
             longShortDisplay = `
                 <div class="longshort-mini">
                     <div class="mini-ratio-bar">
                         <div class="mini-long-bar" style="width: ${longPercent}%"></div>
                         <div class="mini-short-bar" style="width: ${shortPercent}%"></div>
                     </div>
-                    <div class="mini-ratio-text">롱 ${longPercent}% / 숏 ${shortPercent}% ${ratioText}</div>
+                    <div class="mini-ratio-text">${t('long_percent')} ${longPercent}% / ${t('short_percent')} ${shortPercent}% ${ratioText}</div>
                 </div>
             `;
         } else {
@@ -864,14 +874,18 @@ class CoinRankingApp {
                 shortAccount: coin.shortAccount,
                 longShortRatio: coin.longShortRatio
             });
-            longShortDisplay = '<div class="no-data">데이터 없음</div>';
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            longShortDisplay = `<div class="no-data">${t('no_data')}</div>`;
         }
         
         // AI 추천 코인 스타일 적용
         const isAIRecommendation = this.currentMenu === 'ai' && coin.aiScore >= 4;
         const aiClass = isAIRecommendation ? 'ai-recommendation' : '';
         const aiBadge = isAIRecommendation ? '<div class="ai-badge">AI PICK</div>' : '';
-        const aiScore = isAIRecommendation ? `<div class="ai-score">${coin.aiScore}점</div>` : '';
+        const langManager = window.languageManager;
+        const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+        const aiScore = isAIRecommendation ? `<div class="ai-score">${coin.aiScore}${t('ai_score')}</div>` : '';
         
         return `
             <div class="coin-item ${aiClass}" data-symbol="${coin.fullSymbol}" onclick="showCoinModal('${coin.symbol}')" style="cursor: pointer;">
@@ -1038,10 +1052,14 @@ class CoinRankingApp {
         // 롱/숏 비율 점수
         if (coin.longAccount && coin.longAccount >= 0.8) {
             score += 2;
-            reasons.push(`롱비중 ${(coin.longAccount * 100).toFixed(1)}%`);
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            reasons.push(`${t('long_ratio')} ${(coin.longAccount * 100).toFixed(1)}%`);
         } else if (coin.longAccount && coin.longAccount >= 0.7) {
             score += 1;
-            reasons.push(`롱비중 ${(coin.longAccount * 100).toFixed(1)}%`);
+            const langManager = window.languageManager;
+            const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+            reasons.push(`${t('long_ratio')} ${(coin.longAccount * 100).toFixed(1)}%`);
         }
         
         return { score, reasons };
