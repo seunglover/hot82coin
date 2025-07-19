@@ -72,7 +72,12 @@ const i18n = {
         very_optimistic: "매우 낙관적",
         optimistic: "낙관적",
         very_pessimistic: "매우 비관적",
-        pessimistic: "비관적"
+        pessimistic: "비관적",
+        
+        // 모달 에러 메시지
+        coin_not_found: "이 코인에 대한 정보를 찾을 수 없습니다.",
+        searched_symbol: "찾은 심볼",
+        available_coins: "사용 가능한 코인"
     },
     
     en: {
@@ -145,7 +150,12 @@ const i18n = {
         very_optimistic: "Very Optimistic",
         optimistic: "Optimistic",
         very_pessimistic: "Very Pessimistic",
-        pessimistic: "Pessimistic"
+        pessimistic: "Pessimistic",
+        
+        // 모달 에러 메시지
+        coin_not_found: "Information for this coin could not be found.",
+        searched_symbol: "Searched Symbol",
+        available_coins: "Available Coins"
     }
 };
 

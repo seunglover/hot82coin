@@ -1755,7 +1755,9 @@ function showCoinModal(symbol) {
     }
     
     if (coin) {
-        modalTitle.textContent = `${coin.symbol} 상세 정보`;
+        const langManager = window.languageManager;
+        const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+        modalTitle.textContent = `${coin.symbol} ${t('coin_info')}`;
         
         const changeClass = coin.priceChangePercent >= 0 ? 'positive' : 'negative';
         const changeSymbol = coin.priceChangePercent >= 0 ? '+' : '';
@@ -1781,50 +1783,50 @@ function showCoinModal(symbol) {
                 
                 <div class="coin-stats-grid">
                     <div class="stat-card">
-                        <div class="stat-label">시가총액</div>
+                        <div class="stat-label">${t('market_cap')}</div>
                         <div class="stat-value">$${window.coinApp.formatNumber(coin.accurateMarketCap || coin.marketCap)}</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">24시간 거래량</div>
+                        <div class="stat-label">${t('volume_24h')}</div>
                         <div class="stat-value">$${window.coinApp.formatNumber(coin.volume)}</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">순위</div>
+                        <div class="stat-label">${t('rank')}</div>
                         <div class="stat-value">#${coin.rank}</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">변동률</div>
+                        <div class="stat-label">${t('change')}</div>
                         <div class="stat-value ${changeClass}">${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
                     </div>
                 </div>
                 
                 <div class="sparkline-section">
-                    <h4>24시간 가격 변동</h4>
+                    <h4>${t('price_chart_24h')}</h4>
                     <div class="sparkline-container">
                         <div class="sparkline-placeholder">
                             <div id="modal-sparkline-${coin.symbol}" class="sparkline-chart"></div>
-                            <div class="sparkline-note">실시간 차트 데이터 로딩 중...</div>
+                            <div class="sparkline-note">${t('chart_loading')}</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="coin-info-section">
-                    <h4>코인 정보</h4>
+                    <h4>${t('coin_info')}</h4>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">심볼:</span>
+                            <span class="info-label">${t('symbol')}:</span>
                             <span class="info-value">${coin.symbol}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">전체 심볼:</span>
+                            <span class="info-label">${t('full_symbol')}:</span>
                             <span class="info-value">${coin.fullSymbol || coin.symbol}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">현재가:</span>
+                            <span class="info-label">${t('current_price')}:</span>
                             <span class="info-value">${window.coinApp.formatUSDPrice(coin.price)}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">원화 가격:</span>
+                            <span class="info-label">${t('krw_price')}:</span>
                             <span class="info-value">₩${coin.price && coin.price > 0 ? (coin.price * 1350).toLocaleString('ko-KR') : '-'}</span>
                         </div>
                     </div>
@@ -1877,13 +1879,15 @@ function showCoinModal(symbol) {
         }, 1500);
         
     } else {
-        modalTitle.textContent = symbol + ' 정보';
+        const langManager = window.languageManager;
+        const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+        modalTitle.textContent = symbol + ' ' + t('coin_info');
         modalContent.innerHTML = `
             <div class="coin-detail">
-                <p>이 코인에 대한 정보를 찾을 수 없습니다.</p>
+                <p>${t('coin_not_found')}</p>
                 <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">
-                    찾은 심볼: ${symbol}<br>
-                    사용 가능한 코인: ${window.coinApp?.currentCoins?.map(c => c.symbol).slice(0, 10).join(', ')}...
+                    ${t('searched_symbol')}: ${symbol}<br>
+                    ${t('available_coins')}: ${window.coinApp?.currentCoins?.map(c => c.symbol).slice(0, 10).join(', ')}...
                 </p>
             </div>
         `;
