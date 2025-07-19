@@ -285,8 +285,8 @@ class LanguageManager {
         // 3. IP 기반 지역 감지 (비동기)
         this.detectLanguageByIP();
         
-        // 4. 기본값 (영어) - 한국 이외 지역에서는 영어로 표시
-        return 'en';
+        // 4. 기본값 (한국어) - 한국에서 접속하면 한국어로 표시
+        return 'ko';
     }
     
     /**
@@ -311,9 +311,9 @@ class LanguageManager {
             }
         } catch (error) {
             console.log('IP 기반 언어 감지 실패, 브라우저 설정 사용:', error);
-            // IP 감지 실패 시 기본값은 영어로 설정
-            if (this.currentLang !== 'en') {
-                this.changeLanguage('en');
+            // IP 감지 실패 시 기본값은 한국어로 설정
+            if (this.currentLang !== 'ko') {
+                this.changeLanguage('ko');
             }
         }
     }

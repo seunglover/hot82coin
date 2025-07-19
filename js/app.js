@@ -966,7 +966,7 @@ class CoinRankingApp {
     }
 
     /**
-     * 숫자 포맷팅 (한국식 억/만/천 단위)
+     * 숫자 포맷팅 (언어별 단위)
      */
     formatNumber(num) {
         // 모바일에서 안전한 숫자 처리
@@ -974,17 +974,35 @@ class CoinRankingApp {
             return '0';
         }
         
-        if (num >= 1e8) {
-            // 1억 이상: 억 단위, 소수점 1자리
-            return (num / 1e8).toFixed(1) + '억';
-        } else if (num >= 1e4) {
-            // 1만 이상: 만 단위, 정수
-            return Math.floor(num / 1e4) + '만';
-        } else if (num >= 1e3) {
-            // 1천 이상: 천 단위, 정수
-            return Math.floor(num / 1e3) + '천';
+        const langManager = window.languageManager;
+        const isEnglish = langManager && langManager.currentLang === 'en';
+        
+        if (isEnglish) {
+            // 영어: M/B/T 단위 사용
+            if (num >= 1e12) {
+                return (num / 1e12).toFixed(1) + 'T';
+            } else if (num >= 1e9) {
+                return (num / 1e9).toFixed(1) + 'B';
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(1) + 'M';
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(1) + 'K';
+            }
+            return num.toLocaleString('en-US');
+        } else {
+            // 한국어: 억/만/천 단위 사용
+            if (num >= 1e8) {
+                // 1억 이상: 억 단위, 소수점 1자리
+                return (num / 1e8).toFixed(1) + '억';
+            } else if (num >= 1e4) {
+                // 1만 이상: 만 단위, 정수
+                return Math.floor(num / 1e4) + '만';
+            } else if (num >= 1e3) {
+                // 1천 이상: 천 단위, 정수
+                return Math.floor(num / 1e3) + '천';
+            }
+            return num.toLocaleString('ko-KR');
         }
-        return num.toLocaleString('ko-KR');
     }
 
     /**
