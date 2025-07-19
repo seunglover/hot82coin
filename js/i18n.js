@@ -56,7 +56,23 @@ const i18n = {
         
         // 언어 전환
         language_ko: "한국어",
-        language_en: "English"
+        language_en: "English",
+        
+        // 모달 관련
+        market_cap: "시가총액",
+        volume_24h: "24시간 거래량",
+        price_chart_24h: "24시간 가격 변동",
+        chart_loading: "실시간 차트 데이터 로딩 중...",
+        symbol: "심볼",
+        full_symbol: "전체 심볼",
+        current_price: "현재가",
+        krw_price: "원화 가격",
+        
+        // 시장 심리 상태
+        very_optimistic: "매우 낙관적",
+        optimistic: "낙관적",
+        very_pessimistic: "매우 비관적",
+        pessimistic: "비관적"
     },
     
     en: {
@@ -113,7 +129,23 @@ const i18n = {
         
         // 언어 전환
         language_ko: "한국어",
-        language_en: "English"
+        language_en: "English",
+        
+        // 모달 관련
+        market_cap: "Market Cap",
+        volume_24h: "24h Volume",
+        price_chart_24h: "24h Price Chart",
+        chart_loading: "Loading real-time chart data...",
+        symbol: "Symbol",
+        full_symbol: "Full Symbol",
+        current_price: "Current Price",
+        krw_price: "KRW Price",
+        
+        // 시장 심리 상태
+        very_optimistic: "Very Optimistic",
+        optimistic: "Optimistic",
+        very_pessimistic: "Very Pessimistic",
+        pessimistic: "Pessimistic"
     }
 };
 
@@ -367,6 +399,14 @@ class LanguageManager {
                 sentimentStatus.textContent = this.t('sentiment_bullish');
             } else if (currentStatus === '약세' || currentStatus === 'Bearish') {
                 sentimentStatus.textContent = this.t('sentiment_bearish');
+            } else if (currentStatus === '매우 낙관적' || currentStatus === 'Very Optimistic') {
+                sentimentStatus.textContent = this.t('very_optimistic');
+            } else if (currentStatus === '낙관적' || currentStatus === 'Optimistic') {
+                sentimentStatus.textContent = this.t('optimistic');
+            } else if (currentStatus === '매우 비관적' || currentStatus === 'Very Pessimistic') {
+                sentimentStatus.textContent = this.t('very_pessimistic');
+            } else if (currentStatus === '비관적' || currentStatus === 'Pessimistic') {
+                sentimentStatus.textContent = this.t('pessimistic');
             }
         }
         
@@ -397,6 +437,9 @@ class LanguageManager {
         const modalTitle = document.getElementById('modalTitle');
         if (modalTitle) modalTitle.textContent = this.t('coin_info');
         
+        // 모달 내용 업데이트 (동적으로 생성된 모달 내용)
+        this.updateModalContent();
+        
         // 실시간 업데이트 텍스트
         const lastUpdate = document.getElementById('last-update');
         if (lastUpdate) {
@@ -412,6 +455,72 @@ class LanguageManager {
             const timeText = timeMatch ? timeMatch[1] : '-';
             nextUpdate.textContent = `${this.t('next_update')} ${timeText}`;
         }
+    }
+    
+    /**
+     * 모달 내용 업데이트
+     */
+    updateModalContent() {
+        const modalContent = document.getElementById('modalContent');
+        if (!modalContent) return;
+        
+        // 모달이 열려있는지 확인
+        const modal = document.getElementById('coinModal');
+        if (modal.style.display !== 'block') return;
+        
+        // 현재 모달에 표시된 코인 정보 찾기
+        const coinTitle = modalContent.querySelector('.coin-title h3');
+        if (!coinTitle) return;
+        
+        const symbol = coinTitle.textContent;
+        
+        // 모달 내용의 모든 텍스트 업데이트
+        const statLabels = modalContent.querySelectorAll('.stat-label');
+        statLabels.forEach(label => {
+            const text = label.textContent;
+            if (text === '시가총액') {
+                label.textContent = this.t('market_cap');
+            } else if (text === '24시간 거래량') {
+                label.textContent = this.t('volume_24h');
+            } else if (text === '순위') {
+                label.textContent = this.t('rank');
+            } else if (text === '변동률') {
+                label.textContent = this.t('change');
+            }
+        });
+        
+        // 스파크라인 섹션 제목
+        const sparklineTitle = modalContent.querySelector('.sparkline-section h4');
+        if (sparklineTitle) {
+            sparklineTitle.textContent = this.t('price_chart_24h');
+        }
+        
+        // 스파크라인 노트
+        const sparklineNote = modalContent.querySelector('.sparkline-note');
+        if (sparklineNote) {
+            sparklineNote.textContent = this.t('chart_loading');
+        }
+        
+        // 코인 정보 섹션 제목
+        const coinInfoTitle = modalContent.querySelector('.coin-info-section h4');
+        if (coinInfoTitle) {
+            coinInfoTitle.textContent = this.t('coin_info');
+        }
+        
+        // 코인 정보 라벨들
+        const infoLabels = modalContent.querySelectorAll('.info-label');
+        infoLabels.forEach(label => {
+            const text = label.textContent;
+            if (text === '심볼:') {
+                label.textContent = this.t('symbol') + ':';
+            } else if (text === '전체 심볼:') {
+                label.textContent = this.t('full_symbol') + ':';
+            } else if (text === '현재가:') {
+                label.textContent = this.t('current_price') + ':';
+            } else if (text === '원화 가격:') {
+                label.textContent = this.t('krw_price') + ':';
+            }
+        });
     }
 }
 
