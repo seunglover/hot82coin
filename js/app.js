@@ -1637,7 +1637,7 @@ async function drawSparkline(symbol, canvasId) {
             
             if (closePrices.length > 0) {
                 const changeClass = closePrices[closePrices.length - 1] >= closePrices[0] ? 'positive' : 'negative';
-                const lineColor = changeClass === 'positive' ? '#10b981' : '#ef4444';
+                const lineColor = changeClass === 'positive' ? '#ef4444' : '#10b981';
                 
                 console.log('Canvas 크기:', canvas.offsetWidth, 'x', canvas.offsetHeight);
                 
