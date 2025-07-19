@@ -372,6 +372,9 @@ class LanguageManager {
             }
         });
         
+        // 리스트 헤더 업데이트
+        this.updateListHeaders();
+        
         // 1위 코인 라벨
         const topCoinLabel = document.querySelector('.top-coin-label');
         if (topCoinLabel) topCoinLabel.textContent = this.t('top_coin_label');
@@ -409,6 +412,9 @@ class LanguageManager {
                 sentimentStatus.textContent = this.t('pessimistic');
             }
         }
+        
+        // 거래량 급증 배지 업데이트
+        this.updateVolumeBadges();
         
         // 롱/숏 라벨
         const longRatio = document.getElementById('long-ratio');
@@ -454,6 +460,57 @@ class LanguageManager {
             const timeMatch = currentText.match(/:\s*(.+)$/);
             const timeText = timeMatch ? timeMatch[1] : '-';
             nextUpdate.textContent = `${this.t('next_update')} ${timeText}`;
+        }
+    }
+    
+    /**
+     * 리스트 헤더 업데이트
+     */
+    updateListHeaders() {
+        const listHeaders = document.querySelectorAll('.list-header .sortable');
+        if (listHeaders.length === 0) return;
+        
+        listHeaders.forEach(header => {
+            const sortKey = header.getAttribute('data-sort-key');
+            if (sortKey) {
+                let headerText = '';
+                switch (sortKey) {
+                    case 'rank':
+                        headerText = this.t('rank');
+                        break;
+                    case 'symbol':
+                        headerText = this.t('coin');
+                        break;
+                    case 'longAccount':
+                        headerText = this.t('longshort');
+                        break;
+                    case 'volume':
+                        headerText = this.t('volume');
+                        break;
+                    case 'priceChangePercent':
+                        headerText = this.t('change');
+                        break;
+                }
+                
+                // 정렬 화살표 유지
+                const arrow = header.textContent.match(/[▲▼]/);
+                if (arrow) {
+                    headerText += ' ' + arrow[0];
+                }
+                
+                header.textContent = headerText;
+            }
+        });
+        
+        // 차트와 관심도 컬럼도 업데이트
+        const chartHeader = document.querySelector('.col-sparkline');
+        const interestHeader = document.querySelector('.col-interest');
+        
+        if (chartHeader) {
+            chartHeader.textContent = this.t('chart');
+        }
+        if (interestHeader) {
+            interestHeader.textContent = this.t('interest');
         }
     }
     
@@ -519,6 +576,23 @@ class LanguageManager {
                 label.textContent = this.t('current_price') + ':';
             } else if (text === '원화 가격:') {
                 label.textContent = this.t('krw_price') + ':';
+            }
+        });
+    }
+    
+    /**
+     * 거래량 급증 배지 업데이트
+     */
+    updateVolumeBadges() {
+        const volumeBadges = document.querySelectorAll('.volume-surge-badge');
+        volumeBadges.forEach(badge => {
+            const text = badge.textContent;
+            if (text.includes('거래량 급증') || text.includes('Volume Surge')) {
+                badge.textContent = this.t('volume_surge');
+            } else if (text.includes('거래량 높음') || text.includes('High Volume')) {
+                badge.textContent = this.t('volume_high');
+            } else if (text.includes('거래량 급등') || text.includes('Volume Surge')) {
+                badge.textContent = this.t('volume_surge');
             }
         });
     }
