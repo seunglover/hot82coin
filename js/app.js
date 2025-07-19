@@ -791,9 +791,9 @@ class CoinRankingApp {
         
         // AI 추천 메뉴에서는 AI 점수 배지 표시
         if (this.currentMenu === 'ai') {
-            if (coin.aiScore >= 6) {
+            if (coin.aiScore >= 5) {
                 return '<span class="volume-surge-badge">🤖 최고</span>';
-            } else if (coin.aiScore >= 4) {
+            } else if (coin.aiScore >= 3) {
                 return '<span class="volume-surge-badge">🔮 추천</span>';
             }
             return '';
@@ -880,7 +880,7 @@ class CoinRankingApp {
         }
         
         // AI 추천 코인 스타일 적용
-        const isAIRecommendation = this.currentMenu === 'ai' && coin.aiScore >= 4;
+        const isAIRecommendation = this.currentMenu === 'ai' && coin.aiScore >= 3;
         const aiClass = isAIRecommendation ? 'ai-recommendation' : '';
         const aiBadge = isAIRecommendation ? '<div class="ai-badge">AI PICK</div>' : '';
         const langManager = window.languageManager;
@@ -1045,10 +1045,10 @@ class CoinRankingApp {
         let reasons = [];
         
         // 가격 상승률 점수
-        if (coin.priceChangePercent >= 8) {
+        if (coin.priceChangePercent >= 6) {
             score += 2;
             reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
-        } else if (coin.priceChangePercent >= 4) {
+        } else if (coin.priceChangePercent >= 3) {
             score += 1;
             reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
         }
@@ -1058,22 +1058,22 @@ class CoinRankingApp {
             const previousVolume = this.previousVolumes[coin.symbol];
             const volumeChangePercent = ((coin.volume - previousVolume) / previousVolume) * 100;
             
-            if (volumeChangePercent >= 50) {
+            if (volumeChangePercent >= 40) {
                 score += 2;
                 reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
-            } else if (volumeChangePercent >= 25) {
+            } else if (volumeChangePercent >= 20) {
                 score += 1;
                 reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
             }
         }
         
         // 롱/숏 비율 점수
-        if (coin.longAccount && coin.longAccount >= 0.75) {
+        if (coin.longAccount && coin.longAccount >= 0.7) {
             score += 2;
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
             reasons.push(`${t('long_ratio')} ${(coin.longAccount * 100).toFixed(1)}%`);
-        } else if (coin.longAccount && coin.longAccount >= 0.65) {
+        } else if (coin.longAccount && coin.longAccount >= 0.6) {
             score += 1;
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
@@ -1265,7 +1265,7 @@ class CoinRankingApp {
             case 'ai':
                 // AI 추천: AI 점수 높은 코인만
                 filteredCoins = filteredCoins
-                    .filter(coin => coin.aiScore >= 4)
+                    .filter(coin => coin.aiScore >= 3)
                     .sort((a, b) => b.aiScore - a.aiScore) // AI 점수 높은 순
                     .slice(0, 10);
                 break;
