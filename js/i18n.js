@@ -357,6 +357,35 @@ class LanguageManager {
         const sentimentLabel = document.querySelector('.sentiment-label');
         if (sentimentLabel) sentimentLabel.textContent = this.t('market_sentiment_label');
         
+        // 시장 심리 상태 텍스트
+        const sentimentStatus = document.getElementById('sentiment-status');
+        if (sentimentStatus) {
+            const currentStatus = sentimentStatus.textContent;
+            if (currentStatus === '중립' || currentStatus === 'Neutral') {
+                sentimentStatus.textContent = this.t('sentiment_neutral');
+            } else if (currentStatus === '강세' || currentStatus === 'Bullish') {
+                sentimentStatus.textContent = this.t('sentiment_bullish');
+            } else if (currentStatus === '약세' || currentStatus === 'Bearish') {
+                sentimentStatus.textContent = this.t('sentiment_bearish');
+            }
+        }
+        
+        // 롱/숏 라벨
+        const longRatio = document.getElementById('long-ratio');
+        const shortRatio = document.getElementById('short-ratio');
+        if (longRatio) {
+            const currentText = longRatio.textContent;
+            const ratioMatch = currentText.match(/:\s*(.+)$/);
+            const ratioValue = ratioMatch ? ratioMatch[1] : '-';
+            longRatio.textContent = `${this.t('long_label')} ${ratioValue}`;
+        }
+        if (shortRatio) {
+            const currentText = shortRatio.textContent;
+            const ratioMatch = currentText.match(/:\s*(.+)$/);
+            const ratioValue = ratioMatch ? ratioMatch[1] : '-';
+            shortRatio.textContent = `${this.t('short_label')} ${ratioValue}`;
+        }
+        
         // 푸터
         const footerText = document.querySelector('.footer p');
         if (footerText) footerText.textContent = this.t('mobile_optimized');
@@ -370,14 +399,17 @@ class LanguageManager {
         
         // 실시간 업데이트 텍스트
         const lastUpdate = document.getElementById('last-update');
-        if (lastUpdate && lastUpdate.textContent.includes('실시간')) {
+        if (lastUpdate) {
             lastUpdate.textContent = this.t('realtime_updating');
         }
         
         // 다음 업데이트 텍스트
         const nextUpdate = document.getElementById('next-update');
-        if (nextUpdate && nextUpdate.textContent.includes('다음 업데이트')) {
-            const timeText = nextUpdate.textContent.replace('다음 업데이트:', '').trim();
+        if (nextUpdate) {
+            // 기존 시간 정보를 보존
+            const currentText = nextUpdate.textContent;
+            const timeMatch = currentText.match(/:\s*(.+)$/);
+            const timeText = timeMatch ? timeMatch[1] : '-';
             nextUpdate.textContent = `${this.t('next_update')} ${timeText}`;
         }
     }
