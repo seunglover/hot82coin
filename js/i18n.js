@@ -131,6 +131,9 @@ class LanguageManager {
      */
     init() {
         this.updatePageLanguage();
+        
+        // IP 기반 지역 감지 실행 (비동기)
+        this.detectLanguageByIP();
     }
     
     /**
@@ -176,8 +179,8 @@ class LanguageManager {
         // 3. IP 기반 지역 감지 (비동기)
         this.detectLanguageByIP();
         
-        // 4. 기본값 (한국어)
-        return 'ko';
+        // 4. 기본값 (영어) - 한국 이외 지역에서는 영어로 표시
+        return 'en';
     }
     
     /**
@@ -202,6 +205,10 @@ class LanguageManager {
             }
         } catch (error) {
             console.log('IP 기반 언어 감지 실패, 브라우저 설정 사용:', error);
+            // IP 감지 실패 시 기본값은 영어로 설정
+            if (this.currentLang !== 'en') {
+                this.changeLanguage('en');
+            }
         }
     }
     
