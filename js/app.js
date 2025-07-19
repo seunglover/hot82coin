@@ -1045,10 +1045,10 @@ class CoinRankingApp {
         let reasons = [];
         
         // 가격 상승률 점수
-        if (coin.priceChangePercent >= 10) {
+        if (coin.priceChangePercent >= 8) {
             score += 2;
             reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
-        } else if (coin.priceChangePercent >= 5) {
+        } else if (coin.priceChangePercent >= 4) {
             score += 1;
             reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
         }
@@ -1058,22 +1058,22 @@ class CoinRankingApp {
             const previousVolume = this.previousVolumes[coin.symbol];
             const volumeChangePercent = ((coin.volume - previousVolume) / previousVolume) * 100;
             
-            if (volumeChangePercent >= 60) {
+            if (volumeChangePercent >= 50) {
                 score += 2;
                 reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
-            } else if (volumeChangePercent >= 30) {
+            } else if (volumeChangePercent >= 25) {
                 score += 1;
                 reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
             }
         }
         
         // 롱/숏 비율 점수
-        if (coin.longAccount && coin.longAccount >= 0.8) {
+        if (coin.longAccount && coin.longAccount >= 0.75) {
             score += 2;
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
             reasons.push(`${t('long_ratio')} ${(coin.longAccount * 100).toFixed(1)}%`);
-        } else if (coin.longAccount && coin.longAccount >= 0.7) {
+        } else if (coin.longAccount && coin.longAccount >= 0.65) {
             score += 1;
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
