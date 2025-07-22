@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🔥 지금 핫한 코인 순위 - 해외거래소 거래량 TOP 50</title>
+    
+    <!-- 성능 최적화 메타태그 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="//api.bybit.com">
+    <link rel="dns-prefetch" href="//api.coingecko.com">
+    <link rel="dns-prefetch" href="//api.exchangerate-api.com">
+    
+    <!-- Preconnect for critical resources -->
+    <link rel="preconnect" href="https://api.bybit.com">
+    <link rel="preconnect" href="https://api.coingecko.com">
+    
+    <!-- CSS 최적화 -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <meta name="description" content="해외거래소 API를 사용한 실시간 코인 거래량 순위 - 모바일 최적화">
+    <meta name="keywords" content="코인, 암호화폐, 해외거래소, 거래량, 순위, 실시간">
+    <meta name="author" content="Coin Ranking App">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="🔥 지금 핫한 코인 순위 - 해외거래소 거래량 TOP 50">
+    <meta property="og:description" content="해외거래소 API를 사용한 실시간 코인 거래량 순위 - 모바일 최적화">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="코인 순위">
+    <meta name="msapplication-TileColor" content="#0f172a">
+    <meta name="msapplication-navbutton-color" content="#0f172a">
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2347391460222140"
+     crossorigin="anonymous"></script>
+    
+    <!-- 배포 트리거: 2024-01-15 -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <h1 class="logo" id="home-logo">🔥 지금 핫한 코인 순위</h1>
+            </div>
+            <p>해외거래소에서 핫한 코인</p>
+        </div>
+        
+        <div class="menu-bar">
+            <button class="menu-btn active" data-menu="all" data-i18n="menu_all">
+                전체
+            </button>
+            <button class="menu-btn" data-menu="rising" data-i18n="menu_rising">
+                급등 코인
+            </button>
+            <button class="menu-btn" data-menu="volume" data-i18n="menu_volume">
+                거래량 급증
+            </button>
+            <button class="menu-btn" data-menu="longshort" data-i18n="menu_longshort">
+                롱/숏 비율
+            </button>
+            <button class="menu-btn" data-menu="ai" data-i18n="menu_ai">
+                🔮 AI 추천
+            </button>
+            <button class="menu-btn" data-menu="tips" data-i18n="menu_tips">
+                꿀팁
+            </button>
+            <button class="menu-btn" data-menu="myinvest" data-i18n="menu_myinvest">
+                나의투자유형
+            </button>
+            <button class="menu-btn" data-menu="theme">
+                <span id="theme-icon">🌙</span>
+            </button>
+
+        </div>
+        
+        <!-- 1위 코인 정보 표시 영역 -->
+        <div id="top-coin-info" class="top-coin-info" style="display: none;">
+            <div class="top-coin-content">
+                <span class="top-coin-label">🥇 1위 코인:</span>
+                <span id="top-coin-details" class="top-coin-details"></span>
+            </div>
+        </div>
+        
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p> 코인 데이터를 불러오는 중...</p>
+                <p class="loading-note">모바일에서는 잠시 기다려주세요</p>
+            </div>
+        </div>
+        
+        <!-- 꿀팁 컨텐츠 영역 -->
+        <div id="tips-content" class="tips-content" style="display: none;">
+            <div class="tips-header">
+                <h2>💡 코인 투자 꿀팁</h2>
+                <p>초보자를 위한 실전 팁들</p>
+            </div>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">📈</div>
+                            <h3>거래량 급증이 뭔가요?</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>거래량이 갑자기 늘어나면 뭔가 일이 터진 거예요. 뉴스 확인해보세요!</p>
+                        <div class="tip-detail">
+                            <p>예를 들어, 비트코인이 갑자기 거래량 급증하면 뭔가 큰 뉴스가 터진 거죠. "비트코인 ETF 승인" 같은 뉴스가 나오면 사람들이 다들 사려고 해서 거래량이 늘어나는 거예요.</p>
+                            <p>하지만 거래량 급증이 무조건 좋은 건 아니에요.</p>
+                            <p>저도 처음에 거래량 급증 보고 무조건 따라 샀는데, 알고 보니 "폰지 사기" 같은 나쁜 뉴스 때문이었어요. 결국 손해봤죠 ㅠㅠ</p>
+                            <p>그래서 거래량 급증 보면 왜 급증했는지 뉴스 확인해보세요. 좋은 뉴스면 따라 사고, 나쁜 뉴스면 피하는 게 좋아요.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">⚖️</div>
+                            <h3>롱/숏 비율 보는 법</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>롱 비율 높으면 대부분이 올라갈 거라 생각하는 거죠. 하지만 시장은 예측 불가능이에요.</p>
+                        <div class="tip-detail">
+                            <p>예를 들어, 롱 비율 70%면 10명 중 7명이 올라갈 거라 생각하는 거예요.</p>
+                            <p>하지만 시장은 예측 불가능이에요.</p>
+                            <p>저도 롱 비율 80%면 무조건 올라갈 줄 알았는데, 반대로 떨어질 때도 있어요.</p>
+                            <p>그래서 롱/숏 비율은 참고만 하세요. 절대적인 지표는 아니에요.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">🚀</div>
+                            <h3>급등 코인 주의사항</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>급등 코인은 이미 늦었을 가능성이 높아요. 조심하세요!</p>
+                        <div class="tip-detail">
+                            <p>예를 들어, 급등 코인 사고 싶었는데, 이미 50% 올라간 상태라서 망설였어요.</p>
+                            <p>급등 코인은 보통 이미 20-30% 올라간 상태라서, 더 올라갈지 모르겠어요.</p>
+                            <p>그래서 급등 코인은 조심하세요!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">💰</div>
+                            <h3>손절매 전략</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>손실을 최소화하는 방법을 알아보세요. 투자에서 가장 중요한 건 손절매예요.</p>
+                        <div class="tip-detail">
+                            <p>저도 처음엔 손절매를 못해서 큰 손해를 봤어요. "다시 올라갈 거야"라고 생각했는데, 계속 떨어지더라고요.</p>
+                            <p>손절매 원칙: 투자 금액의 10-15% 손실되면 무조건 팔아요.</p>
+                            <p>감정에 휘둘리지 마세요. "아깝다"는 생각보다 "더 손해보기 싫다"는 생각이 중요해요.</p>
+                            <p>손절매는 실패가 아니라 성공적인 투자의 시작이에요!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">📊</div>
+                            <h3>차트 보는 법 기초</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>캔들스틱 패턴을 읽으면 시장 방향을 예측할 수 있어요.</p>
+                        <div class="tip-detail">
+                            <p>초보자는 복잡한 지표보다 기본 패턴부터 배우세요.</p>
+                            <p>상승 캔들(초록색): 시가보다 종가가 높음 = 매수세 우세</p>
+                            <p>하락 캔들(빨간색): 시가보다 종가가 낮음 = 매도세 우세</p>
+                            <p>긴 꼬리: 많은 거래가 있었지만 방향성은 약함</p>
+                            <p>처음엔 일봉(1일) 차트부터 보세요. 분봉은 너무 복잡해요.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">🎯</div>
+                            <h3>포트폴리오 분산 투자</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>모든 달걀을 한 바구니에 담지 마세요. 리스크를 분산시키는 게 중요해요.</p>
+                        <div class="tip-detail">
+                            <p>저도 처음엔 한 코인에만 올인했는데, 그 코인이 폭락해서 모든 돈을 잃었어요.</p>
+                            <p>분산 투자 비율: 메인코인 60% + 알트코인 30% + 현금 10%</p>
+                            <p>메인코인: BTC, ETH, BNB 등 안정적인 코인</p>
+                            <p>알트코인: SOL, ADA, DOT 등 성장 가능성 있는 코인</p>
+                            <p>현금: 급등 기회를 기다리는 용도</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">😰</div>
+                            <h3>FOMO 조심하세요</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>FOMO = Fear Of Missing Out (놓칠까봐 두려운 심리)</p>
+                        <div class="tip-detail">
+                            <p>저도 FOMO 때문에 급등 코인을 사고 큰 손해를 봤어요.</p>
+                            <p>FOMO 증상: "이제 안 사면 늦어!", "다른 사람들 다 사는데 나만 안 사면?"</p>
+                            <p>FOMO 대처법: 10분 기다리기, 뉴스 확인하기, 차분히 생각하기</p>
+                            <p>기회는 항상 있어요. 서두르지 마세요!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">📱</div>
+                            <h3>모바일 거래 팁</h3>
+                        </div>
+                        <span class="tip-toggle">자세히보기</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>모바일에서도 안전하게 거래하는 방법을 알아보세요.</p>
+                        <div class="tip-detail">
+                            <p>모바일 거래 시 주의사항:</p>
+                            <p>• 공용 WiFi 사용 금지 (해킹 위험)</p>
+                            <p>• 2단계 인증 필수 설정</p>
+                            <p>• 거래소 앱만 사용 (웹사이트 피하기)</p>
+                            <p>• 급하게 거래하지 말고 충분히 확인하기</p>
+                            <p>• 화면 잠금 설정 필수</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 시장 심리 지표 영역 -->
+        <div id="market-sentiment" class="market-sentiment" style="display: none;">
+            <div class="sentiment-header">
+                <span class="sentiment-label">📊 시장 심리 지표</span>
+            </div>
+            <div class="sentiment-content">
+                <div class="sentiment-main">
+                    <span id="sentiment-emoji" class="sentiment-emoji">😐</span>
+                    <span id="sentiment-status" class="sentiment-status">중립</span>
+                    <span id="sentiment-ratio" class="sentiment-ratio">-</span>
+                </div>
+                <div class="sentiment-details">
+                    <span id="long-ratio" class="ratio-item">롱: -</span>
+                    <span id="short-ratio" class="ratio-item">숏: -</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 투자성향 테스트 영역 -->
+        <div id="myinvest-content" class="tips-content" style="display: none;">
+            <div class="tips-header">
+                <h2>🧠 나의 투자유형 테스트</h2>
+                <p>15개 질문으로 내 투자성향을 알아보세요!</p>
+            </div>
+            <div class="tips-grid" id="myinvest-grid">
+                <!-- 투자성향 테스트 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="controls">
+                <div class="update-info">
+                    <span id="last-update">실시간 반영중</span>
+                    <span id="next-update">다음 업데이트: -</span>
+                </div>
+            </div>
+            
+            <p>📱 모바일 최적화 | 🔄 5분 자동 업데이트</p>
+            <div class="footer-links">
+                <a href="about.html" class="footer-link">📖 사이트 소개</a>
+                <a href="privacy.html" class="footer-link">🔒 개인정보처리방침</a>
+                <a href="terms.html" class="footer-link">📋 이용약관</a>
+            </div>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="ko">한국어</button>
+                <button class="lang-btn" data-lang="en">English</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 코인 상세 정보 모달 -->
+    <div id="coinModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">코인 정보</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- 모달 내용이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules - 최적화된 로딩 -->
+    <script src="js/i18n.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/exchange-rate-api.js" defer></script>
+    <script src="js/coingecko-api.js" defer></script>
+    <script src="js/app.js" defer></script>
+    
+    <script>
+        // 테마 토글 함수
+        function toggleTheme() {
+            if (window.coinApp) {
+                window.coinApp.toggleTheme();
+            }
+        }
+        
+        // 꿀팁 토글 함수
+        function toggleTip(headerElement) {
+            const tipCard = headerElement.closest('.tip-card');
+            const isExpanded = tipCard.classList.contains('expanded');
+            
+            // 다른 모든 카드 닫기
+            document.querySelectorAll('.tip-card').forEach(card => {
+                card.classList.remove('expanded');
+            });
+            
+            // 클릭한 카드 토글
+            if (!isExpanded) {
+                tipCard.classList.add('expanded');
+            }
+        }
+        
+        // 모달 닫기 이벤트
+        document.addEventListener('DOMContentLoaded', () => {
+            const modals = document.querySelectorAll('.modal');
+            const closeBtns = document.querySelectorAll('.modal .close');
+            
+            closeBtns.forEach(btn => {
+                btn.onclick = function() {
+                    this.closest('.modal').style.display = 'none';
+                };
+            });
+            
+            window.onclick = function(event) {
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            };
+            
+            // 언어 전환 버튼 이벤트
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.getAttribute('data-lang');
+                    if (window.languageManager) {
+                        window.languageManager.changeLanguage(lang);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
