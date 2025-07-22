@@ -507,7 +507,7 @@ class CoinRankingApp {
                 break;
             case 'ai':
                 // AI 추천: AI 점수 높은 코인만
-                sortedCoins = sortedCoins.filter(coin => coin.aiScore >= 4);
+                sortedCoins = sortedCoins.filter(coin => coin.aiScore >= 2);
                 break;
             default: // 'all'
                 // 전체: 메인코인 우선 표시 (displayFilteredCoins와 동일한 로직)
@@ -1389,7 +1389,7 @@ class CoinRankingApp {
             case 'ai':
                 // AI 추천: AI 점수 높은 코인만
                 this.allCoins = filteredCoins
-                    .filter(coin => coin.aiScore >= 3)
+                    .filter(coin => coin.aiScore >= 2)
                     .sort((a, b) => b.aiScore - a.aiScore) // AI 점수 높은 순
                     .slice(0, 10);
                 break;
