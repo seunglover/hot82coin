@@ -1749,6 +1749,85 @@ class CoinRankingApp {
         }
     }
 
+    /**
+     * 꿀팁 영역 렌더링
+     */
+    renderTipsContent() {
+        const tipsContent = document.getElementById('tips-content');
+        if (!tipsContent) return;
+        const t = window.languageManager.t.bind(window.languageManager);
+        tipsContent.innerHTML = `
+            <div class="tips-header">
+                <h2>${t('tips_title')}</h2>
+                <p>${t('tips_subtitle')}</p>
+            </div>
+            <div class="tips-grid">
+                ${[1,2,3,4,5,6,7,8].map(i => `
+                <div class="tip-card">
+                    <div class="tip-header" onclick="toggleTip(this)">
+                        <div class="tip-header-left">
+                            <div class="tip-icon">${['📈','⚖️','🚀','💰','📊','🎯','😰','📱'][i-1]}</div>
+                            <h3>${t(`tips_card${i}_title`)}</h3>
+                        </div>
+                        <span class="tip-toggle">${t('tips_detail_view')}</span>
+                    </div>
+                    <div class="tip-content">
+                        <p>${t(`tips_card${i}_summary`)}</p>
+                        <div class="tip-detail">
+                            <!-- 상세 내용은 필요시 추가 구현 -->
+                        </div>
+                    </div>
+                </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    /**
+     * 투자 경고 영역 렌더링
+     */
+    renderInvestmentWarning() {
+        const warningDiv = document.getElementById('investment-warning');
+        if (!warningDiv) return;
+        const t = window.languageManager.t.bind(window.languageManager);
+        warningDiv.innerHTML = `
+            <div class="warning-header">
+                <h3>${t('investment_warning_title')}</h3>
+                <p>${t('investment_warning_subtitle')}</p>
+            </div>
+            <div class="warning-content">
+                <div class="warning-item">
+                    <div class="warning-icon">💡</div>
+                    <div class="warning-text">
+                        <h4>${t('warning_info_purpose_title')}</h4>
+                        <p>${t('warning_info_purpose_content')}</p>
+                    </div>
+                </div>
+                <div class="warning-item">
+                    <div class="warning-icon">⚖️</div>
+                    <div class="warning-text">
+                        <h4>${t('warning_investment_responsibility_title')}</h4>
+                        <p>${t('warning_investment_responsibility_content')}</p>
+                    </div>
+                </div>
+                <div class="warning-item">
+                    <div class="warning-icon">📊</div>
+                    <div class="warning-text">
+                        <h4>${t('warning_market_risk_title')}</h4>
+                        <p>${t('warning_market_risk_content')}</p>
+                    </div>
+                </div>
+                <div class="warning-item">
+                    <div class="warning-icon">🔍</div>
+                    <div class="warning-text">
+                        <h4>${t('warning_careful_investment_title')}</h4>
+                        <p>${t('warning_careful_investment_content')}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
 }
 
 // 유틸리티 함수들

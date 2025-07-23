@@ -249,7 +249,38 @@ const i18n = {
         // 공통
         back_to_main: "🏠 메인으로 돌아가기",
         dark_mode: "다크 모드",
-        light_mode: "라이트 모드"
+        light_mode: "라이트 모드",
+        // 꿀팁/투자경고 다국어 텍스트 추가
+        tips_title: "💡 코인 투자 꿀팁",
+        tips_subtitle: "초보자를 위한 실전 팁들",
+        tips_card1_title: "거래량 급증이 뭔가요?",
+        tips_card1_summary: "거래량이 갑자기 늘어나면 뭔가 일이 터진 거예요. 뉴스 확인해보세요!",
+        tips_card2_title: "롱/숏 비율 보는 법",
+        tips_card2_summary: "롱 비율 높으면 대부분이 올라갈 거라 생각하는 거죠. 하지만 시장은 예측 불가능이에요.",
+        tips_card3_title: "급등 코인 주의사항",
+        tips_card3_summary: "급등 코인은 이미 늦었을 가능성이 높아요. 조심하세요!",
+        tips_card4_title: "손절매 전략",
+        tips_card4_summary: "손실을 최소화하는 방법을 알아보세요. 투자에서 가장 중요한 건 손절매예요.",
+        tips_card5_title: "차트 보는 법 기초",
+        tips_card5_summary: "캔들스틱 패턴을 읽으면 시장 방향을 예측할 수 있어요.",
+        tips_card6_title: "포트폴리오 분산 투자",
+        tips_card6_summary: "모든 달걀을 한 바구니에 담지 마세요. 리스크를 분산시키는 게 중요해요.",
+        tips_card7_title: "FOMO 조심하세요",
+        tips_card7_summary: "FOMO = Fear Of Missing Out (놓칠까봐 두려운 심리)",
+        tips_card8_title: "모바일 거래 팁",
+        tips_card8_summary: "모바일에서도 안전하게 거래하는 방법을 알아보세요.",
+        tips_detail_view: "자세히보기",
+        // 투자 경고
+        investment_warning_title: "⚠️ 투자 경고",
+        investment_warning_subtitle: "본 사이트는 정보 제공 목적으로만 제작되었습니다",
+        warning_info_purpose_title: "정보 제공 목적",
+        warning_info_purpose_content: "이 사이트는 암호화폐 시장 정보를 제공하는 목적으로만 제작되었습니다. 투자 조언이나 추천을 제공하지 않습니다.",
+        warning_investment_responsibility_title: "투자 책임",
+        warning_investment_responsibility_content: "모든 투자 결정과 그 결과는 전적으로 본인의 책임입니다. 투자 손실에 대한 책임은 투자자 본인에게 있습니다.",
+        warning_market_risk_title: "시장 위험",
+        warning_market_risk_content: "암호화폐 시장은 높은 변동성을 가지고 있습니다. 투자 원금의 일부 또는 전부를 잃을 수 있습니다.",
+        warning_careful_investment_title: "신중한 투자",
+        warning_careful_investment_content: "투자 결정 전 충분한 검토와 분석을 거쳐 신중하게 판단하시기 바랍니다.",
     },
     
     en: {
@@ -471,7 +502,38 @@ const i18n = {
         // 공통
         back_to_main: "🏠 Back to Main",
         dark_mode: "Dark Mode",
-        light_mode: "Light Mode"
+        light_mode: "Light Mode",
+        // 꿀팁/투자경고 다국어 텍스트 추가
+        tips_title: "💡 Crypto Investment Tips",
+        tips_subtitle: "Practical tips for beginners",
+        tips_card1_title: "What is a volume surge?",
+        tips_card1_summary: "If trading volume suddenly increases, something has happened. Check the news!",
+        tips_card2_title: "How to read long/short ratio",
+        tips_card2_summary: "A high long ratio means most expect a rise, but the market is unpredictable.",
+        tips_card3_title: "Caution for surging coins",
+        tips_card3_summary: "Surging coins are often already late. Be careful!",
+        tips_card4_title: "Stop-loss strategy",
+        tips_card4_summary: "Learn how to minimize losses. The most important thing in investing is stop-loss.",
+        tips_card5_title: "Chart basics",
+        tips_card5_summary: "Reading candlestick patterns can help predict market direction.",
+        tips_card6_title: "Portfolio diversification",
+        tips_card6_summary: "Don't put all your eggs in one basket. Diversifying risk is important.",
+        tips_card7_title: "Beware of FOMO",
+        tips_card7_summary: "FOMO = Fear Of Missing Out",
+        tips_card8_title: "Mobile trading tips",
+        tips_card8_summary: "Learn how to trade safely on mobile.",
+        tips_detail_view: "View details",
+        // 투자 경고
+        investment_warning_title: "⚠️ Investment Warning",
+        investment_warning_subtitle: "This site is for informational purposes only",
+        warning_info_purpose_title: "Information Purpose",
+        warning_info_purpose_content: "This site is for providing crypto market information only. It does not provide investment advice or recommendations.",
+        warning_investment_responsibility_title: "Investment Responsibility",
+        warning_investment_responsibility_content: "All investment decisions and results are entirely your responsibility. Losses are your own responsibility.",
+        warning_market_risk_title: "Market Risk",
+        warning_market_risk_content: "The crypto market is highly volatile. You may lose some or all of your principal.",
+        warning_careful_investment_title: "Careful Investment",
+        warning_careful_investment_content: "Please make careful decisions after sufficient review and analysis before investing."
     }
 };
 
