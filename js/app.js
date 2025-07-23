@@ -39,11 +39,9 @@ class CoinRankingApp {
         
         // 언어 설정 초기화
         this.initLanguage();
-        // 꿀팁/투자경고 최초 렌더링 및 표시
+        // 꿀팁/투자경고 최초 렌더링
         this.renderTipsContent();
         this.renderInvestmentWarning();
-        const tipsContent = document.getElementById('tips-content');
-        if (tipsContent) tipsContent.style.display = 'block';
         const warningDiv = document.getElementById('investment-warning');
         if (warningDiv) warningDiv.style.display = 'block';
     }
@@ -1717,14 +1715,17 @@ class CoinRankingApp {
         const topCoinInfo = document.getElementById('top-coin-info');
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
+        const myInvestContent = document.getElementById('myinvest-content');
 
         if (contentDiv) contentDiv.style.display = 'none';
         if (topCoinInfo) topCoinInfo.style.display = 'none';
         if (marketSentiment) marketSentiment.style.display = 'none';
+        if (myInvestContent) myInvestContent.style.display = 'none';
 
-        // 꿀팁 컨텐츠 표시
+        // 꿀팁 컨텐츠 표시 및 렌더링
         if (tipsContent) {
             tipsContent.style.display = 'block';
+            this.renderTipsContent();
         }
 
         // 꿀팁 카드 클릭 이벤트 바인딩
@@ -1752,8 +1753,22 @@ class CoinRankingApp {
         if (tipsContent) tipsContent.style.display = 'none';
         if (myInvestContent) {
             myInvestContent.style.display = 'block';
+            this.renderMyInvestContent();
             renderMyInvestTestCards();
         }
+    }
+
+    /**
+     * 투자유형 테스트 영역 렌더링
+     */
+    renderMyInvestContent() {
+        const myInvestTitle = document.getElementById('myinvest-title');
+        const myInvestSubtitle = document.getElementById('myinvest-subtitle');
+        if (!myInvestTitle || !myInvestSubtitle) return;
+        
+        const t = window.languageManager.t.bind(window.languageManager);
+        myInvestTitle.textContent = t('myinvest_title');
+        myInvestSubtitle.textContent = t('myinvest_subtitle');
     }
 
     /**
@@ -1781,7 +1796,7 @@ class CoinRankingApp {
                     <div class="tip-content">
                         <p>${t(`tips_card${i}_summary`)}</p>
                         <div class="tip-detail">
-                            <!-- 상세 내용은 필요시 추가 구현 -->
+                            <p>${t(`tips_card${i}_detail`)}</p>
                         </div>
                     </div>
                 </div>

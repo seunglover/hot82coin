@@ -103,8 +103,17 @@
         
         <!-- 꿀팁 컨텐츠 영역 -->
         <div id="tips-content" class="tips-content" style="display: none;"></div>
-        <!-- 투자 경고 섹션 -->
-        <div id="investment-warning" class="investment-warning"></div>
+        
+        <!-- 투자성향 테스트 영역 -->
+        <div id="myinvest-content" class="tips-content" style="display: none;">
+            <div class="tips-header">
+                <h2 id="myinvest-title"></h2>
+                <p id="myinvest-subtitle"></p>
+            </div>
+            <div class="tips-grid" id="myinvest-grid">
+                <!-- 투자성향 테스트 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
         
         <!-- 시장 심리 지표 영역 -->
         <div id="market-sentiment" class="market-sentiment" style="display: none;">
@@ -124,16 +133,8 @@
             </div>
         </div>
         
-        <!-- 투자성향 테스트 영역 -->
-        <div id="myinvest-content" class="tips-content" style="display: none;">
-            <div class="tips-header">
-                <h2>🧠 나의 투자유형 테스트</h2>
-                <p>15개 질문으로 내 투자성향을 알아보세요!</p>
-            </div>
-            <div class="tips-grid" id="myinvest-grid">
-                <!-- 투자성향 테스트 카드들이 여기에 동적으로 추가됩니다 -->
-            </div>
-        </div>
+        <!-- 투자 경고 섹션 -->
+        <div id="investment-warning" class="investment-warning"></div>
         
         <div class="footer">
             <div class="controls">
@@ -196,7 +197,7 @@
                 card.classList.remove('expanded');
             });
             
-            // 클릭한 카드 토글
+            // 클릭한 카드가 닫혀있었으면 열기, 열려있었으면 닫기
             if (!isExpanded) {
                 tipCard.classList.add('expanded');
             }
