@@ -2182,8 +2182,133 @@ body {
     }
     
     .test-retry-btn {
-        padding: 10px 20px;
+        padding: 10px 16px;
         font-size: 0.85rem;
+    }
+} 
+
+/* 투자 경고 섹션 스타일 */
+.investment-warning {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 20px 0;
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.warning-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+}
+
+.warning-header h3 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.warning-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.warning-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.warning-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.warning-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: var(--accent);
+}
+
+.warning-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.warning-text h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.warning-text p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .investment-warning {
+        margin: 15px 0;
+        padding: 20px;
+    }
+    
+    .warning-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .warning-item {
+        padding: 14px;
+    }
+    
+    .warning-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .warning-text h4 {
+        font-size: 0.95rem;
+    }
+    
+    .warning-text p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .investment-warning {
+        margin: 12px 0;
+        padding: 16px;
+    }
+    
+    .warning-item {
+        padding: 12px;
+    }
+    
+    .warning-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .warning-text h4 {
+        font-size: 0.9rem;
+    }
+    
+    .warning-text p {
+        font-size: 0.75rem;
     }
 } 
 
