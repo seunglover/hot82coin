@@ -39,6 +39,13 @@ class CoinRankingApp {
         
         // 언어 설정 초기화
         this.initLanguage();
+        // 꿀팁/투자경고 최초 렌더링 및 표시
+        this.renderTipsContent();
+        this.renderInvestmentWarning();
+        const tipsContent = document.getElementById('tips-content');
+        if (tipsContent) tipsContent.style.display = 'block';
+        const warningDiv = document.getElementById('investment-warning');
+        if (warningDiv) warningDiv.style.display = 'block';
     }
 
     /**
