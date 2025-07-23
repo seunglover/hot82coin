@@ -2002,7 +2002,27 @@ body {
 }
 
 .tip-card.expanded .tip-content {
-    max-height: 500px;
+    max-height: 600px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+.tip-card.expanded .tip-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tip-card.expanded .tip-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tip-card.expanded .tip-content::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 3px;
+}
+
+.tip-card.expanded .tip-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-secondary);
 }
 
 .tip-content p {
@@ -2057,6 +2077,10 @@ body {
     .tip-detail {
         padding: 0 15px 15px;
     }
+    
+    .tip-card.expanded .tip-content {
+        max-height: 500px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2084,6 +2108,10 @@ body {
     
     .tip-detail {
         padding: 0 12px 12px;
+    }
+    
+    .tip-card.expanded .tip-content {
+        max-height: 400px;
     }
 } 
 
