@@ -153,6 +153,10 @@ class CoinRankingApp {
                 this.currentMenu = 'tips';
                 this.displayTipsContent();
                 break;
+            case 'dictionary':
+                this.currentMenu = 'dictionary';
+                this.displayDictionaryContent();
+                break;
             case 'theme':
                 this.toggleTheme();
                 break;
@@ -1803,6 +1807,174 @@ class CoinRankingApp {
                 `).join('')}
             </div>
         `;
+    }
+
+    /**
+     * 용어사전 컨텐츠 표시
+     */
+    displayDictionaryContent() {
+        console.log('용어사전 컨텐츠 표시 시작');
+        
+        // 다른 영역들 숨기기
+        const contentDiv = document.getElementById('content');
+        const topCoinInfo = document.getElementById('top-coin-info');
+        const marketSentiment = document.getElementById('market-sentiment');
+        const tipsContent = document.getElementById('tips-content');
+        const myInvestContent = document.getElementById('myinvest-content');
+        
+        if (contentDiv) contentDiv.style.display = 'none';
+        if (topCoinInfo) topCoinInfo.style.display = 'none';
+        if (marketSentiment) marketSentiment.style.display = 'none';
+        if (tipsContent) tipsContent.style.display = 'none';
+        if (myInvestContent) myInvestContent.style.display = 'none';
+        
+        // 용어사전 컨텐츠 표시
+        const dictionaryContent = document.getElementById('dictionary-content');
+        if (dictionaryContent) {
+            dictionaryContent.style.display = 'block';
+            this.renderDictionaryContent();
+        }
+    }
+
+    /**
+     * 용어사전 컨텐츠 렌더링
+     */
+    renderDictionaryContent() {
+        const dictionaryGrid = document.getElementById('dictionary-grid');
+        if (!dictionaryGrid) return;
+
+        const langManager = window.languageManager;
+        const t = langManager ? langManager.t.bind(langManager) : (key) => key;
+
+        const dictionaryCards = [
+            {
+                title: t('dictionary_basics_title'),
+                subtitle: t('dictionary_basics_subtitle'),
+                icon: '🔐',
+                content: `
+                    <h3>블록체인 (Blockchain)</h3>
+                    <p>분산 원장 기술로, 모든 거래 기록이 투명하게 저장되는 기술</p>
+                    
+                    <h3>암호화폐 (Cryptocurrency)</h3>
+                    <p>암호화 기술을 사용하여 보안을 유지하는 디지털 또는 가상 화폐</p>
+                    
+                    <h3>지갑 (Wallet)</h3>
+                    <ul>
+                        <li><strong>핫 지갑:</strong> 인터넷에 연결된 지갑 (편리하지만 보안 위험)</li>
+                        <li><strong>콜드 지갑:</strong> 오프라인 지갑 (보안성이 높음)</li>
+                        <li><strong>하드웨어 지갑:</strong> 물리적 장치로 보안성이 매우 높음</li>
+                    </ul>
+                    
+                    <h3>채굴 (Mining)</h3>
+                    <p>새로운 암호화폐를 생성하고 거래를 검증하는 과정</p>
+                    
+                    <h3>해시 (Hash)</h3>
+                    <p>데이터를 고정 길이의 문자열로 변환하는 암호화 함수</p>
+                `
+            },
+            {
+                title: t('dictionary_exchange_title'),
+                subtitle: t('dictionary_exchange_subtitle'),
+                icon: '🏦',
+                content: `
+                    <h3>거래소 (Exchange)</h3>
+                    <p>암호화폐를 사고팔 수 있는 온라인 플랫폼</p>
+                    
+                    <h3>스팟 거래 (Spot Trading)</h3>
+                    <p>실제 암호화폐를 즉시 사고파는 거래</p>
+                    
+                    <h3>선물 거래 (Futures Trading)</h3>
+                    <p>미래의 특정 가격으로 거래하는 계약</p>
+                    
+                    <h3>레버리지 (Leverage)</h3>
+                    <p>자본 대비 거래 규모를 확대하는 것 (예: 10배 레버리지)</p>
+                    
+                    <h3>마진 (Margin)</h3>
+                    <p>레버리지 거래에 필요한 보증금</p>
+                    
+                    <h3>청산 (Liquidation)</h3>
+                    <p>마진이 부족해져서 강제로 포지션이 정리되는 것</p>
+                    
+                    <h3>스왑 (Swap)</h3>
+                    <p>한 암호화폐를 다른 암호화폐로 교환하는 것</p>
+                `
+            },
+            {
+                title: t('dictionary_defi_title'),
+                subtitle: t('dictionary_defi_subtitle'),
+                icon: '🌊',
+                content: `
+                    <h3>DeFi (Decentralized Finance)</h3>
+                    <p>중앙화된 기관 없이 블록체인 기반으로 운영되는 금융 서비스</p>
+                    
+                    <h3>NFT (Non-Fungible Token)</h3>
+                    <p>대체 불가능한 고유한 디지털 자산</p>
+                    
+                    <h3>스마트 컨트랙트 (Smart Contract)</h3>
+                    <p>자동으로 실행되는 디지털 계약</p>
+                    
+                    <h3>유동성 풀 (Liquidity Pool)</h3>
+                    <p>DeFi에서 거래를 위한 자금 풀</p>
+                    
+                    <h3>Yield Farming</h3>
+                    <p>DeFi 프로토콜에 자금을 제공하고 보상을 받는 것</p>
+                    
+                    <h3>스테이킹 (Staking)</h3>
+                    <p>암호화폐를 네트워크에 예치하고 보상을 받는 것</p>
+                    
+                    <h3>DAO (Decentralized Autonomous Organization)</h3>
+                    <p>중앙화된 관리 없이 자동으로 운영되는 조직</p>
+                `
+            },
+            {
+                title: t('dictionary_trading_title'),
+                subtitle: t('dictionary_trading_subtitle'),
+                icon: '📈',
+                content: `
+                    <h3>롱 (Long)</h3>
+                    <p>가격 상승을 기대하는 포지션</p>
+                    
+                    <h3>숏 (Short)</h3>
+                    <p>가격 하락을 기대하는 포지션</p>
+                    
+                    <h3>FOMO (Fear Of Missing Out)</h3>
+                    <p>놓칠까봐 두려운 심리로 인한 성급한 투자</p>
+                    
+                    <h3>FUD (Fear, Uncertainty, Doubt)</h3>
+                    <p>공포, 불확실성, 의심을 조성하는 정보</p>
+                    
+                    <h3>HODL</h3>
+                    <p>Hold의 오타에서 유래한 암호화폐 홀딩 문화</p>
+                    
+                    <h3>웨일 (Whale)</h3>
+                    <p>대량의 암호화폐를 보유한 대형 투자자</p>
+                    
+                    <h3>펌프 앤 덤프 (Pump and Dump)</h3>
+                    <p>인위적으로 가격을 끌어올린 후 매도하는 조작</p>
+                    
+                    <h3>손절매 (Stop Loss)</h3>
+                    <p>미리 정한 손실 한도에서 포지션을 정리하는 것</p>
+                `
+            }
+        ];
+
+        dictionaryGrid.innerHTML = dictionaryCards.map((card, index) => `
+            <div class="tip-card" onclick="toggleDictionaryCard(this)">
+                <div class="tip-header">
+                    <div class="tip-icon">${card.icon}</div>
+                    <div class="tip-title-section">
+                        <h3 class="tip-title">${card.title}</h3>
+                        <p class="tip-subtitle">${card.subtitle}</p>
+                    </div>
+                    <div class="tip-arrow">▼</div>
+                </div>
+                <div class="tip-content">
+                    ${card.content}
+                </div>
+            </div>
+        `).join('');
+
+        console.log('용어사전 컨텐츠 렌더링 완료');
     }
 
     /**

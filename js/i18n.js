@@ -14,6 +14,7 @@ const i18n = {
         menu_longshort: "롱/숏 비율",
         menu_ai: "🔮 AI 추천",
         menu_tips: "꿀팁",
+        menu_dictionary: "📚 용어사전",
         menu_myinvest: "나의투자유형",
         
         // 1위 코인 정보
@@ -293,6 +294,18 @@ const i18n = {
         warning_market_risk_content: "암호화폐 시장은 높은 변동성을 가지고 있습니다. 투자 원금의 일부 또는 전부를 잃을 수 있습니다.",
         warning_careful_investment_title: "신중한 투자",
         warning_careful_investment_content: "투자 결정 전 충분한 검토와 분석을 거쳐 신중하게 판단하시기 바랍니다.",
+        
+        // 용어사전
+        dictionary_title: "📚 암호화폐 용어사전",
+        dictionary_subtitle: "암호화폐 투자에 필요한 모든 용어를 한눈에!",
+        dictionary_basics_title: "암호화폐 기초 용어",
+        dictionary_basics_subtitle: "블록체인, 암호화폐, 지갑 등 기본 개념",
+        dictionary_exchange_title: "거래소 용어",
+        dictionary_exchange_subtitle: "거래소에서 자주 사용하는 용어들",
+        dictionary_defi_title: "DeFi & NFT 용어",
+        dictionary_defi_subtitle: "최신 트렌드 용어 정리",
+        dictionary_trading_title: "투자/거래 용어",
+        dictionary_trading_subtitle: "투자에 필요한 핵심 용어들",
     },
     
     en: {
@@ -307,6 +320,7 @@ const i18n = {
         menu_longshort: "Long/Short",
         menu_ai: "🔮 AI Pick",
         menu_tips: "Tips",
+        menu_dictionary: "📚 Dictionary",
         menu_myinvest: "My Invest Type",
         
         // 1위 코인 정보
@@ -456,6 +470,18 @@ const i18n = {
         terms_change_content: "This site may change these terms as necessary. Changes will be notified through site announcements, and changed terms take effect immediately upon notice.",
         terms_article_9_title: "Article 9 (Effective Date)",
         terms_effective_date: "These terms take effect from January 15, 2024.",
+        
+        // 용어사전
+        dictionary_title: "📚 Cryptocurrency Dictionary",
+        dictionary_subtitle: "All terms needed for cryptocurrency investment at a glance!",
+        dictionary_basics_title: "Cryptocurrency Basics",
+        dictionary_basics_subtitle: "Basic concepts like blockchain, cryptocurrency, wallet",
+        dictionary_exchange_title: "Exchange Terms",
+        dictionary_exchange_subtitle: "Commonly used terms on exchanges",
+        dictionary_defi_title: "DeFi & NFT Terms",
+        dictionary_defi_subtitle: "Latest trend terms",
+        dictionary_trading_title: "Investment/Trading Terms",
+        dictionary_trading_subtitle: "Essential terms for investment",
         
         // 개인정보처리방침 페이지
         privacy_title: "🔒 Privacy Policy",
