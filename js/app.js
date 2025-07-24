@@ -389,10 +389,12 @@ class CoinRankingApp {
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
         const myInvestContent = document.getElementById('myinvest-content');
+        const dictionaryContent = document.getElementById('dictionary-content');
         if (topCoinInfo) topCoinInfo.style.display = 'none';
         if (marketSentiment) marketSentiment.style.display = 'none';
         if (tipsContent) tipsContent.style.display = 'none';
         if (myInvestContent) myInvestContent.style.display = 'none';
+        if (dictionaryContent) dictionaryContent.style.display = 'none';
         
         // 기존 컨텐츠 표시
         if (contentDiv) {
@@ -1720,11 +1722,13 @@ class CoinRankingApp {
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
         const myInvestContent = document.getElementById('myinvest-content');
+        const dictionaryContent = document.getElementById('dictionary-content');
 
         if (contentDiv) contentDiv.style.display = 'none';
         if (topCoinInfo) topCoinInfo.style.display = 'none';
         if (marketSentiment) marketSentiment.style.display = 'none';
         if (myInvestContent) myInvestContent.style.display = 'none';
+        if (dictionaryContent) dictionaryContent.style.display = 'none';
 
         // 꿀팁 컨텐츠 표시 및 렌더링
         if (tipsContent) {
@@ -1751,10 +1755,12 @@ class CoinRankingApp {
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
         const myInvestContent = document.getElementById('myinvest-content');
+        const dictionaryContent = document.getElementById('dictionary-content');
         if (contentDiv) contentDiv.style.display = 'none';
         if (topCoinInfo) topCoinInfo.style.display = 'none';
         if (marketSentiment) marketSentiment.style.display = 'none';
         if (tipsContent) tipsContent.style.display = 'none';
+        if (dictionaryContent) dictionaryContent.style.display = 'none';
         if (myInvestContent) {
             myInvestContent.style.display = 'block';
             this.renderMyInvestContent();
@@ -1821,6 +1827,7 @@ class CoinRankingApp {
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
         const myInvestContent = document.getElementById('myinvest-content');
+        const dictionaryContent = document.getElementById('dictionary-content');
         
         if (contentDiv) contentDiv.style.display = 'none';
         if (topCoinInfo) topCoinInfo.style.display = 'none';
@@ -1829,7 +1836,6 @@ class CoinRankingApp {
         if (myInvestContent) myInvestContent.style.display = 'none';
         
         // 용어사전 컨텐츠 표시
-        const dictionaryContent = document.getElementById('dictionary-content');
         if (dictionaryContent) {
             dictionaryContent.style.display = 'block';
             this.renderDictionaryContent();
