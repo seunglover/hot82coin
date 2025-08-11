@@ -105,7 +105,7 @@ class BybitAPI {
     async getFallbackData() {
         try {
             console.log('CoinGecko API로 대체 데이터 가져오는 중...');
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=50&page=1&sparkline=false&locale=en', {
+            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=80&page=1&sparkline=false&locale=en', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -120,8 +120,11 @@ class BybitAPI {
             
             const data = await response.json();
             
+            // 메인코인과 밈코인이 골고루 섞인 선별된 리스트
+            const selectedCoins = this.getBalancedCoinList(data);
+            
             // 바이비트 API 형식에 맞게 변환
-            return data.map((coin, index) => ({
+            return selectedCoins.map((coin, index) => ({
                 symbol: coin.symbol.toUpperCase() + 'USDT',
                 lastPrice: coin.current_price.toString(),
                 quoteVolume: coin.total_volume.toString(),
@@ -135,6 +138,79 @@ class BybitAPI {
             console.error('대체 데이터 가져오기 실패:', error);
             throw error;
         }
+    }
+
+    /**
+     * 메인코인과 밈코인이 균형있게 섞인 리스트 생성
+     */
+    getBalancedCoinList(allCoins) {
+        console.log('균형있는 코인 리스트 생성 중...');
+        
+        // 메인코인들 (시가총액 상위 + 주요 코인들)
+        const mainCoins = ['bitcoin', 'ethereum', 'binancecoin', 'ripple', 'cardano', 'solana', 
+                          'avalanche-2', 'polkadot', 'chainlink', 'polygon', 'litecoin', 'bitcoin-cash',
+                          'ethereum-classic', 'stellar', 'vechain', 'filecoin', 'tron', 'monero',
+                          'internet-computer', 'cosmos', 'algorand', 'elrond-erd-2', 'near', 'flow',
+                          'the-sandbox', 'decentraland', 'axie-infinity', 'theta-token'];
+        
+        // 밈코인들 (인기있는 밈코인들)
+        const memeCoins = ['dogecoin', 'shiba-inu', 'pepe', 'floki', 'bonk', 'dogwifcoin', 'book-of-meme',
+                          'popcat', 'cat-in-a-dogs-world', 'brett-based', 'baby-doge-coin', 'meme-moguls',
+                          'memecoin', 'wen-4', 'samoyedcoin', 'myro', 'jeo-boden', 'maga', 'turbo',
+                          'simon-s-cat', 'degen-base', 'mog-coin', 'neiro-ethereum', 'goatseus-maximus'];
+        
+        // DeFi/AI/게임 코인들 (다양성을 위해)
+        const specialCoins = ['uniswap', 'maker', 'compound-governance-token', '1inch', 'sushi',
+                             'pancakeswap-token', 'curve-dao-token', 'yearn-finance', 'synthetix',
+                             'artificial-superintelligence-alliance', 'render-token', 'ocean-protocol',
+                             'fetch-ai', 'singularitynet', 'immutable-x', 'enjincoin', 'gala',
+                             'chiliz', 'wemix-token', 'apecoin'];
+        
+        const selectedCoins = [];
+        const usedIds = new Set();
+        
+        // 1. 메인코인들 우선 선택 (20개)
+        const availableMainCoins = allCoins.filter(coin => 
+            mainCoins.includes(coin.id) && !usedIds.has(coin.id)
+        ).slice(0, 20);
+        
+        availableMainCoins.forEach(coin => {
+            selectedCoins.push(coin);
+            usedIds.add(coin.id);
+        });
+        
+        // 2. 밈코인들 선택 (15개)
+        const availableMemeCoins = allCoins.filter(coin => 
+            memeCoins.includes(coin.id) && !usedIds.has(coin.id)
+        ).slice(0, 15);
+        
+        availableMemeCoins.forEach(coin => {
+            selectedCoins.push(coin);
+            usedIds.add(coin.id);
+        });
+        
+        // 3. 특별 카테고리 코인들 (10개)
+        const availableSpecialCoins = allCoins.filter(coin => 
+            specialCoins.includes(coin.id) && !usedIds.has(coin.id)
+        ).slice(0, 10);
+        
+        availableSpecialCoins.forEach(coin => {
+            selectedCoins.push(coin);
+            usedIds.add(coin.id);
+        });
+        
+        // 4. 나머지는 거래량 순으로 채우기
+        const remainingCoins = allCoins.filter(coin => !usedIds.has(coin.id))
+            .slice(0, 50 - selectedCoins.length);
+        
+        selectedCoins.push(...remainingCoins);
+        
+        // 최종적으로 거래량 순으로 정렬
+        const finalList = selectedCoins.sort((a, b) => b.total_volume - a.total_volume).slice(0, 50);
+        
+        console.log(`균형있는 리스트 완성: 메인코인 ${availableMainCoins.length}개, 밈코인 ${availableMemeCoins.length}개, 특별코인 ${availableSpecialCoins.length}개, 기타 ${remainingCoins.length}개`);
+        
+        return finalList;
     }
 
     /**
@@ -509,15 +585,25 @@ class BybitAPI {
                 };
             });
             
-            // 4단계: 메인코인과 밈코인 분리
-            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH'];
+            // 4단계: 메인코인과 밈코인 분리 (더 다양하고 균형있게)
+            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'LTC', 'BCH',
+                              'ETC', 'XLM', 'VET', 'FIL', 'TRX', 'XMR', 'ICP', 'ATOM', 'ALGO', 'EGLD', 'NEAR', 'FLOW',
+                              'SAND', 'MANA', 'AXS', 'THETA', 'AAVE', 'MKR', 'COMP', '1INCH', 'SUSHI', 'CRV', 'YFI', 
+                              'SNX', 'FET', 'AGIX', 'OCEAN', 'RNDR', 'IMX', 'ENJ', 'GALA', 'CHZ', 'WEMIX', 'APE'];
+            const memeCoins = ['DOGE', 'SHIB', 'PEPE', 'FLOKI', 'BONK', 'WIF', 'BOME', 'POPCAT', 'MEW', 'BRETT', 
+                              'BABYDOGE', 'MEME', 'WEN', 'SAMO', 'MYRO', 'BODEN', 'MAGA', 'TURBO', 'CAT', 'DEGEN', 
+                              'MOG', 'NEIRO', 'GOAT'];
             const mainCoinPairs = combinedData.filter(item => {
                 const symbol = item.symbol.replace('USDT', '');
                 return mainCoins.includes(symbol);
             });
             const memeCoinPairs = combinedData.filter(item => {
                 const symbol = item.symbol.replace('USDT', '');
-                return !mainCoins.includes(symbol);
+                return memeCoins.includes(symbol);
+            });
+            const otherCoinPairs = combinedData.filter(item => {
+                const symbol = item.symbol.replace('USDT', '');
+                return !mainCoins.includes(symbol) && !memeCoins.includes(symbol);
             });
             
             // 5단계: 15분 기준 거래량으로 정렬
@@ -533,21 +619,41 @@ class BybitAPI {
                 return bVolume - aVolume; // 15분 거래량 높은 순
             });
             
-            console.log('=== 15분 거래량 기준 정렬 결과 ===');
-            console.log('메인코인 15분 거래량 순위:', sortedMainCoins.slice(0, 10).map(coin => ({
+            const sortedOtherCoins = otherCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume15min || 0);
+                const bVolume = parseFloat(b.volume15min || 0);
+                return bVolume - aVolume; // 15분 거래량 높은 순
+            });
+            
+            console.log('=== 15분 거래량 기준 정렬 결과 (균형있는 구성) ===');
+            console.log('메인코인 15분 거래량 순위:', sortedMainCoins.slice(0, 8).map(coin => ({
                 symbol: coin.symbol,
                 volume15min: `${(coin.volume15min / 1e6).toFixed(2)}M`,
                 volume24h: `${(parseFloat(coin.volume24h || coin.volume || coin.quoteVolume) / 1e9).toFixed(2)}B`
             })));
-            console.log('밈코인 15분 거래량 순위:', sortedMemeCoins.slice(0, 10).map(coin => ({
+            console.log('밈코인 15분 거래량 순위:', sortedMemeCoins.slice(0, 8).map(coin => ({
+                symbol: coin.symbol,
+                volume15min: `${(coin.volume15min / 1e6).toFixed(2)}M`
+            })));
+            console.log('기타코인 15분 거래량 순위:', sortedOtherCoins.slice(0, 5).map(coin => ({
                 symbol: coin.symbol,
                 volume15min: `${(coin.volume15min / 1e6).toFixed(2)}M`
             })));
             
-            // 6단계: 메인코인 먼저, 밈코인 나중에 결합
-            const mainCoinsToShow = sortedMainCoins.slice(0, Math.max(20, limit * 0.6));
-            const memeCoinsToShow = sortedMemeCoins.slice(0, limit - mainCoinsToShow.length);
-            const finalCoins = [...mainCoinsToShow, ...memeCoinsToShow];
+            // 6단계: 메인코인, 밈코인, 기타코인 균형있게 결합
+            const mainCoinsToShow = sortedMainCoins.slice(0, Math.floor(limit * 0.5)); // 50%
+            const memeCoinsToShow = sortedMemeCoins.slice(0, Math.floor(limit * 0.3)); // 30%
+            const otherCoinsToShow = sortedOtherCoins.slice(0, limit - mainCoinsToShow.length - memeCoinsToShow.length); // 20%
+            
+            // 섞어서 다양성 확보
+            const finalCoins = [];
+            const maxLength = Math.max(mainCoinsToShow.length, memeCoinsToShow.length, otherCoinsToShow.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                if (i < mainCoinsToShow.length) finalCoins.push(mainCoinsToShow[i]);
+                if (i < memeCoinsToShow.length) finalCoins.push(memeCoinsToShow[i]);
+                if (i < otherCoinsToShow.length) finalCoins.push(otherCoinsToShow[i]);
+            }
             
             return finalCoins.map((coin, index) => {
                 const volume24h = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
@@ -852,7 +958,7 @@ class BybitAPI {
     async getMarketStatsFromCoinGecko() {
         try {
             console.log('CoinGecko API에서 시장 통계 가져오는 중...');
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=50&page=1&sparkline=false&locale=en', {
+            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=80&page=1&sparkline=false&locale=en', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -867,15 +973,18 @@ class BybitAPI {
             
             const data = await response.json();
             
-            const totalVolume = data.reduce((sum, coin) => sum + coin.total_volume, 0);
-            const totalMarketCap = data.reduce((sum, coin) => sum + coin.market_cap, 0);
+            // 균형있는 리스트 사용
+            const selectedData = this.getBalancedCoinList(data);
             
-            const gainers = data
+            const totalVolume = selectedData.reduce((sum, coin) => sum + coin.total_volume, 0);
+            const totalMarketCap = selectedData.reduce((sum, coin) => sum + coin.market_cap, 0);
+            
+            const gainers = selectedData
                 .filter(coin => coin.price_change_percentage_24h > 0)
                 .sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h)
                 .slice(0, 5);
                 
-            const losers = data
+            const losers = selectedData
                 .filter(coin => coin.price_change_percentage_24h < 0)
                 .sort((a, b) => a.price_change_percentage_24h - b.price_change_percentage_24h)
                 .slice(0, 5);
