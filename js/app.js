@@ -19,7 +19,7 @@ class CoinRankingApp {
         this.cache = {
             coins: null,
             lastCacheTime: 0,
-            cacheDuration: 4 * 60 * 1000 // 4분 캐시
+            cacheDuration: 14 * 60 * 1000 // 14분 캐시 (15분 업데이트에 맞춤)
         };
         this.init();
     }
@@ -242,9 +242,10 @@ class CoinRankingApp {
         try {
             console.log('코인 데이터 로딩 시작...');
             
-            // 병렬로 API 호출하여 속도 개선
+            // 15분 기준 실시간 거래량 데이터로 변경
+            console.log('15분 기준 실시간 거래량 데이터 로딩 중...');
             const [coins, marketStats] = await Promise.all([
-                bybitAPI.getTopCoinsByVolume(20),
+                bybitAPI.getTopCoinsFromBybit15Min(50), // 15분 기준 상위 50개 코인
                 bybitAPI.getMarketStats()
             ]);
             
@@ -1125,13 +1126,14 @@ class CoinRankingApp {
     }
 
     /**
-     * 자동 새로고침 시작
+     * 자동 새로고침 시작 (15분 기준 실시간 거래량 반영)
      */
     startAutoRefresh() {
-        // 5분마다 자동 새로고침
+        // 15분마다 자동 새로고침 (실시간 거래량 업데이트에 맞춤)
         this.autoRefreshInterval = setInterval(() => {
+            console.log('15분 주기 자동 업데이트 시작...');
             this.loadCoinData();
-        }, 5 * 60 * 1000);
+        }, 15 * 60 * 1000);
     }
 
     /**
@@ -1416,56 +1418,33 @@ class CoinRankingApp {
                 console.log('메인코인 목록:', mainCoinList.map(coin => coin.symbol));
                 console.log('기타 코인 개수:', otherCoins.length);
                 
-                // 메인코인을 복합 점수로 정렬 (거래량 + 변동률 + 롱숏비율)
+                // 메인코인을 순수 거래량 기준으로 정렬 (진짜 지금 거래를 많이 하는 순서)
                 const sortedMainCoins = mainCoinList.sort((a, b) => {
-                    // 거래량 정규화 (0-1 범위)
-                    const maxVolume = Math.max(...mainCoinList.map(coin => coin.volume || 0));
-                    const aVolume = maxVolume > 0 ? (a.volume || 0) / maxVolume : 0;
-                    const bVolume = maxVolume > 0 ? (b.volume || 0) / maxVolume : 0;
-                    
-                    // 변동률 정규화 (0-1 범위)
-                    const maxChange = Math.max(...mainCoinList.map(coin => Math.abs(coin.price24hPcnt || 0)));
-                    const aChange = maxChange > 0 ? Math.abs(a.price24hPcnt || 0) / maxChange : 0;
-                    const bChange = maxChange > 0 ? Math.abs(b.price24hPcnt || 0) / maxChange : 0;
-                    
-                    // 롱숏비율 정규화 (0-1 범위)
-                    const maxLongShort = Math.max(...mainCoinList.map(coin => Math.abs(coin.longAccount || 0)));
-                    const aLongShort = maxLongShort > 0 ? Math.abs(a.longAccount || 0) / maxLongShort : 0;
-                    const bLongShort = maxLongShort > 0 ? Math.abs(b.longAccount || 0) / maxLongShort : 0;
-                    
-                    // 복합 점수 계산 (거래량 40% + 변동률 30% + 롱숏비율 30%)
-                    const aScore = (aVolume * 0.4) + (aChange * 0.3) + (aLongShort * 0.3);
-                    const bScore = (bVolume * 0.4) + (bChange * 0.3) + (bLongShort * 0.3);
-                    
-                    return bScore - aScore;
+                    const aVolume = parseFloat(a.volume || 0);
+                    const bVolume = parseFloat(b.volume || 0);
+                    return bVolume - aVolume; // 거래량 높은 순
                 });
                 
-                // 기타 코인도 동일한 복합 점수로 정렬
+                // 밈코인(기타 코인)도 순수 거래량 기준으로 정렬 (진짜 지금 거래를 많이 하는 순서)
                 const sortedOtherCoins = otherCoins.sort((a, b) => {
-                    // 거래량 정규화 (0-1 범위)
-                    const maxVolume = Math.max(...otherCoins.map(coin => coin.volume || 0));
-                    const aVolume = maxVolume > 0 ? (a.volume || 0) / maxVolume : 0;
-                    const bVolume = maxVolume > 0 ? (b.volume || 0) / maxVolume : 0;
-                    
-                    // 변동률 정규화 (0-1 범위)
-                    const maxChange = Math.max(...otherCoins.map(coin => Math.abs(coin.price24hPcnt || 0)));
-                    const aChange = maxChange > 0 ? Math.abs(a.price24hPcnt || 0) / maxChange : 0;
-                    const bChange = maxChange > 0 ? Math.abs(b.price24hPcnt || 0) / maxChange : 0;
-                    
-                    // 롱숏비율 정규화 (0-1 범위)
-                    const maxLongShort = Math.max(...otherCoins.map(coin => Math.abs(coin.longAccount || 0)));
-                    const aLongShort = maxLongShort > 0 ? Math.abs(a.longAccount || 0) / maxLongShort : 0;
-                    const bLongShort = maxLongShort > 0 ? Math.abs(b.longAccount || 0) / maxLongShort : 0;
-                    
-                    // 복합 점수 계산 (거래량 40% + 변동률 30% + 롱숏비율 30%)
-                    const aScore = (aVolume * 0.4) + (aChange * 0.3) + (aLongShort * 0.3);
-                    const bScore = (bVolume * 0.4) + (bChange * 0.3) + (bLongShort * 0.3);
-                    
-                    return bScore - aScore;
+                    const aVolume = parseFloat(a.volume || 0);
+                    const bVolume = parseFloat(b.volume || 0);
+                    return bVolume - aVolume; // 거래량 높은 순
                 });
                 
                 // 메인코인을 먼저, 그 다음 다른 코인들
                 this.allCoins = [...sortedMainCoins, ...sortedOtherCoins].slice(0, 20);
+                
+                // 거래량 기준 정렬 결과 로깅
+                console.log('=== 거래량 기준 정렬 결과 ===');
+                console.log('메인코인 거래량 순위:', sortedMainCoins.slice(0, 10).map(coin => ({
+                    symbol: coin.symbol,
+                    volume: `$${(coin.volume / 1e9).toFixed(2)}B`
+                })));
+                console.log('밈코인 거래량 순위:', sortedOtherCoins.slice(0, 5).map(coin => ({
+                    symbol: coin.symbol,
+                    volume: `$${(coin.volume / 1e6).toFixed(1)}M`
+                })));
                 console.log('최종 표시할 코인 개수:', this.allCoins.length);
                 console.log('최종 코인 목록:', this.allCoins.map(coin => coin.symbol));
                 break;
@@ -2894,3 +2873,7 @@ function renderMyInvestTestCards() {
     
     showStartScreen();
 }
+
+/**
+ * 가이드 콘텐츠 표시
+ */

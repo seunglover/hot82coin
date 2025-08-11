@@ -145,6 +145,72 @@ class BybitAPI {
     }
 
     /**
+     * 바이비트 V5 API에서 15분 기준 K-line 데이터 가져오기 (실시간 거래량)
+     */
+    async get15MinKline(symbol) {
+        try {
+            console.log(`${symbol} 15분 K-line 데이터 요청 중...`);
+            const response = await this.makeRequest('/market/kline', { 
+                category: this.categories.spot,
+                symbol: symbol,
+                interval: '15',  // 15분 간격
+                limit: 4         // 최근 4개 (1시간 데이터)
+            });
+            
+            if (!response.result || !response.result.list) {
+                throw new Error(`${symbol} K-line 데이터 없음`);
+            }
+            
+            // 가장 최근 15분 데이터 반환
+            const latestKline = response.result.list[0];
+            return {
+                symbol: symbol,
+                timestamp: parseInt(latestKline[0]), // 시작 시간
+                volume15min: parseFloat(latestKline[5]), // 15분 거래량
+                turnover15min: parseFloat(latestKline[6]), // 15분 거래대금
+                price: parseFloat(latestKline[4]), // 종가
+                high: parseFloat(latestKline[2]), // 고가
+                low: parseFloat(latestKline[3]), // 저가
+                open: parseFloat(latestKline[1]) // 시가
+            };
+        } catch (error) {
+            console.warn(`${symbol} 15분 K-line 데이터 실패:`, error.message);
+            return null;
+        }
+    }
+
+    /**
+     * 여러 코인의 15분 거래량 데이터를 병렬로 가져오기
+     */
+    async get15MinVolumeData(symbols) {
+        try {
+            console.log('15분 기준 거래량 데이터 수집 시작:', symbols.slice(0, 10));
+            
+            // 병렬 처리로 성능 향상 (최대 10개씩)
+            const batchSize = 10;
+            const results = [];
+            
+            for (let i = 0; i < symbols.length; i += batchSize) {
+                const batch = symbols.slice(i, i + batchSize);
+                const batchPromises = batch.map(symbol => this.get15MinKline(symbol));
+                const batchResults = await Promise.all(batchPromises);
+                results.push(...batchResults.filter(data => data !== null));
+                
+                // API 제한을 위한 짧은 대기
+                if (i + batchSize < symbols.length) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            }
+            
+            console.log(`15분 거래량 데이터 수집 완료: ${results.length}개 성공`);
+            return results;
+        } catch (error) {
+            console.error('15분 거래량 데이터 수집 실패:', error);
+            return [];
+        }
+    }
+
+    /**
      * 바이비트 V5 선물 롱숏 비율 API에서 데이터 가져오기
      * https://api.bybit.com/v5/market/account-ratio
      */
@@ -398,7 +464,115 @@ class BybitAPI {
     }
 
     /**
-     * 바이비트 V5 API에서 거래량 기준 상위 코인 가져오기
+     * 바이비트 V5 API에서 15분 기준 실시간 거래량 상위 코인 가져오기
+     */
+    async getTopCoinsFromBybit15Min(limit = 50) {
+        try {
+            console.log('=== 15분 기준 실시간 거래량 분석 시작 ===');
+            
+            // 1단계: 24시간 기준 상위 코인 목록 가져오기
+            const response = await this.get24hrTicker();
+            const usdtPairs = response.result.list.filter(item => item.symbol.endsWith('USDT'));
+            
+            // 상위 100개 정도의 USDT 페어 선택
+            const top100Pairs = usdtPairs
+                .sort((a, b) => {
+                    const aVolume = parseFloat(a.volume24h || a.volume || a.quoteVolume || 0);
+                    const bVolume = parseFloat(b.volume24h || b.volume || b.quoteVolume || 0);
+                    return bVolume - aVolume;
+                })
+                .slice(0, 100);
+                
+            console.log('24시간 거래량 상위 100개 코인 선택 완료');
+            
+            // 2단계: 15분 K-line 데이터로 실시간 거래량 수집
+            const symbols = top100Pairs.map(pair => pair.symbol);
+            const volume15MinData = await this.get15MinVolumeData(symbols);
+            
+            if (volume15MinData.length === 0) {
+                console.warn('15분 데이터 수집 실패, 24시간 데이터로 대체');
+                return await this.getTopCoinsFromBybit(limit);
+            }
+            
+            // 3단계: 24시간 데이터와 15분 데이터 결합
+            const combinedData = top100Pairs.map(pair => {
+                const volume15Min = volume15MinData.find(data => data.symbol === pair.symbol);
+                return {
+                    ...pair,
+                    volume15min: volume15Min?.volume15min || 0,
+                    turnover15min: volume15Min?.turnover15min || 0,
+                    realTimeActivity: volume15Min ? (volume15Min.volume15min * 96) : 0 // 15분 → 24시간 환산
+                };
+            });
+            
+            // 4단계: 메인코인과 밈코인 분리
+            const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH'];
+            const mainCoinPairs = combinedData.filter(item => {
+                const symbol = item.symbol.replace('USDT', '');
+                return mainCoins.includes(symbol);
+            });
+            const memeCoinPairs = combinedData.filter(item => {
+                const symbol = item.symbol.replace('USDT', '');
+                return !mainCoins.includes(symbol);
+            });
+            
+            // 5단계: 15분 기준 거래량으로 정렬
+            const sortedMainCoins = mainCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume15min || 0);
+                const bVolume = parseFloat(b.volume15min || 0);
+                return bVolume - aVolume; // 15분 거래량 높은 순
+            });
+            
+            const sortedMemeCoins = memeCoinPairs.sort((a, b) => {
+                const aVolume = parseFloat(a.volume15min || 0);
+                const bVolume = parseFloat(b.volume15min || 0);
+                return bVolume - aVolume; // 15분 거래량 높은 순
+            });
+            
+            console.log('=== 15분 거래량 기준 정렬 결과 ===');
+            console.log('메인코인 15분 거래량 순위:', sortedMainCoins.slice(0, 10).map(coin => ({
+                symbol: coin.symbol,
+                volume15min: `${(coin.volume15min / 1e6).toFixed(2)}M`,
+                volume24h: `${(parseFloat(coin.volume24h || coin.volume || coin.quoteVolume) / 1e9).toFixed(2)}B`
+            })));
+            console.log('밈코인 15분 거래량 순위:', sortedMemeCoins.slice(0, 10).map(coin => ({
+                symbol: coin.symbol,
+                volume15min: `${(coin.volume15min / 1e6).toFixed(2)}M`
+            })));
+            
+            // 6단계: 메인코인 먼저, 밈코인 나중에 결합
+            const mainCoinsToShow = sortedMainCoins.slice(0, Math.max(20, limit * 0.6));
+            const memeCoinsToShow = sortedMemeCoins.slice(0, limit - mainCoinsToShow.length);
+            const finalCoins = [...mainCoinsToShow, ...memeCoinsToShow];
+            
+            return finalCoins.map((coin, index) => {
+                const volume24h = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
+                const volume15min = parseFloat(coin.volume15min || 0);
+                
+                return {
+                    rank: index + 1,
+                    symbol: coin.symbol.replace('USDT', ''),
+                    fullSymbol: coin.symbol,
+                    price: parseFloat(coin.lastPrice),
+                    volume: volume15min > 0 ? volume15min * 96 : volume24h, // 15분 데이터 있으면 24시간 환산값 사용
+                    volume15min: volume15min,
+                    volume24h: volume24h,
+                    priceChange: parseFloat(coin.price24hPcnt) * parseFloat(coin.lastPrice),
+                    priceChangePercent: parseFloat(coin.price24hPcnt) * 100,
+                    highPrice: parseFloat(coin.highPrice24h),
+                    lowPrice: parseFloat(coin.lowPrice24h),
+                    marketCap: parseFloat(coin.lastPrice) * volume24h * 0.1,
+                    isRealTime: volume15min > 0 // 실시간 데이터 여부 표시
+                };
+            });
+        } catch (error) {
+            console.error('15분 기준 거래량 분석 실패, 기존 방식으로 대체:', error);
+            return await this.getTopCoinsFromBybit(limit);
+        }
+    }
+
+    /**
+     * 바이비트 V5 API에서 거래량 기준 상위 코인 가져오기 (기존 방식)
      */
     async getTopCoinsFromBybit(limit = 20) {
         try {

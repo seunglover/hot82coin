@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>암호화폐 거래 기초 | 🔥 지금 핫한 코인 순위</title>
+    <meta name="description" content="암호화폐 거래의 기본부터 고급 전략까지. 주문 유형, 리스크 관리, 세금 처리까지 실전에 필요한 모든 것을 알려드립니다.">
+    <meta name="keywords" content="암호화폐거래, 거래전략, 주문유형, 리스크관리, 거래소이용법, 투자전략">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    
+    <style>
+        .trading-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .trading-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+        }
+        .trading-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .trading-subtitle {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .level-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .level-btn {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .level-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .level-btn:hover {
+            transform: translateY(-2px);
+        }
+        .content-sections {
+            display: grid;
+            gap: 2rem;
+        }
+        .trading-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .trading-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .trading-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .trading-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .trading-card.pro-tip {
+            border-left: 4px solid #f39c12;
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
+        }
+        .trading-card.warning {
+            border-left: 4px solid #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
+        }
+        .trading-card.advanced {
+            border-left: 4px solid #9b59b6;
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0.05) 100%);
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feature-list li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .feature-list li::before {
+            content: '💡';
+            position: absolute;
+            left: 0;
+            font-size: 0.8rem;
+        }
+        .risk-management {
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 100%);
+            color: #721c24;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .risk-item {
+            background: rgba(255,255,255,0.8);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(114, 28, 36, 0.2);
+        }
+        .risk-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .order-types {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+        .order-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .order-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .order-badge {
+            position: absolute;
+            top: -8px;
+            right: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .order-badge.basic { background: #27ae60; }
+        .order-badge.advanced { background: #e74c3c; }
+        .practical-example {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        .example-scenario {
+            background: rgba(255,255,255,0.15);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+        }
+        .scenario-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .scenario-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            counter-reset: step;
+        }
+        .scenario-steps li {
+            counter-increment: step;
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 2rem;
+        }
+        .scenario-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .tax-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .navigation-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        .level-content {
+            display: none;
+        }
+        .level-content.active {
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .trading-container {
+                padding: 1rem;
+            }
+            .trading-title {
+                font-size: 2rem;
+            }
+            .trading-grid {
+                grid-template-columns: 1fr;
+            }
+            .level-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            .level-btn {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🔥 핫코인</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/crypto-guide.html" class="nav-link">초보가이드</a>
+                <a href="/market-analysis.html" class="nav-link">시장분석</a>
+                <a href="/trading-basics.html" class="nav-link active">거래기초</a>
+                <a href="/faq.html" class="nav-link">FAQ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="trading-container">
+            <div class="trading-header">
+                <h1 class="trading-title">💱 암호화폐 거래 기초</h1>
+                <p class="trading-subtitle">
+                    실전에서 바로 활용할 수 있는 거래 기법과 전략<br>
+                    초보자부터 중급자까지 단계별 맞춤 가이드
+                </p>
+            </div>
+
+            <div class="level-selector">
+                <button class="level-btn active" data-level="beginner">🌱 초보자 (입문)</button>
+                <button class="level-btn" data-level="intermediate">📈 중급자 (실전)</button>
+                <button class="level-btn" data-level="advanced">🎯 고급자 (전문)</button>
+            </div>
+
+            <!-- 초보자 레벨 -->
+            <div id="beginner" class="level-content active">
+                <div class="content-sections">
+                    <div class="trading-section">
+                        <div class="section-header">
+                            <span class="section-icon">🏪</span>
+                            <h2 class="section-title">거래소 이용 기초</h2>
+                        </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                            암호화폐 거래의 첫걸음, 거래소 사용법부터 차근차근 알아보겠습니다.
+                        </p>
+
+                        <div class="trading-grid">
+                            <div class="trading-card">
+                                <h3 class="card-title">
+                                    🔐 계정 설정 및 보안
+                                </h3>
+                                <p class="card-desc">
+                                    안전한 거래를 위한 필수 보안 설정 방법
+                                </p>
+                                <ul class="feature-list">
+                                    <li>강력한 비밀번호 설정</li>
+                                    <li>2단계 인증(2FA) 활성화</li>
+                                    <li>본인인증(KYC) 완료</li>
+                                    <li>출금 주소 화이트리스트 설정</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card">
+                                <h3 class="card-title">
+                                    💰 입금 및 출금
+                                </h3>
+                                <p class="card-desc">
+                                    원화 입금부터 암호화폐 출금까지
+                                </p>
+                                <ul class="feature-list">
+                                    <li>은행 계좌 연동 방법</li>
+                                    <li>원화 입금 수수료 비교</li>
+                                    <li>암호화폐 지갑 주소 확인법</li>
+                                    <li>출금 수수료 및 소요시간</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card">
+                                <h3 class="card-title">
+                                    📊 거래소 인터페이스
+                                </h3>
+                                <p class="card-desc">
+                                    거래 화면의 각 요소와 기능 이해
+                                </p>
+                                <ul class="feature-list">
+                                    <li>호가창(OrderBook) 읽는 법</li>
+                                    <li>체결내역과 차트 해석</li>
+                                    <li>잔고 및 보유자산 확인</li>
+                                    <li>거래 수수료 구조 파악</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card pro-tip">
+                                <h3 class="card-title">
+                                    💡 초보자 꿀팁
+                                </h3>
+                                <p class="card-desc">
+                                    실수를 줄이는 초보자 필수 팁들
+                                </p>
+                                <ul class="feature-list">
+                                    <li>소액으로 테스트 거래 먼저</li>
+                                    <li>주요 코인(BTC, ETH)부터 시작</li>
+                                    <li>감정적 거래 피하기</li>
+                                    <li>거래 기록 꼼꼼히 확인</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 기본 주문 유형 -->
+                    <div class="order-types">
+                        <h3 style="margin-bottom: 1rem; color: var(--text-color);">📝 기본 주문 유형</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            거래의 기본이 되는 주문 방식들을 이해하고 상황에 맞게 활용해보세요.
+                        </p>
+                        
+                        <div class="order-comparison">
+                            <div class="order-card">
+                                <div class="order-badge basic">기본</div>
+                                <h4 style="margin-bottom: 1rem; color: var(--text-color);">시장가 주문</h4>
+                                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                                    현재 시장 가격에 즉시 체결되는 주문
+                                </p>
+                                <strong>장점:</strong> 즉시 체결 보장<br>
+                                <strong>단점:</strong> 정확한 체결가 예측 어려움<br>
+                                <strong>적합한 상황:</strong> 빠른 매매 필요 시
+                            </div>
+
+                            <div class="order-card">
+                                <div class="order-badge basic">기본</div>
+                                <h4 style="margin-bottom: 1rem; color: var(--text-color);">지정가 주문</h4>
+                                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                                    원하는 가격을 지정해서 주문하는 방식
+                                </p>
+                                <strong>장점:</strong> 원하는 가격에 정확히 거래<br>
+                                <strong>단점:</strong> 체결이 안 될 수 있음<br>
+                                <strong>적합한 상황:</strong> 여유를 가지고 거래할 때
+                            </div>
+
+                            <div class="order-card">
+                                <div class="order-badge advanced">고급</div>
+                                <h4 style="margin-bottom: 1rem; color: var(--text-color);">스탑 주문</h4>
+                                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                                    특정 가격 도달 시 자동으로 실행되는 주문
+                                </p>
+                                <strong>장점:</strong> 손절/익절 자동화<br>
+                                <strong>단점:</strong> 급격한 변동 시 미끄러짐<br>
+                                <strong>적합한 상황:</strong> 리스크 관리가 필요할 때
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 실전 예시 -->
+                    <div class="practical-example">
+                        <h3 style="margin-bottom: 1rem;">💼 실전 거래 시나리오</h3>
+                        <p style="margin-bottom: 1.5rem;">비트코인 첫 매수 상황을 예시로 단계별 거래 과정을 알아보겠습니다.</p>
+                        
+                        <div class="example-scenario">
+                            <div class="scenario-title">
+                                📈 시나리오: 비트코인 5만원어치 매수
+                            </div>
+                            <ol class="scenario-steps">
+                                <li>거래소에 원화 5만원 입금 완료</li>
+                                <li>BTC/KRW 거래쌍 선택</li>
+                                <li>현재 가격 대비 -1~2% 지정가로 매수 주문</li>
+                                <li>체결 완료 후 개인 지갑으로 출금</li>
+                                <li>거래 내역 기록하여 세금 신고 준비</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 중급자 레벨 -->
+            <div id="intermediate" class="level-content">
+                <div class="content-sections">
+                    <div class="trading-section">
+                        <div class="section-header">
+                            <span class="section-icon">📈</span>
+                            <h2 class="section-title">중급 거래 전략</h2>
+                        </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                            기본기를 익힌 후 활용할 수 있는 실전 거래 기법들입니다.
+                        </p>
+
+                        <div class="trading-grid">
+                            <div class="trading-card">
+                                <h3 class="card-title">
+                                    ⚡ 스윙 트레이딩
+                                </h3>
+                                <p class="card-desc">
+                                    수일~수주 보유하며 중간 수익을 노리는 전략
+                                </p>
+                                <ul class="feature-list">
+                                    <li>기술적 분석 기반 진입</li>
+                                    <li>지지/저항선 활용</li>
+                                    <li>3-7% 목표 수익률</li>
+                                    <li>손절매 2-3% 설정</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card">
+                                <h3 class="card-title">
+                                    📊 분할 매매
+                                </h3>
+                                <p class="card-desc">
+                                    리스크 분산을 위한 분할 진입/청산 전략
+                                </p>
+                                <ul class="feature-list">
+                                    <li>3-5회 나누어 매수/매도</li>
+                                    <li>평균 단가 개선 효과</li>
+                                    <li>심리적 부담 완화</li>
+                                    <li>급등/급락 리스크 완화</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card">
+                                <h3 class="card-title">
+                                    🎯 트렌드 추종
+                                </h3>
+                                <p class="card-desc">
+                                    명확한 추세를 확인하고 따라가는 전략
+                                </p>
+                                <ul class="feature-list">
+                                    <li>이동평균선 돌파 확인</li>
+                                    <li>거래량 증가와 함께 진입</li>
+                                    <li>추세 반전 시 즉시 청산</li>
+                                    <li>장기 상승 추세에 최적</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card advanced">
+                                <h3 class="card-title">
+                                    🔄 차익거래 (아비트라지)
+                                </h3>
+                                <p class="card-desc">
+                                    거래소 간 가격 차이를 이용한 저위험 수익
+                                </p>
+                                <ul class="feature-list">
+                                    <li>거래소별 가격 모니터링</li>
+                                    <li>김치 프리미엄 활용</li>
+                                    <li>출금 수수료 고려 필수</li>
+                                    <li>빠른 실행력 요구</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 리스크 관리 -->
+                    <div class="risk-management">
+                        <h3 style="margin-bottom: 1rem; text-align: center;">🛡️ 리스크 관리 핵심 원칙</h3>
+                        <p style="text-align: center; margin-bottom: 1.5rem;">
+                            수익보다 중요한 것은 손실 최소화입니다. 체계적인 리스크 관리로 장기적 성공을 도모하세요.
+                        </p>
+                        
+                        <div class="risk-grid">
+                            <div class="risk-item">
+                                <div class="risk-title">
+                                    💰 포지션 사이징
+                                </div>
+                                <p>총 자본의 1-2%만 한 거래에 할당</p>
+                            </div>
+                            <div class="risk-item">
+                                <div class="risk-title">
+                                    📉 손절매 설정
+                                </div>
+                                <p>매수가 대비 -5~7% 선에서 자동 손절</p>
+                            </div>
+                            <div class="risk-item">
+                                <div class="risk-title">
+                                    📈 익절 타겟
+                                </div>
+                                <p>손절폭의 2-3배 수익 시점에서 분할 익절</p>
+                            </div>
+                            <div class="risk-item">
+                                <div class="risk-title">
+                                    🔄 분산 투자
+                                </div>
+                                <p>3-5개 이상 종목으로 위험 분산</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 세금 정보 -->
+                    <div class="tax-info">
+                        <h4 style="margin-bottom: 1rem;">📋 암호화폐 세금 기본 정보</h4>
+                        <p style="margin-bottom: 1rem;">
+                            <strong>과세 대상:</strong> 2022년부터 암호화폐 매매차익에 대해 기타소득세 20% 부과<br>
+                            <strong>공제 한도:</strong> 연간 250만원까지 비과세<br>
+                            <strong>신고 의무:</strong> 250만원 초과 시 다음해 5월 종합소득세 신고<br>
+                            <strong>필요 서류:</strong> 거래소별 거래내역서, 매매 손익 계산서
+                        </p>
+                        <p><strong>💡 팁:</strong> 거래 때마다 기록을 남겨두면 세금 신고가 훨씬 쉬워집니다!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 고급자 레벨 -->
+            <div id="advanced" class="level-content">
+                <div class="content-sections">
+                    <div class="trading-section">
+                        <div class="section-header">
+                            <span class="section-icon">🎯</span>
+                            <h2 class="section-title">고급 거래 기법</h2>
+                        </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                            경험이 풍부한 투자자를 위한 고급 전략과 위험 관리 기법들입니다.
+                        </p>
+
+                        <div class="trading-grid">
+                            <div class="trading-card advanced">
+                                <h3 class="card-title">
+                                    ⚡ 레버리지 거래
+                                </h3>
+                                <p class="card-desc">
+                                    차입금을 활용해 수익률을 극대화하는 고위험 전략
+                                </p>
+                                <ul class="feature-list">
+                                    <li>2-10배 레버리지 활용</li>
+                                    <li>강제청산 위험 관리</li>
+                                    <li>펀딩비 고려 필수</li>
+                                    <li>엄격한 손절매 원칙</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card advanced">
+                                <h3 class="card-title">
+                                    🤖 알고리즘 트레이딩
+                                </h3>
+                                <p class="card-desc">
+                                    프로그래밍을 통한 자동매매 시스템 구축
+                                </p>
+                                <ul class="feature-list">
+                                    <li>API 연동 자동 거래</li>
+                                    <li>백테스팅으로 전략 검증</li>
+                                    <li>감정 배제한 기계적 실행</li>
+                                    <li>24시간 시장 모니터링</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card advanced">
+                                <h3 class="card-title">
+                                    📊 마켓 메이킹
+                                </h3>
+                                <p class="card-desc">
+                                    매수/매도 호가를 동시에 제공하여 스프레드 수익
+                                </p>
+                                <ul class="feature-list">
+                                    <li>매수/매도 주문 동시 배치</li>
+                                    <li>호가 스프레드에서 수익</li>
+                                    <li>높은 거래량 필요</li>
+                                    <li>시장 유동성 제공 역할</li>
+                                </ul>
+                            </div>
+
+                            <div class="trading-card warning">
+                                <h3 class="card-title">
+                                    ⚠️ 고급 전략 주의사항
+                                </h3>
+                                <p class="card-desc">
+                                    고급 전략 활용 시 반드시 고려해야 할 위험 요소들
+                                </p>
+                                <ul class="feature-list">
+                                    <li>높은 수수료 부담 가능성</li>
+                                    <li>기술적 오류 위험</li>
+                                    <li>시장 급변동 시 큰 손실</li>
+                                    <li>충분한 경험과 자본 필요</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 고급 주문 유형 -->
+                    <div class="order-types">
+                        <h3 style="margin-bottom: 1rem; color: var(--text-color);">🎛️ 고급 주문 유형</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            전문가들이 활용하는 복합 주문 방식들입니다.
+                        </p>
+                        
+                        <div class="order-comparison">
+                            <div class="order-card">
+                                <div class="order-badge advanced">고급</div>
+                                <h4 style="margin-bottom: 1rem; color: var(--text-color);">OCO 주문</h4>
+                                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                                    One-Cancels-Other: 두 주문 중 하나가 체결되면 나머지 취소
+                                </p>
+                                <strong>활용:</strong> 익절과 손절을 동시 설정<br>
+                                <strong>예시:</strong> 50,000원 익절 + 45,000원 손절
+                            </div>
+
+                            <div class="order-card">
+                                <div class="order-badge advanced">고급</div>
+                                <h4 style="margin-bottom: 1rem; color: var(--text-color);">트레일링 스탑</h4>
+                                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                                    가격 상승에 따라 손절 라인도 함께 상승하는 주문
+                                </p>
+                                <strong>활용:</strong> 상승 트렌드에서 최대 수익 추구<br>
+                                <strong>예시:</strong> 현재가 -5% 지점으로 계속 추적
+                            </div>
+
+                            <div class="order-card">
+                                <div class="order-badge advanced">고급</div>
+                                <h4 style="margin-bottom: 1rem; color: var(--text-color);">아이스버그 주문</h4>
+                                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                                    대량 주문을 소량씩 나누어 시장에 노출하는 주문
+                                </p>
+                                <strong>활용:</strong> 대량 거래 시 시장 충격 최소화<br>
+                                <strong>예시:</strong> 100 BTC를 10 BTC씩 분할 처리
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 포트폴리오 관리 -->
+                    <div class="practical-example">
+                        <h3 style="margin-bottom: 1rem;">💼 전문가 포트폴리오 관리</h3>
+                        <p style="margin-bottom: 1.5rem;">체계적인 포트폴리오 구성과 관리 방법을 알아보겠습니다.</p>
+                        
+                        <div class="example-scenario">
+                            <div class="scenario-title">
+                                🎯 1억원 규모 포트폴리오 예시
+                            </div>
+                            <ol class="scenario-steps">
+                                <li><strong>안전자산 (40%)</strong> - BTC, ETH 등 주요 코인</li>
+                                <li><strong>성장자산 (30%)</strong> - 상위 10-30위 알트코인</li>
+                                <li><strong>고위험자산 (20%)</strong> - 새로운 프로젝트, DeFi 토큰</li>
+                                <li><strong>현금성자산 (10%)</strong> - USDT, USDC 등 스테이블코인</li>
+                                <li><strong>리밸런싱</strong> - 월 1회 비율 재조정</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation-links">
+                <a href="/crypto-guide.html" class="nav-btn">📚 초보자 가이드</a>
+                <a href="/market-analysis.html" class="nav-btn">📊 시장 분석 방법</a>
+                <a href="/safety-tips.html" class="nav-btn">🛡️ 투자 안전 수칙</a>
+                <a href="/faq.html" class="nav-btn">❓ 자주 묻는 질문</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 레벨 전환 기능
+            const levelBtns = document.querySelectorAll('.level-btn');
+            const levelContents = document.querySelectorAll('.level-content');
+
+            levelBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 모든 레벨 비활성화
+                    levelBtns.forEach(b => b.classList.remove('active'));
+                    levelContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // 선택된 레벨 활성화
+                    btn.classList.add('active');
+                    const targetLevel = document.getElementById(btn.dataset.level);
+                    if (targetLevel) {
+                        targetLevel.classList.add('active');
+                    }
+
+                    // 스크롤을 레벨 선택기 위치로 이동
+                    const levelSelector = document.querySelector('.level-selector');
+                    levelSelector.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // 거래 카드 호버 효과
+            const tradingCards = document.querySelectorAll('.trading-card');
+            tradingCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                });
+            });
+
+            // 주문 카드 호버 효과
+            const orderCards = document.querySelectorAll('.order-card');
+            orderCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                    this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.1)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // 리스크 아이템 호버 효과
+            const riskItems = document.querySelectorAll('.risk-item');
+            riskItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.background = 'rgba(255,255,255,0.9)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.background = 'rgba(255,255,255,0.8)';
+                });
+            });
+
+            console.log('Trading Basics page loaded successfully');
+        });
+    </script>
+</body>
+</html>
