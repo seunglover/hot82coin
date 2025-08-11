@@ -514,8 +514,8 @@ class CoinRankingApp {
                 sortedCoins = sortedCoins;
                 break;
             case 'longshort':
-                // 롱/숏 비율: 순수하게 롱 비중 높은 순 (거래량 무관)
-                sortedCoins = sortedCoins.filter(coin => coin.longAccount && coin.longAccount > 0.6);
+                // 롱/숏 비율: 롱숏 데이터가 있는 모든 코인 표시 (필터 조건 완화)
+                sortedCoins = sortedCoins.filter(coin => coin.longAccount !== undefined && coin.longAccount !== null);
                 break;
             case 'ai':
                 // AI 추천: AI 점수 높은 코인만
@@ -1359,11 +1359,11 @@ class CoinRankingApp {
                     .slice(0, 10);
                 break;
             case 'longshort':
-                // 롱/숏 비율: 순수하게 롱 비중 높은 순 (거래량 무관)
+                // 롱/숏 비율: 롱숏 데이터가 있는 모든 코인 표시 (필터 조건 완화)
                 console.log('=== 스텝 2: 롱숏 메뉴 필터링 ===');
                 console.log('전체 코인 개수:', filteredCoins.length);
                 
-                const longShortDataCoins = filteredCoins.filter(coin => coin.longAccount);
+                const longShortDataCoins = filteredCoins.filter(coin => coin.longAccount !== undefined && coin.longAccount !== null);
                 console.log('롱숏 데이터가 있는 코인들:', longShortDataCoins.map(coin => ({
                     symbol: coin.symbol,
                     longAccount: coin.longAccount,
@@ -1371,8 +1371,8 @@ class CoinRankingApp {
                     volume: coin.volume
                 })));
                 
-                // 롱숏 데이터가 있는 모든 코인을 롱 비중 순으로 정렬 (거래량 무관)
-                const longShortCoins = filteredCoins.filter(coin => coin.longAccount && coin.longAccount > 0.6);
+                // 롱숏 데이터가 있는 모든 코인을 롱 비중 순으로 정렬 (필터 조건 완화)
+                const longShortCoins = filteredCoins.filter(coin => coin.longAccount !== undefined && coin.longAccount !== null);
                 console.log('필터링 후 롱숏 코인들:', longShortCoins.map(coin => ({
                     symbol: coin.symbol,
                     longAccount: coin.longAccount,

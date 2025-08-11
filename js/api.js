@@ -331,9 +331,13 @@ class BybitAPI {
             'ICPUSDT', 'FILUSDT', 'TRXUSDT', 'ETCUSDT', 'XLMUSDT',
             'APTUSDT', 'OPUSDT', 'ARBUSDT', 'SUIUSDT', 'SEIUSDT',
             'INJUSDT', 'TIAUSDT', 'JUPUSDT', 'PYTHUSDT', 'WIFUSDT',
-            'BONKUSDT', 'PEPEUSDT', 'FLOKIUSDT', 'MEMEUSDT', 'WIFUSDT',
+            'BONKUSDT', 'PEPEUSDT', 'FLOKIUSDT', 'MEMEUSDT',
             'BOMEUSDT', 'BOOKUSDT', 'SLERFUSDT', 'POPCATUSDT', 'TURBOUSDT',
-            'MYROUSDT', 'SMOGUSDT', 'WENUSDT', 'JTOUSDT', 'SLERFUSDT'
+            'MYROUSDT', 'SMOGUSDT', 'WENUSDT', 'JTOUSDT',
+            'AAVEUSDT', 'COMPUSDT', 'MKRUSDT', 'SNTUSDT', 'YFIUSDT',
+            'CRVUSDT', '1INCHUSDT', 'ENSUSDT', 'LOOKSUSDT', 'GMTUSDT',
+            'GALUSDT', 'CHZUSDT', 'SANDUSDT', 'MANAUSDT', 'AXSUSDT',
+            'RNDRUSDT', 'ORDIUSDT', '1000RATSUSDT', '1000SATSUSDT'
         ];
         
         // 이미 선물 심볼인 경우 그대로 반환
@@ -388,8 +392,8 @@ class BybitAPI {
         try {
             const longShortData = [];
             
-            // 바이비트에서 선물 거래를 지원하는 메인 코인들만 처리 (DOGE 추가)
-            const supportedMainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'DOGE', 'SHIB', 'XRP', 'LTC', 'BCH'];
+            // 바이비트에서 선물 거래를 지원하는 더 많은 메인 코인들 처리
+            const supportedMainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'DOGE', 'SHIB', 'XRP', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET', 'ICP', 'FIL', 'TRX', 'ETC', 'XLM', 'APT', 'OP', 'ARB', 'SUI', 'SEI'];
             const supportedMainCoinSymbols = supportedMainCoins.map(coin => coin + 'USDT');
             
             // 지원되는 메인 코인들만 처리
@@ -415,7 +419,7 @@ class BybitAPI {
             // 상위 거래량 코인들 중에서 선물 거래가 지원되는 것들만 처리 (더 많은 코인 시도)
             const topVolumeCoins = coins
                 .filter(coin => !supportedMainCoins.includes(coin.symbol))
-                .slice(0, 10); // 10개로 증가
+                .slice(0, 20); // 20개로 증가
             
             for (const coin of topVolumeCoins) {
                 try {
