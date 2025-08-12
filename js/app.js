@@ -448,7 +448,7 @@ class CoinRankingApp {
         const sparklinePromises = coins.map((coin, index) => {
             return new Promise(resolve => {
                 setTimeout(() => {
-                    drawSparkline(coin.symbol, `sparkline-${coin.symbol}`);
+                    drawSparklineV2(coin.symbol, `sparkline-${coin.symbol}`, coin);
                     resolve();
                 }, index * 50); // 50ms 간격으로 순차 로딩
             });
@@ -2264,6 +2264,184 @@ function drawSVGSparkline(canvas, prices, lineColor, changeClass) {
     }
 }
 
+// 🚀 GPT-5 조언 기반 개선된 스파크라인 차트 함수
+async function drawSparklineV2(symbol, canvasId, coinData) {
+    try {
+        console.log('📊 스파크라인 V2 시작:', symbol, canvasId, coinData?.priceChangePercent);
+        
+        // Canvas 요소 확인
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) {
+            console.error('Canvas 요소를 찾을 수 없습니다:', canvasId);
+            return;
+        }
+        
+        // 모달 크기 설정
+        const isInModal = canvas.closest('.modal');
+        if (isInModal && canvas.offsetWidth < 200) {
+            canvas.style.width = '400px';
+            canvas.style.height = '60px';
+            canvas.style.minWidth = '400px';
+            canvas.style.minHeight = '60px';
+        }
+        
+        // 🎯 GPT-5 조언 1: 색상은 항상 priceChangePercent 기준으로 결정
+        const changePercent = coinData?.priceChangePercent || 0;
+        const lineColor = changePercent >= 0 ? '#10b981' : '#ef4444';
+        const changeClass = changePercent >= 0 ? 'positive' : 'negative';
+        
+        console.log(`💡 색상 결정: ${changePercent.toFixed(2)}% -> ${lineColor} (${changeClass})`);
+        
+        // 🎯 GPT-5 조언 2: 정확한 24시간 기준 시간 계산
+        const now = Date.now();
+        const start24h = now - (24 * 60 * 60 * 1000);
+        
+        // 현재 가격 (ticker 기준)
+        const currentPrice = coinData?.price || coinData?.lastPrice || 100;
+        
+        try {
+            // 🎯 GPT-5 조언 3: 선물 -> 스팟 순서로 API 시도
+            let klineData = await fetchKlineData(symbol, 'linear', start24h, now);
+            
+            if (!klineData || klineData.length === 0) {
+                console.log(`${symbol} 선물 데이터 없음, 스팟으로 시도...`);
+                klineData = await fetchKlineData(symbol, 'spot', start24h, now);
+            }
+            
+            if (klineData && klineData.length > 0) {
+                // 🎯 GPT-5 조언 4: 마지막 포인트는 ticker.lastPrice 사용
+                const chartPrices = klineData.map(item => parseFloat(item[4])); // close 가격
+                
+                // 마지막 포인트를 현재 가격으로 대체 (더 정확한 실시간 반영)
+                if (chartPrices.length > 0) {
+                    chartPrices[chartPrices.length - 1] = currentPrice;
+                }
+                
+                console.log(`📈 차트 데이터: ${chartPrices.length}개 포인트, 시작: ${chartPrices[0]?.toFixed(2)}, 끝: ${chartPrices[chartPrices.length-1]?.toFixed(2)}`);
+                
+                // SVG 차트 그리기 (색상은 priceChangePercent 기준)
+                drawSVGSparklineV2(canvas, chartPrices, lineColor, changeClass, changePercent);
+                
+            } else {
+                throw new Error('kline 데이터를 가져올 수 없음');
+            }
+            
+        } catch (apiError) {
+            console.warn('API 호출 실패, Mock 데이터 생성:', apiError);
+            
+            // 🎯 실패 시 Mock 데이터 생성 (변동률 반영)
+            const mockPrices = generateMockSparklineData(currentPrice, changePercent);
+            drawSVGSparklineV2(canvas, mockPrices, lineColor, changeClass, changePercent);
+        }
+        
+        // 로딩 메시지 제거
+        const loadingNote = canvas.parentElement?.querySelector('.sparkline-note');
+        if (loadingNote) {
+            loadingNote.style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('스파크라인 V2 차트 오류:', error);
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+            canvas.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px; font-size: 12px;">차트 로딩 실패</div>';
+            
+            const loadingNote = canvas.parentElement?.querySelector('.sparkline-note');
+            if (loadingNote) {
+                loadingNote.style.display = 'none';
+            }
+        }
+    }
+}
+
+// 🔥 개선된 Kline 데이터 수집 함수
+async function fetchKlineData(symbol, category = 'linear', startTime, endTime) {
+    const interval = '15'; // 15분 간격
+    const limit = 96; // 24시간 * 4 = 96개
+    
+    const url = `https://api.bybit.com/v5/market/kline?category=${category}&symbol=${symbol}USDT&interval=${interval}&limit=${limit}`;
+    console.log(`🌐 Kline API 호출: ${url}`);
+    
+    const response = await fetch(url);
+    const json = await response.json();
+    
+    if (json.retCode === 0 && json.result && json.result.list && json.result.list.length > 0) {
+        return json.result.list;
+    }
+    
+    return null;
+}
+
+// 🎨 개선된 SVG 스파크라인 그리기 함수
+function drawSVGSparklineV2(canvas, prices, lineColor, changeClass, changePercent) {
+    let width = canvas.offsetWidth;
+    if (width === 0) {
+        width = canvas.closest('.modal') ? 400 : 120;
+    }
+    
+    // 모달에서 더 큰 크기 사용
+    if (canvas.closest('.modal') && width < 200) {
+        width = 400;
+    }
+    
+    const height = canvas.closest('.modal') ? 60 : 40;
+    const padding = 2;
+    
+    if (prices.length === 0) return;
+    
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceRange = maxPrice - minPrice || 1;
+    
+    // 포인트 좌표 계산
+    const points = prices.map((price, index) => {
+        const x = (index / (prices.length - 1)) * (width - padding * 2) + padding;
+        const y = height - ((price - minPrice) / priceRange) * (height - padding * 2) - padding;
+        return `${x.toFixed(2)},${y.toFixed(2)}`;
+    }).join(' ');
+    
+    // 채우기 영역 좌표
+    const fillPoints = `${padding},${height} ${points} ${width - padding},${height}`;
+    
+    // 🎯 GPT-5 조언: 툴팁에 24h 정보 표시
+    const tooltipText = `24h: ${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
+    
+    const svg = `
+        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="overflow: visible;">
+            <title>${tooltipText}</title>
+            <defs>
+                <linearGradient id="sparklineGradientV2-${changeClass}" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:${lineColor};stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:${lineColor};stop-opacity:0.1"/>
+                </linearGradient>
+            </defs>
+            <polygon points="${fillPoints}" fill="url(#sparklineGradientV2-${changeClass})"/>
+            <polyline points="${points}" stroke="${lineColor}" stroke-width="2" fill="none"/>
+        </svg>
+    `;
+    
+    canvas.innerHTML = svg;
+    console.log(`✅ SVG 차트 완료: ${lineColor}, ${changePercent.toFixed(2)}%`);
+}
+
+// 📊 Mock 데이터 생성 함수 (변동률 반영)
+function generateMockSparklineData(basePrice, changePercent, points = 24) {
+    const data = [];
+    const startPrice = basePrice / (1 + changePercent / 100); // 24시간 전 가격 역산
+    
+    for (let i = 0; i < points; i++) {
+        const progress = i / (points - 1);
+        const trend = startPrice + (basePrice - startPrice) * progress;
+        const noise = (Math.random() - 0.5) * basePrice * 0.02; // 2% 노이즈
+        data.push(Math.max(0, trend + noise));
+    }
+    
+    // 마지막 포인트를 정확한 현재 가격으로 설정
+    data[data.length - 1] = basePrice;
+    
+    return data;
+}
+
 // 모달 표시 함수 (전역)
 function showCoinModal(symbol) {
     const modal = document.getElementById('coinModal');
@@ -2379,49 +2557,11 @@ function showCoinModal(symbol) {
             </div>
         `;
         
-        // 모달이 표시된 후 스파크라인 차트 그리기
+        // 🚀 GPT-5 조언: 간소화된 모달 스파크라인 차트 로딩
         setTimeout(() => {
-            console.log('모달 스파크차트 첫 번째 시도');
-            const canvas = document.getElementById(`modal-sparkline-${coin.symbol}`);
-            if (canvas) {
-                // 강제로 크기 설정
-                canvas.style.width = '400px';
-                canvas.style.height = '60px';
-                canvas.style.minWidth = '400px';
-                canvas.style.minHeight = '60px';
-                drawSparkline(coin.symbol, `modal-sparkline-${coin.symbol}`);
-            }
-        }, 300);
-        
-        // 모달이 완전히 표시된 후 다시 시도
-        setTimeout(() => {
-            console.log('모달 스파크차트 두 번째 시도');
-            const canvas = document.getElementById(`modal-sparkline-${coin.symbol}`);
-            if (canvas) {
-                console.log('Canvas 크기 확인:', canvas.offsetWidth, 'x', canvas.offsetHeight);
-                if (canvas.offsetWidth < 200) {
-                    console.log('Canvas 크기가 작아서 다시 시도');
-                    canvas.style.width = '400px';
-                    canvas.style.height = '60px';
-                    drawSparkline(coin.symbol, `modal-sparkline-${coin.symbol}`);
-                }
-            }
-        }, 800);
-        
-        // 최종 시도
-        setTimeout(() => {
-            console.log('모달 스파크차트 최종 시도');
-            const canvas = document.getElementById(`modal-sparkline-${coin.symbol}`);
-            if (canvas) {
-                console.log('최종 시도 - 강제로 차트 그리기');
-                // 강제로 크기 설정 후 차트 그리기
-                canvas.style.width = '400px';
-                canvas.style.height = '60px';
-                canvas.style.minWidth = '400px';
-                canvas.style.minHeight = '60px';
-                drawSparkline(coin.symbol, `modal-sparkline-${coin.symbol}`);
-            }
-        }, 1500);
+            console.log('🔥 모달 스파크차트 V2 시작');
+            drawSparklineV2(coin.symbol, `modal-sparkline-${coin.symbol}`, coin);
+        }, 200); // 더 빠른 로딩
         
     } else {
         const langManager = window.languageManager;
