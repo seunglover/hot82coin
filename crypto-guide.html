@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>암호화폐 초보 가이드 | 🔥 지금 핫한 코인 순위</title>
+    <meta name="description" content="암호화폐 투자를 시작하는 초보자를 위한 완벽 가이드. 기본 개념부터 안전한 투자 방법까지 단계별로 알려드립니다.">
+    <meta name="keywords" content="암호화폐, 초보가이드, 비트코인, 투자방법, 디지털자산">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    
+    <style>
+        .guide-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .guide-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+        }
+        .guide-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .guide-subtitle {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .progress-bar {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .step {
+            text-align: center;
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .step.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .step-number {
+            display: block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--border-color);
+            color: white;
+            line-height: 30px;
+            margin: 0 auto 0.5rem;
+            font-weight: 600;
+        }
+        .step.active .step-number {
+            background: var(--primary-color);
+        }
+        .guide-content {
+            display: grid;
+            gap: 2rem;
+        }
+        .content-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-icon {
+            font-size: 2rem;
+        }
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .concept-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+        .concept-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+        .concept-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .concept-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .warning-box.danger {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .warning-box.info {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .step-list {
+            counter-reset: step-counter;
+        }
+        .step-item {
+            counter-increment: step-counter;
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 4rem;
+        }
+        .step-item::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1.5rem;
+            top: 1.5rem;
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        .step-title {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        .step-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .quick-tips {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .tip-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        .navigation-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .guide-container {
+                padding: 1rem;
+            }
+            .guide-title {
+                font-size: 2rem;
+            }
+            .concept-grid {
+                grid-template-columns: 1fr;
+            }
+            .progress-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .step {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                width: 100%;
+                text-align: left;
+            }
+            .step-number {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🔥 핫코인</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/about.html" class="nav-link">소개</a>
+                <a href="/crypto-guide.html" class="nav-link active">초보가이드</a>
+                <a href="/faq.html" class="nav-link">FAQ</a>
+                <a href="/contact.html" class="nav-link">문의</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="guide-container">
+            <div class="guide-header">
+                <h1 class="guide-title">📚 암호화폐 초보 가이드</h1>
+                <p class="guide-subtitle">
+                    암호화폐의 기본 개념부터 안전한 투자 방법까지<br>
+                    단계별로 차근차근 알아가는 완벽 가이드
+                </p>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-steps">
+                    <div class="step active">
+                        <span class="step-number">1</span>
+                        기본 개념
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        시작하기
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        안전 수칙
+                    </div>
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        실전 투자
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-content">
+                <!-- 1단계: 기본 개념 -->
+                <div class="content-section" id="basics">
+                    <h2 class="section-title">
+                        <span class="section-icon">🧠</span>
+                        1단계: 암호화폐 기본 개념 이해하기
+                    </h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        투자에 앞서 반드시 알아야 할 핵심 개념들을 정리했습니다. 
+                        이 기초를 탄탄히 해야 안전하고 현명한 투자가 가능합니다.
+                    </p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🪙 암호화폐(Cryptocurrency)
+                            </h3>
+                            <p class="concept-desc">
+                                암호학을 기반으로 만들어진 디지털 화폐입니다. 
+                                중앙 기관 없이 블록체인 기술로 안전하게 거래됩니다.
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                ⛓️ 블록체인(Blockchain)
+                            </h3>
+                            <p class="concept-desc">
+                                거래 기록을 블록 단위로 연결한 분산 장부 시스템입니다. 
+                                위변조가 불가능하고 투명한 특징을 가집니다.
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                👛 지갑(Wallet)
+                            </h3>
+                            <p class="concept-desc">
+                                암호화폐를 저장하고 관리하는 도구입니다. 
+                                하드웨어 지갑, 소프트웨어 지갑 등 여러 종류가 있습니다.
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🏢 거래소(Exchange)
+                            </h3>
+                            <p class="concept-desc">
+                                암호화폐를 사고팔 수 있는 플랫폼입니다. 
+                                중앙화 거래소(CEX)와 탈중앙화 거래소(DEX)로 구분됩니다.
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                📊 시가총액(Market Cap)
+                            </h3>
+                            <p class="concept-desc">
+                                총 발행량 × 현재 가격으로 계산되는 값입니다. 
+                                해당 코인의 전체 시장 가치를 나타냅니다.
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🔥 변동성(Volatility)
+                            </h3>
+                            <p class="concept-desc">
+                                가격이 오르내리는 정도를 말합니다. 
+                                암호화폐는 전통 자산보다 변동성이 매우 큽니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box info">
+                        <strong>💡 핵심 포인트:</strong> 암호화폐는 24시간 거래되며, 
+                        가격 변동이 매우 클 수 있습니다. 투자 전 충분한 학습이 필수입니다!
+                    </div>
+                </div>
+
+                <!-- 2단계: 시작하기 -->
+                <div class="content-section" id="getting-started">
+                    <h2 class="section-title">
+                        <span class="section-icon">🚀</span>
+                        2단계: 첫 투자 시작하기
+                    </h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        실제로 암호화폐 투자를 시작하는 단계별 방법을 알아보겠습니다. 
+                        천천히 따라하시면 안전하게 시작할 수 있습니다.
+                    </p>
+
+                    <div class="step-list">
+                        <div class="step-item">
+                            <h3 class="step-title">신뢰할 수 있는 거래소 선택</h3>
+                            <p class="step-desc">
+                                국내: 업비트, 빗썸, 코인원 등<br>
+                                해외: 바이낸스, 바이비트, 코인베이스 등<br>
+                                <strong>중요:</strong> 금융당국 허가를 받은 곳만 이용하세요.
+                            </p>
+                        </div>
+
+                        <div class="step-item">
+                            <h3 class="step-title">계정 개설 및 본인 인증</h3>
+                            <p class="step-desc">
+                                개인정보, 신분증, 계좌 정보 등이 필요합니다.<br>
+                                KYC(신원확인) 절차를 거쳐야 정상적으로 거래할 수 있습니다.
+                            </p>
+                        </div>
+
+                        <div class="step-item">
+                            <h3 class="step-title">소액으로 테스트</h3>
+                            <p class="step-desc">
+                                처음에는 잃어도 괜찮은 소액(10-50만원)부터 시작하세요.<br>
+                                거래 방법에 익숙해진 후 투자 금액을 늘리는 것이 안전합니다.
+                            </p>
+                        </div>
+
+                        <div class="step-item">
+                            <h3 class="step-title">대표 코인부터 시작</h3>
+                            <p class="step-desc">
+                                비트코인(BTC), 이더리움(ETH) 같은 주요 코인부터 시작하세요.<br>
+                                알트코인은 위험이 크므로 경험이 쌓인 후에 고려하세요.
+                            </p>
+                        </div>
+
+                        <div class="step-item">
+                            <h3 class="step-title">안전한 보관</h3>
+                            <p class="step-desc">
+                                거래소에 오래 보관하지 말고 개인 지갑으로 이동하세요.<br>
+                                하드웨어 지갑이 가장 안전하지만, 소프트웨어 지갑도 괜찮습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box danger">
+                        <strong>⚠️ 절대 금지사항:</strong><br>
+                        • 대출이나 빚을 내서 투자하기<br>
+                        • 생활비나 비상금으로 투자하기<br>
+                        • 감정적으로 매매하기<br>
+                        • 확인되지 않은 정보에 의존하기
+                    </div>
+                </div>
+
+                <!-- 3단계: 안전 수칙 -->
+                <div class="content-section" id="safety">
+                    <h2 class="section-title">
+                        <span class="section-icon">🛡️</span>
+                        3단계: 필수 보안 및 안전 수칙
+                    </h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        암호화폐 투자에서 보안은 가장 중요한 요소입니다. 
+                        해킹이나 사기로부터 자산을 보호하는 방법을 알아보세요.
+                    </p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🔐 강력한 비밀번호
+                            </h3>
+                            <p class="concept-desc">
+                                12자리 이상, 대소문자+숫자+특수문자 조합<br>
+                                각 사이트마다 다른 비밀번호 사용<br>
+                                비밀번호 관리자 프로그램 활용
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                📱 2단계 인증(2FA)
+                            </h3>
+                            <p class="concept-desc">
+                                Google Authenticator, Authy 등 사용<br>
+                                SMS보다는 OTP 앱이 더 안전<br>
+                                백업 코드 안전한 곳에 보관
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🕵️ 피싱 사이트 주의
+                            </h3>
+                            <p class="concept-desc">
+                                URL을 정확히 확인하세요<br>
+                                이메일 링크 클릭 금지<br>
+                                공식 앱만 다운로드<br>
+                                의심스러운 메시지 무시
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                💾 개인 지갑 사용
+                            </h3>
+                            <p class="concept-desc">
+                                거래소는 해킹 위험 존재<br>
+                                하드웨어 지갑 권장(Ledger, Trezor)<br>
+                                시드 구문(복구 문구) 안전 보관<br>
+                                정기적으로 백업 확인
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🚫 사기 수법 인지
+                            </h3>
+                            <p class="concept-desc">
+                                폰지 사기(고수익 보장)<br>
+                                가짜 에어드롭<br>
+                                투자 권유 전화/메시지<br>
+                                유명인 사칭 사기
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                📚 지속적인 학습
+                            </h3>
+                            <p class="concept-desc">
+                                최신 보안 동향 파악<br>
+                                공식 채널 정보만 신뢰<br>
+                                커뮤니티 활동으로 정보 교환<br>
+                                의심되면 전문가 상담
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🔥 기억하세요:</strong> "Not your keys, not your coins" - 
+                        개인키를 가지지 않으면 진정한 소유가 아닙니다. 
+                        거래소는 거래할 때만 사용하고, 평소에는 개인 지갑에 보관하세요.
+                    </div>
+                </div>
+
+                <!-- 4단계: 실전 투자 -->
+                <div class="content-section" id="investment">
+                    <h2 class="section-title">
+                        <span class="section-icon">💰</span>
+                        4단계: 현명한 투자 전략
+                    </h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        단순히 사고파는 것이 아니라, 체계적이고 현명한 투자 방법을 알아보겠습니다.
+                    </p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                📊 분산 투자
+                            </h3>
+                            <p class="concept-desc">
+                                한 종목에 올인 금지<br>
+                                여러 코인으로 위험 분산<br>
+                                포트폴리오 비율 관리<br>
+                                정기적으로 리밸런싱
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🎯 목표 설정
+                            </h3>
+                            <p class="concept-desc">
+                                투자 목적 명확히 하기<br>
+                                목표 수익률과 손실 한도<br>
+                                투자 기간 정하기<br>
+                                감정보다는 계획 따르기
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                📈 기술적 분석 기초
+                            </h3>
+                            <p class="concept-desc">
+                                차트 읽는 법 익히기<br>
+                                지지선과 저항선 파악<br>
+                                거래량과 함께 분석<br>
+                                과도한 분석은 금물
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                🔍 기본적 분석
+                            </h3>
+                            <p class="concept-desc">
+                                프로젝트의 실용성 평가<br>
+                                개발팀과 파트너십<br>
+                                로드맵과 기술력<br>
+                                커뮤니티 활성도
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                ⏰ 달러 비용 평균법
+                            </h3>
+                            <p class="concept-desc">
+                                매월 일정 금액 투자<br>
+                                가격 변동성 완화<br>
+                                심리적 부담 감소<br>
+                                장기 투자에 효과적
+                            </p>
+                        </div>
+
+                        <div class="concept-card">
+                            <h3 class="concept-title">
+                                📝 기록 관리
+                            </h3>
+                            <p class="concept-desc">
+                                모든 거래 기록<br>
+                                세금 신고 대비<br>
+                                투자 성과 분석<br>
+                                실수로부터 배우기
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 퀴ㅐ 팁 -->
+            <div class="quick-tips">
+                <h2 style="text-align: center; margin-bottom: 1.5rem;">💡 초보자 필수 팁</h2>
+                <div class="tips-grid">
+                    <div class="tip-item">
+                        <h3>🎯 목표 명확히</h3>
+                        <p>단기 vs 장기 투자 목적을 분명히 하세요</p>
+                    </div>
+                    <div class="tip-item">
+                        <h3>💰 여유 자금만</h3>
+                        <p>잃어도 생활에 지장 없는 돈으로만 투자</p>
+                    </div>
+                    <div class="tip-item">
+                        <h3>📚 꾸준한 학습</h3>
+                        <p>시장은 계속 변화하니 지속적으로 공부</p>
+                    </div>
+                    <div class="tip-item">
+                        <h3>😎 감정 조절</h3>
+                        <p>FOMO, FUD에 휩쓸리지 말고 냉정함 유지</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation-links">
+                <a href="/safety-tips.html" class="nav-btn">🛡️ 투자 안전 수칙</a>
+                <a href="/market-analysis.html" class="nav-btn">📊 시장 분석 방법</a>
+                <a href="/trading-basics.html" class="nav-btn">💱 거래 기초</a>
+                <a href="/faq.html" class="nav-btn">❓ 자주 묻는 질문</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 스크롤에 따른 진행 단계 업데이트
+            const steps = document.querySelectorAll('.step');
+            const sections = document.querySelectorAll('.content-section');
+            
+            function updateProgress() {
+                const scrollTop = window.pageYOffset;
+                const windowHeight = window.innerHeight;
+                
+                sections.forEach((section, index) => {
+                    const sectionTop = section.offsetTop - 200;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+                    
+                    if (scrollTop >= sectionTop && scrollTop < sectionBottom) {
+                        steps.forEach(step => step.classList.remove('active'));
+                        if (steps[index]) {
+                            steps[index].classList.add('active');
+                        }
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', updateProgress);
+            updateProgress(); // 초기 상태 설정
+            
+            // 콘셉트 카드 호버 이벤트
+            const conceptCards = document.querySelectorAll('.concept-card');
+            conceptCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+            });
+            
+            // 페이지 로드 완료 로깅
+            console.log('Crypto Guide loaded successfully');
+        });
+    </script>
+</body>
+</html>

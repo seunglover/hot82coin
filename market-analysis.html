@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시장 분석 방법론 | 🔥 지금 핫한 코인 순위</title>
+    <meta name="description" content="암호화폐 시장을 분석하는 다양한 방법론을 알아보세요. 기술적 분석, 기본적 분석, 온체인 분석까지 체계적으로 학습할 수 있습니다.">
+    <meta name="keywords" content="시장분석, 기술적분석, 기본적분석, 온체인분석, 차트분석, 암호화폐">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    
+    <style>
+        .analysis-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .analysis-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+        }
+        .analysis-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .analysis-subtitle {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .method-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .method-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .technique-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .technique-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+        .technique-card:hover {
+            transform: translateY(-2px);
+        }
+        .technique-card.advanced {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
+        }
+        .technique-card.intermediate {
+            border-left-color: #f39c12;
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
+        }
+        .technique-card.beginner {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
+        }
+        .technique-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .difficulty-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .difficulty-badge.beginner {
+            background: #27ae60;
+            color: white;
+        }
+        .difficulty-badge.intermediate {
+            background: #f39c12;
+            color: white;
+        }
+        .difficulty-badge.advanced {
+            background: #e74c3c;
+            color: white;
+        }
+        .technique-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .technique-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .technique-features li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .technique-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .warning-box.danger {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .warning-box.info {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .practical-example {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        .example-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .example-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .example-step {
+            background: rgba(255,255,255,0.15);
+            padding: 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .tools-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            margin-top: 2rem;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .tool-item {
+            background: var(--bg-color);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+        .tool-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+        .tool-name {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        .tool-type {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .navigation-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .analysis-container {
+                padding: 1rem;
+            }
+            .analysis-title {
+                font-size: 2rem;
+            }
+            .technique-grid {
+                grid-template-columns: 1fr;
+            }
+            .method-tabs {
+                flex-direction: column;
+            }
+            .tab-btn {
+                text-align: left;
+                border-left: 3px solid transparent;
+                border-bottom: none;
+            }
+            .tab-btn.active {
+                border-left-color: var(--primary-color);
+                border-bottom-color: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🔥 핫코인</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/crypto-guide.html" class="nav-link">초보가이드</a>
+                <a href="/market-analysis.html" class="nav-link active">시장분석</a>
+                <a href="/safety-tips.html" class="nav-link">안전수칙</a>
+                <a href="/faq.html" class="nav-link">FAQ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="analysis-container">
+            <div class="analysis-header">
+                <h1 class="analysis-title">📊 시장 분석 방법론</h1>
+                <p class="analysis-subtitle">
+                    성공적인 암호화폐 투자를 위한 핵심 분석 기법들<br>
+                    기술적 분석부터 온체인 분석까지 체계적으로 마스터하세요
+                </p>
+            </div>
+
+            <div class="method-tabs">
+                <button class="tab-btn active" data-tab="technical">📈 기술적 분석</button>
+                <button class="tab-btn" data-tab="fundamental">📋 기본적 분석</button>
+                <button class="tab-btn" data-tab="onchain">⛓️ 온체인 분석</button>
+                <button class="tab-btn" data-tab="sentiment">🧠 시장 심리</button>
+            </div>
+
+            <!-- 기술적 분석 탭 -->
+            <div id="technical" class="tab-content active">
+                <div class="method-section">
+                    <div class="section-header">
+                        <span class="section-icon">📈</span>
+                        <h2 class="section-title">기술적 분석 (Technical Analysis)</h2>
+                    </div>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        과거 가격과 거래량 데이터를 바탕으로 미래 가격 방향을 예측하는 분석 방법입니다.
+                        차트 패턴과 지표를 활용해 매매 타이밍을 결정할 수 있습니다.
+                    </p>
+
+                    <div class="technique-grid">
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                📊 지지선 & 저항선
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                가격이 반등하거나 조정을 받는 핵심 수준을 파악합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>과거 고점/저점에서 형성</li>
+                                <li>매매 진입/청산 기준점</li>
+                                <li>돌파 시 강력한 신호</li>
+                                <li>거래량과 함께 확인 필수</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                📉 이동평균선
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                일정 기간 평균가격으로 트렌드 방향을 파악합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>5일, 20일, 60일 등 활용</li>
+                                <li>골든크로스/데드크로스</li>
+                                <li>동적 지지저항 역할</li>
+                                <li>트렌드 확인에 효과적</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                🔥 RSI (상대강도지수)
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                과매수/과매도 상태를 판단하는 모멘텀 지표입니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>0-100 범위의 오실레이터</li>
+                                <li>70 이상 과매수, 30 이하 과매도</li>
+                                <li>다이버전스 신호 중요</li>
+                                <li>단기 매매에 유용</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                📐 피보나치 되돌림
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                조정 구간에서 지지/저항 수준을 예측합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>23.6%, 38.2%, 50%, 61.8%</li>
+                                <li>주요 조정 지점 예측</li>
+                                <li>확장 수준으로 목표가 설정</li>
+                                <li>다른 지표와 조합 활용</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                📋 엘리어트 파동
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                시장의 심리 사이클을 5파동으로 분석합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>충격파 5파동 + 조정파 3파동</li>
+                                <li>장기 트렌드 분석에 적합</li>
+                                <li>복잡하지만 강력한 도구</li>
+                                <li>피보나치와 연계 활용</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                🕯️ 캔들 패턴
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                캔들스틱 조합으로 반전 신호를 포착합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>도지, 해머, 십자별</li>
+                                <li>상승/하락 신호 패턴</li>
+                                <li>단일/복합 패턴 구분</li>
+                                <li>거래량 확인 필수</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="practical-example">
+                        <div class="example-title">
+                            🎯 실전 적용 예시: 비트코인 매수 타이밍
+                        </div>
+                        <div class="example-steps">
+                            <div class="example-step">
+                                <div class="step-number">1</div>
+                                <strong>지지선 확인</strong><br>
+                                과거 저점에서 형성된 강력한 지지선 파악
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">2</div>
+                                <strong>RSI 체크</strong><br>
+                                30 이하 과매도 구간에서 반등 신호 대기
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">3</div>
+                                <strong>거래량 확인</strong><br>
+                                지지선 터치 시점의 거래량 급증 확인
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">4</div>
+                                <strong>진입 결정</strong><br>
+                                모든 조건 만족 시 분할매수로 진입
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ 주의사항:</strong> 기술적 분석은 100% 정확하지 않습니다. 
+                        여러 지표를 종합적으로 판단하고, 리스크 관리를 철저히 하세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기본적 분석 탭 -->
+            <div id="fundamental" class="tab-content">
+                <div class="method-section">
+                    <div class="section-header">
+                        <span class="section-icon">📋</span>
+                        <h2 class="section-title">기본적 분석 (Fundamental Analysis)</h2>
+                    </div>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        프로젝트의 내재 가치를 평가하여 장기적 투자 가치를 판단하는 분석 방법입니다.
+                        기술력, 팀, 실용성 등 본질적 요소들을 종합적으로 검토합니다.
+                    </p>
+
+                    <div class="technique-grid">
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                👥 팀 & 파트너십
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                개발진의 실력과 신뢰성을 평가합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>창립자 및 개발팀 배경</li>
+                                <li>과거 프로젝트 성공 이력</li>
+                                <li>주요 기업 파트너십</li>
+                                <li>자문단 구성의 전문성</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                🎯 실용성 & 채택률
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                실제 사용되는 정도와 해결하는 문제를 파악합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>실제 사용 사례와 수요</li>
+                                <li>기존 솔루션 대비 장점</li>
+                                <li>사용자 증가 추세</li>
+                                <li>기업 도입 현황</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                💻 기술력 & 혁신성
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                프로젝트의 기술적 우수성을 검토합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>백서(WhitePaper) 품질</li>
+                                <li>블록체인 기술의 독창성</li>
+                                <li>확장성 및 보안성</li>
+                                <li>Github 개발 활동</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                💰 토큰 이코노믹스
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                토큰의 경제 구조와 가치 창출 메커니즘을 분석합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>총 발행량과 유통량</li>
+                                <li>토큰 분배 구조</li>
+                                <li>스테이킹 및 소각 메커니즘</li>
+                                <li>인플레이션/디플레이션 요소</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                🌐 생태계 & 커뮤니티
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                프로젝트 주변의 생태계 발전을 종합 평가합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>DeFi, NFT 등 생태계 규모</li>
+                                <li>개발자 커뮤니티 활성도</li>
+                                <li>사용자 커뮤니티 충성도</li>
+                                <li>미디어 및 소셜 인지도</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                📊 재무 건전성
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                프로젝트의 재정 상태와 지속 가능성을 점검합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>자금 조달 이력 및 규모</li>
+                                <li>재단 보유 자산</li>
+                                <li>개발비 지출 계획</li>
+                                <li>수익 창출 모델</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="practical-example">
+                        <div class="example-title">
+                            🔍 실전 적용 예시: 이더리움 투자 판단
+                        </div>
+                        <div class="example-steps">
+                            <div class="example-step">
+                                <div class="step-number">1</div>
+                                <strong>기술 우위성</strong><br>
+                                스마트 계약의 선구자, EIP 업그레이드 활발
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">2</div>
+                                <strong>생태계 규모</strong><br>
+                                DeFi, NFT 대부분이 이더리움 기반 구축
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">3</div>
+                                <strong>제도권 채택</strong><br>
+                                기업들의 블록체인 도입 시 우선 고려
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">4</div>
+                                <strong>지속적 혁신</strong><br>
+                                PoS 전환, 샤딩 등 확장성 개선 진행
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box info">
+                        <strong>💡 핵심 포인트:</strong> 기본적 분석은 장기 투자에 적합합니다. 
+                        단기 가격 변동보다는 프로젝트의 성장 잠재력에 집중하세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 온체인 분석 탭 -->
+            <div id="onchain" class="tab-content">
+                <div class="method-section">
+                    <div class="section-header">
+                        <span class="section-icon">⛓️</span>
+                        <h2 class="section-title">온체인 분석 (On-Chain Analysis)</h2>
+                    </div>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        블록체인에 기록된 실제 거래 데이터를 분석하여 투자자들의 행동 패턴과 
+                        시장 트렌드를 파악하는 최신 분석 기법입니다.
+                    </p>
+
+                    <div class="technique-grid">
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                📈 활성 주소 수
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                네트워크 사용자 수의 증감을 통해 관심도를 측정합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>일일 활성 주소(DAA) 추이</li>
+                                <li>신규 주소 생성률</li>
+                                <li>장기 보유자 비율</li>
+                                <li>네트워크 성장성 지표</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                💸 대량 이체 모니터링
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                고래(대형 투자자)들의 움직임을 추적합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>1000BTC 이상 대형 거래</li>
+                                <li>거래소 입출금 패턴</li>
+                                <li>고래 주소 누적 현황</li>
+                                <li>기관 투자자 동향</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                🏦 거래소 보유량
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                거래소 지갑의 코인 보유량 변화로 매도압력을 예측합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>거래소 유입/유출 밸런스</li>
+                                <li>보유량 증감 패턴</li>
+                                <li>매도 압력 예측</li>
+                                <li>시장 심리 반영</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                ⏰ HODL 웨이브
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                코인들의 보유 기간별 분포를 분석합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>1일~10년 구간별 분류</li>
+                                <li>장기 보유 비율 변화</li>
+                                <li>시장 성숙도 측정</li>
+                                <li>공급 충격 예측</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                💰 MVRV 비율
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                시가총액 대비 실현 가치로 과열/침체를 판단합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>Market Cap vs Realized Cap</li>
+                                <li>과매수/과매도 판단</li>
+                                <li>장기 사이클 분석</li>
+                                <li>매수/매도 타이밍 포착</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                📊 네트워크 밸류
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                네트워크 사용량 대비 가치 평가 모델입니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>NVT 비율 (Price/Transaction)</li>
+                                <li>사용량 기반 가치 평가</li>
+                                <li>버블 여부 판단</li>
+                                <li>펀더멘털 건전성 체크</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="practical-example">
+                        <div class="example-title">
+                            🐋 실전 적용 예시: 비트코인 고래 분석
+                        </div>
+                        <div class="example-steps">
+                            <div class="example-step">
+                                <div class="step-number">1</div>
+                                <strong>고래 알림 설정</strong><br>
+                                1000 BTC 이상 이체 시 실시간 알림
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">2</div>
+                                <strong>패턴 분석</strong><br>
+                                거래소 입금 증가 시 매도 압력 예상
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">3</div>
+                                <strong>시장 반응 관찰</strong><br>
+                                대량 이체 후 가격 변동 상관관계 확인
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">4</div>
+                                <strong>대응 전략</strong><br>
+                                고래 매도 시점에 매수 기회 포착
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box danger">
+                        <strong>🚨 주의사항:</strong> 온체인 데이터도 과거 지표입니다. 
+                        시장은 예상과 다르게 움직일 수 있으니 다른 분석과 함께 활용하세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시장 심리 분석 탭 -->
+            <div id="sentiment" class="tab-content">
+                <div class="method-section">
+                    <div class="section-header">
+                        <span class="section-icon">🧠</span>
+                        <h2 class="section-title">시장 심리 분석 (Sentiment Analysis)</h2>
+                    </div>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        투자자들의 감정과 심리 상태를 파악하여 시장의 극단적 상황과 
+                        반전 시점을 예측하는 보조 분석 방법입니다.
+                    </p>
+
+                    <div class="technique-grid">
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                😨 공포탐욕지수
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                시장 참여자들의 감정 상태를 수치화한 지표입니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>0~100 범위의 감정 지수</li>
+                                <li>극도 공포(0~20)에서 매수</li>
+                                <li>극도 탐욕(80~100)에서 매도</li>
+                                <li>역발상 투자의 핵심 지표</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card beginner">
+                            <h3 class="technique-title">
+                                📱 소셜 미디어 분석
+                                <span class="difficulty-badge beginner">초급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                SNS와 커뮤니티의 여론을 분석합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>트위터, 텔레그램 언급량</li>
+                                <li>긍정/부정 키워드 비율</li>
+                                <li>인플루언서 의견 추세</li>
+                                <li>검색량 및 관심도 변화</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                📊 롱/숏 비율
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                선물거래에서 롱/숏 포지션 비율을 분석합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>거래소별 롱/숏 데이터</li>
+                                <li>극단적 비율에서 반전</li>
+                                <li>펀딩비와 연계 분석</li>
+                                <li>청산 위험도 평가</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card intermediate">
+                            <h3 class="technique-title">
+                                💸 펀딩비 분석
+                                <span class="difficulty-badge intermediate">중급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                무기한선물의 펀딩비로 시장 쏠림을 파악합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>양수 시 롱 우세, 음수 시 숏 우세</li>
+                                <li>극단적 펀딩비는 반전 신호</li>
+                                <li>8시간마다 정산</li>
+                                <li>차익거래 기회 포착</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                🏛️ 기관 투자자 동향
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                대형 기관들의 투자 패턴을 추적합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>그레이스케일, 테슬라 등 보유량</li>
+                                <li>ETF 자금 유입/유출</li>
+                                <li>상장사 비트코인 매입</li>
+                                <li>제도권 채택 뉴스</li>
+                            </ul>
+                        </div>
+
+                        <div class="technique-card advanced">
+                            <h3 class="technique-title">
+                                🌊 시장 사이클 분석
+                                <span class="difficulty-badge advanced">고급</span>
+                            </h3>
+                            <p class="technique-desc">
+                                암호화폐 시장의 4년 주기 사이클을 분석합니다.
+                            </p>
+                            <ul class="technique-features">
+                                <li>비트코인 반감기 사이클</li>
+                                <li>불마켓/베어마켓 단계 구분</li>
+                                <li>축적-상승-분배-하락 패턴</li>
+                                <li>장기 매수/매도 타이밍</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="practical-example">
+                        <div class="example-title">
+                            📈 실전 적용 예시: 시장 바닥 포착하기
+                        </div>
+                        <div class="example-steps">
+                            <div class="example-step">
+                                <div class="step-number">1</div>
+                                <strong>공포지수 확인</strong><br>
+                                극도 공포(10 이하) 상태 확인
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">2</div>
+                                <strong>소셜 미디어</strong><br>
+                                부정 키워드 급증, 관심도 급락
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">3</div>
+                                <strong>롱/숏 비율</strong><br>
+                                숏 포지션 극도로 증가한 상태
+                            </div>
+                            <div class="example-step">
+                                <div class="step-number">4</div>
+                                <strong>역발상 매수</strong><br>
+                                모든 조건 만족 시 분할 매수 진행
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🎭 심리의 함정:</strong> 본인도 시장 심리의 일부입니다. 
+                        객관적 지표를 활용해 감정에 휘둘리지 않는 투자를 하세요.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 분석 도구 섹션 -->
+            <div class="tools-section">
+                <h3 style="margin-bottom: 1rem; color: var(--text-color);">🛠️ 추천 분석 도구</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-name">TradingView</div>
+                        <div class="tool-type">차트 분석</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">Glassnode</div>
+                        <div class="tool-type">온체인 분석</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">CoinGecko</div>
+                        <div class="tool-type">시장 데이터</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">Santiment</div>
+                        <div class="tool-type">소셜 분석</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">Messari</div>
+                        <div class="tool-type">기본적 분석</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">DeFiPulse</div>
+                        <div class="tool-type">DeFi 분석</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation-links">
+                <a href="/crypto-guide.html" class="nav-btn">📚 초보자 가이드</a>
+                <a href="/safety-tips.html" class="nav-btn">🛡️ 투자 안전 수칙</a>
+                <a href="/trading-basics.html" class="nav-btn">💱 거래 기초</a>
+                <a href="/faq.html" class="nav-btn">❓ 자주 묻는 질문</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 탭 전환 기능
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 모든 탭 비활성화
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    // 선택된 탭 활성화
+                    btn.classList.add('active');
+                    const targetTab = document.getElementById(btn.dataset.tab);
+                    if (targetTab) {
+                        targetTab.classList.add('active');
+                    }
+
+                    // 스크롤을 탭 컨테이너 위치로 이동
+                    const tabContainer = document.querySelector('.method-tabs');
+                    tabContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // 테크닉 카드 호버 효과
+            const techniqueCards = document.querySelectorAll('.technique-card');
+            techniqueCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+            });
+
+            // 도구 아이템 호버 효과
+            const toolItems = document.querySelectorAll('.tool-item');
+            toolItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+            });
+
+            console.log('Market Analysis page loaded successfully');
+        });
+    </script>
+</body>
+</html>

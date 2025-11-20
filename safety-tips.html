@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>투자 안전 수칙 | 🔥 지금 핫한 코인 순위</title>
+    <meta name="description" content="암호화폐 투자에서 가장 중요한 보안과 안전 수칙. 해킹과 사기로부터 자산을 보호하는 방법을 알아보세요.">
+    <meta name="keywords" content="암호화폐보안, 투자안전, 지갑보안, 해킹방지, 투자사기예방">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    
+    <style>
+        .safety-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .safety-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+        }
+        .safety-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .safety-subtitle {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .warning-banner {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            color: #856404;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .warning-banner.critical {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .security-sections {
+            display: grid;
+            gap: 2rem;
+        }
+        .security-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .security-rules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .rule-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+        .rule-card:hover {
+            transform: translateY(-2px);
+        }
+        .rule-card.critical {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
+        }
+        .rule-card.warning {
+            border-left-color: #f39c12;
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
+        }
+        .rule-card.info {
+            border-left-color: #3498db;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
+        }
+        .rule-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .rule-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .checklist {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .checklist-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: var(--bg-color);
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+        .checklist-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .checklist-checkbox.checked {
+            background: var(--primary-color);
+            position: relative;
+        }
+        .checklist-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            font-size: 14px;
+        }
+        .scam-examples {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            color: #721c24;
+        }
+        .scam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .scam-card {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(114, 28, 36, 0.2);
+        }
+        .navigation-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .nav-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .safety-container {
+                padding: 1rem;
+            }
+            .safety-title {
+                font-size: 2rem;
+            }
+            .security-rules {
+                grid-template-columns: 1fr;
+            }
+            .scam-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">🔥 핫코인</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">홈</a>
+                <a href="/crypto-guide.html" class="nav-link">초보가이드</a>
+                <a href="/safety-tips.html" class="nav-link active">안전수칙</a>
+                <a href="/faq.html" class="nav-link">FAQ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="safety-container">
+            <div class="safety-header">
+                <h1 class="safety-title">🛡️ 투자 안전 수칙</h1>
+                <p class="safety-subtitle">
+                    암호화폐 투자에서 가장 중요한 것은 안전입니다.<br>
+                    해킹과 사기로부터 소중한 자산을 지키는 방법을 알아보세요.
+                </p>
+            </div>
+
+            <div class="warning-banner critical">
+                <strong>⚠️ 중요:</strong> 암호화폐 투자는 높은 위험을 동반합니다. 
+                잃어도 괜찮은 돈으로만 투자하세요. 본 내용은 투자 조언이 아닌 정보 제공 목적입니다.
+            </div>
+
+            <div class="security-sections">
+                <!-- 기본 보안 -->
+                <div class="security-section">
+                    <div class="section-header">
+                        <span class="section-icon">🔐</span>
+                        <h2 class="section-title">기본 보안 수칙</h2>
+                    </div>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                        모든 투자자가 반드시 지켜야 할 기본적인 보안 수칙들입니다.
+                    </p>
+
+                    <div class="security-rules">
+                        <div class="rule-card critical">
+                            <h3 class="rule-title">
+                                🔑 강력한 비밀번호
+                            </h3>
+                            <p class="rule-desc">
+                                • 12자리 이상의 복잡한 비밀번호<br>
+                                • 대소문자, 숫자, 특수문자 조합<br>
+                                • 사이트별로 다른 비밀번호 사용<br>
+                                • 비밀번호 관리자 프로그램 활용
+                            </p>
+                        </div>
+
+                        <div class="rule-card critical">
+                            <h3 class="rule-title">
+                                📱 2단계 인증(2FA)
+                            </h3>
+                            <p class="rule-desc">
+                                • Google Authenticator, Authy 사용<br>
+                                • SMS보다는 OTP 앱 선택<br>
+                                • 백업 코드 안전한 곳에 보관<br>
+                                • 모든 거래소에서 필수 설정
+                            </p>
+                        </div>
+
+                        <div class="rule-card warning">
+                            <h3 class="rule-title">
+                                🌐 안전한 네트워크
+                            </h3>
+                            <p class="rule-desc">
+                                • 공용 와이파이에서 거래 금지<br>
+                                • VPN 사용 권장<br>
+                                • HTTPS 사이트만 이용<br>
+                                • 공용 컴퓨터에서 로그인 금지
+                            </p>
+                        </div>
+
+                        <div class="rule-card info">
+                            <h3 class="rule-title">
+                                💾 정기 백업
+                            </h3>
+                            <p class="rule-desc">
+                                • 지갑 시드 구문 안전 보관<br>
+                                • 여러 장소에 분산 보관<br>
+                                • 하드웨어 백업 권장<br>
+                                • 정기적으로 복구 테스트
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 지갑 보안 -->
+                <div class="security-section">
+                    <div class="section-header">
+                        <span class="section-icon">👛</span>
+                        <h2 class="section-title">지갑 보안 관리</h2>
+                    </div>
+                    
+                    <div class="security-rules">
+                        <div class="rule-card critical">
+                            <h3 class="rule-title">
+                                🔒 하드웨어 지갑 사용
+                            </h3>
+                            <p class="rule-desc">
+                                • Ledger, Trezor 등 검증된 제품<br>
+                                • 공식 사이트에서만 구매<br>
+                                • 개봉 상태와 씰 확인<br>
+                                • 펌웨어 정기 업데이트
+                            </p>
+                        </div>
+
+                        <div class="rule-card warning">
+                            <h3 class="rule-title">
+                                📱 소프트웨어 지갑
+                            </h3>
+                            <p class="rule-desc">
+                                • 공식 앱스토어에서만 다운로드<br>
+                                • 정기적인 앱 업데이트<br>
+                                • 루팅/탈옥된 기기 사용 금지<br>
+                                • 바이러스 검사 정기 실행
+                            </p>
+                        </div>
+
+                        <div class="rule-card warning">
+                            <h3 class="rule-title">
+                                🏢 거래소 보관 최소화
+                            </h3>
+                            <p class="rule-desc">
+                                • 거래 시에만 거래소 이용<br>
+                                • 평소에는 개인 지갑 보관<br>
+                                • 대량 보관 시 분산 보관<br>
+                                • 정기적으로 출금하기
+                            </p>
+                        </div>
+
+                        <div class="rule-card info">
+                            <h3 class="rule-title">
+                                🔑 개인키 관리
+                            </h3>
+                            <p class="rule-desc">
+                                • 개인키 절대 온라인 공유 금지<br>
+                                • 시드 구문 오프라인 보관<br>
+                                • 스크린샷이나 사진 저장 금지<br>
+                                • 물리적 백업 여러 개 보관
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 사기 예방 -->
+                <div class="security-section">
+                    <div class="section-header">
+                        <span class="section-icon">🕵️</span>
+                        <h2 class="section-title">사기 및 피싱 예방</h2>
+                    </div>
+                    
+                    <div class="scam-examples">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">⚠️ 주요 사기 수법들</h3>
+                        <div class="scam-grid">
+                            <div class="scam-card">
+                                <h4 style="margin-bottom: 0.5rem;">📧 피싱 이메일</h4>
+                                <p>거래소를 사칭한 가짜 이메일로 로그인 정보를 탈취</p>
+                            </div>
+                            <div class="scam-card">
+                                <h4 style="margin-bottom: 0.5rem;">🎁 가짜 에어드롭</h4>
+                                <p>무료 코인을 준다며 개인키나 시드 구문을 요구</p>
+                            </div>
+                            <div class="scam-card">
+                                <h4 style="margin-bottom: 0.5rem;">👨‍💼 투자 사기</h4>
+                                <p>고수익을 보장하며 투자금을 요구하는 폰지 사기</p>
+                            </div>
+                            <div class="scam-card">
+                                <h4 style="margin-bottom: 0.5rem;">🌐 가짜 사이트</h4>
+                                <p>유명 거래소와 비슷한 URL의 피싱 사이트</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="security-rules">
+                        <div class="rule-card critical">
+                            <h3 class="rule-title">
+                                ✅ 사기 예방 수칙
+                            </h3>
+                            <p class="rule-desc">
+                                • URL을 정확히 확인하기<br>
+                                • 이메일 링크 클릭 금지<br>
+                                • 고수익 보장 제안 거부<br>
+                                • 개인정보 요구 시 의심<br>
+                                • 서두르라는 압박 무시
+                            </p>
+                        </div>
+
+                        <div class="rule-card warning">
+                            <h3 class="rule-title">
+                                🚨 의심스러운 신호들
+                            </h3>
+                            <p class="rule-desc">
+                                • 너무 좋은 수익률 제안<br>
+                                • 유명인 사칭 메시지<br>
+                                • 긴급하다며 서두르기<br>
+                                • 선입금 요구<br>
+                                • 개인키/시드 구문 요청
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 투자 리스크 관리 -->
+                <div class="security-section">
+                    <div class="section-header">
+                        <span class="section-icon">📊</span>
+                        <h2 class="section-title">리스크 관리</h2>
+                    </div>
+                    
+                    <div class="security-rules">
+                        <div class="rule-card critical">
+                            <h3 class="rule-title">
+                                💰 자금 관리
+                            </h3>
+                            <p class="rule-desc">
+                                • 잃어도 괜찮은 돈으로만 투자<br>
+                                • 대출받아서 투자 절대 금지<br>
+                                • 생활비와 투자금 분리<br>
+                                • 포트폴리오 다양화
+                            </p>
+                        </div>
+
+                        <div class="rule-card warning">
+                            <h3 class="rule-title">
+                                📈 감정 관리
+                            </h3>
+                            <p class="rule-desc">
+                                • FOMO(놓칠까봐 하는 투자) 주의<br>
+                                • 손절매 라인 미리 설정<br>
+                                • 계획적이고 냉정한 판단<br>
+                                • 소셜미디어 과도한 의존 금지
+                            </p>
+                        </div>
+
+                        <div class="rule-card info">
+                            <h3 class="rule-title">
+                                📚 지속적 학습
+                            </h3>
+                            <p class="rule-desc">
+                                • 시장 동향과 기술 발전 추적<br>
+                                • 신뢰할 만한 정보원 확보<br>
+                                • 투자 경험 기록 및 분석<br>
+                                • 전문가 의견 참고 (맹신은 금물)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 보안 체크리스트 -->
+            <div class="checklist">
+                <h3 class="checklist-title">
+                    ✅ 보안 체크리스트
+                </h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    안전한 투자를 위해 다음 항목들을 확인해보세요:
+                </p>
+                
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>강력한 비밀번호와 2단계 인증 설정 완료</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>하드웨어 지갑 구매 및 설정</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>시드 구문 오프라인 백업 완료</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>신뢰할 수 있는 거래소만 이용</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>피싱 사이트 구별법 숙지</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>투자 계획과 손절매 라인 설정</span>
+                </div>
+                <div class="checklist-item">
+                    <div class="checklist-checkbox" onclick="toggleCheck(this)"></div>
+                    <span>정기적인 보안 점검 계획 수립</span>
+                </div>
+            </div>
+
+            <div class="navigation-links">
+                <a href="/crypto-guide.html" class="nav-btn">📚 초보자 가이드</a>
+                <a href="/market-analysis.html" class="nav-btn">📊 시장 분석 방법</a>
+                <a href="/trading-basics.html" class="nav-btn">💱 거래 기초</a>
+                <a href="/faq.html" class="nav-btn">❓ 자주 묻는 질문</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCheck(checkbox) {
+            checkbox.classList.toggle('checked');
+            
+            // 체크 상태를 로컬 스토리지에 저장
+            const checkedItems = document.querySelectorAll('.checklist-checkbox.checked');
+            const totalItems = document.querySelectorAll('.checklist-checkbox');
+            const progress = (checkedItems.length / totalItems.length * 100).toFixed(0);
+            
+            localStorage.setItem('safetyChecklistProgress', progress);
+            
+            if (checkedItems.length === totalItems.length) {
+                setTimeout(() => {
+                    alert('🎉 모든 보안 수칙을 확인하셨습니다! 안전한 투자 되세요.');
+                }, 300);
+            }
+        }
+
+        // 페이지 로드 시 저장된 진행도 복원
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedProgress = localStorage.getItem('safetyChecklistProgress');
+            if (savedProgress) {
+                console.log(`보안 체크리스트 진행도: ${savedProgress}%`);
+            }
+
+            // 보안 카드 호버 효과
+            const ruleCards = document.querySelectorAll('.rule-card');
+            ruleCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

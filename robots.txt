@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+Sitemap: https://cryptopulse.kr/sitemap.xml
+
+# 불필요한 파일 크롤링 방지
+Disallow: /js/
+Disallow: /css/
+Disallow: /_headers
+Disallow: /netlify.toml
+Disallow: /.git/
+Disallow: /.cursor/
+Disallow: /node_modules/
+
+# 중요 페이지 허용
+Allow: /index.html
+Allow: /about.html
+Allow: /privacy.html
+Allow: /terms.html
+Allow: /contact.html
+Allow: /faq.html
+Allow: /crypto-guide.html
+Allow: /safety-tips.html
+Allow: /market-analysis.html
+Allow: /trading-basics.html
+
+# 검색 엔진별 크롤링 주기 설정
+Crawl-delay: 1

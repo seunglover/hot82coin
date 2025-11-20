@@ -1,0 +1,175 @@
+{
+  "crawlInfo": {
+    "crawlTime": "2025-08-13T20:38:24.987145",
+    "source": "https://coinness.com/news",
+    "crawler": "Python Playwright v1.0",
+    "method": "텍스트 패턴 분석 + 구조화 추출",
+    "success": true,
+    "totalNews": 10,
+    "date": "2025년 08월 13일 Wednesday"
+  },
+  "newsData": [
+    {
+      "id": 1,
+      "time": "20:26",
+      "title": "美 나스닥 상장사 707 케이먼, BTC·ETH·BNB 대규모 투자 계획",
+      "content": "미국 나스닥 상장사 707 케이먼 홀딩스(707 Cayman Holdings)가 BTC, ETH, BNB 투자 전략을 모색할 것이며, 향후 12개월 동안 해당 자산 보유 규모를 크게 확대할 계획이라고 글로브뉴스와이어가 전했다. 구체적인 내용은 아직 공개되지 않았다. Quick Order",
+      "category": "이더리움",
+      "keywords": [
+        "BTC",
+        "ETH",
+        "BNB"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 2,
+      "time": "20:19",
+      "title": "ETH 선물 미결제약정 49조원...역대 최대",
+      "content": "ETH 선물 미결제약정이 355억달러(49조원)로 역대 최대를 기록했다고 글래스노드가 X를 통해 전했다. Quick Order",
+      "category": "이더리움",
+      "keywords": [
+        "ETH",
+        "ETH"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 3,
+      "time": "20:19",
+      "title": "분석 \"美 통화 공급 확대, BTC 랠리 촉진\"",
+      "content": "미국 국가 부채가 역대 최대인 37조 달러를 돌파한 가운데, BTC 랠리가 촉진될 수 있다는 전망이 나왔다. 코인텔레그래프는 \"미국 재정적자가 확대될수록 중앙은행이 양적완화 카드를 고려할 수 있으며 이는 암호화폐 등 위험자산 가치 상승을 부추길 것\"이라고 내다봤다. 지난 5년간 미국 부채가 38% 증가했으며 이 기간 BTC 가격은 925% 상승했다고 비트겟 수석 애널리스트 라이언 리가 설명했다. 리얼비전 애널리스트 제이미 쿠츠는 \"부채 상환은 글로벌 광의통화(M2) 공급 증가로 이어질 수 있으며, 이 경우 비트코인은 올해 말 13.2만 달러를 돌파할 수 있다\"고 말했다. Quick Order",
+      "category": "비트코인",
+      "keywords": [
+        "BTC",
+        "BTC",
+        "BTC",
+        "비트코인"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 4,
+      "time": "20:18",
+      "title": "업비트, IOTA 입출금 일시 중단",
+      "content": "업비트가 공식 홈페이지를 통해 아이오타(IOTA) 네트워크 업그레이드 지원에 따라 오는 14일 11시부터 IOTA 입출금을 일시 중단한다고 공지했다. Quick Order",
+      "category": "거래소",
+      "keywords": [
+        "IOTA",
+        "IOTA",
+        "IOTA",
+        "업비트",
+        "업비트"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 5,
+      "time": "20:06",
+      "title": "제프리 황, ETH 25배 숏포지션 진입",
+      "content": "BAYC 계열 NFT 고래이자 대만 유명 가수 제프리 황이 25배 레버리지로 ETH 숏포지션을 오픈했다고 온체인렌즈가 전했다. 포지션 규모는 1500 ETH이며 진입가는 4,699.89 달러다. 현재 9000 달러 상당 미실현손실 중이다. Quick Order",
+      "category": "이더리움",
+      "keywords": [
+        "ETH",
+        "BAYC",
+        "NFT"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 6,
+      "time": "19:54",
+      "title": "이더리움 ICO 참여 고래, $1042만 ETH 크라켄 입금",
+      "content": "이더리움 ICO 참여 고래가 16시간 전 2283 ETH(1042만달러)를 크라켄에 입금했다고 온체인 렌즈가 전했다. 거래소 입금은 통상 매도 목적으로 해석된다. Quick Order",
+      "category": "이더리움",
+      "keywords": [
+        "ICO",
+        "ETH",
+        "ICO",
+        "$1042",
+        "크라켄"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 7,
+      "time": "19:37",
+      "title": "해시키 캐피털, $3386만 ETH 바이낸스 추가 입금",
+      "content": "해시키 캐피털 추정 주소가 약 50분 전 바이낸스로 7300 ETH(3386만달러)를 추가 입금했다고 앰버CN이 전했다. 해당 주소는 7월 28일 이후 바이낸스, OKX, 갤럭시 디지털로 총 3만1300 ETH(1.3억달러)를 입금한 바 있다. Quick Order",
+      "category": "이더리움",
+      "keywords": [
+        "ETH",
+        "ETH",
+        "CN",
+        "$3386",
+        "바이낸스"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 8,
+      "time": "19:19",
+      "title": "300,000,000 USDT 이체... Aave → HTX",
+      "content": "웨일 얼럿에 따르면, Aave 주소에서 HTX 주소로 300,000,000 USDT가 이체됐다. 3억 달러 규모다.",
+      "category": "스테이블코인",
+      "keywords": [
+        "USDT",
+        "HTX",
+        "HTX"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 9,
+      "time": "19:05",
+      "title": "바이낸스 월렛, REVA 사전 TGE 진행",
+      "content": "바이낸스 월렛이 8월 14일 20시(한국시간)부터 2시간 동안 REVA 사전 TGE를 진행한다고 공지했다.",
+      "category": "거래소",
+      "keywords": [
+        "REVA",
+        "TGE",
+        "REVA",
+        "바이낸스",
+        "바이낸스"
+      ],
+      "source": "coinness.com"
+    },
+    {
+      "id": 10,
+      "time": "18:44",
+      "title": "바이낸스 AIO, XNY 무기한 선물 상장",
+      "content": "바이낸스가 오늘 20시 30분 AIO, 20시 45분 XNY 무기한 선물을 상장한다고 공지했다. 둘다 최대 50배 레버리지를 지원한다. 대한민국 크립토 어워즈 가장 빠르고 정확한 24시간 크립토 뉴스 제휴제안&광고문의: business@coinness.live    고객센터: cs@coinness.live Google Play Copyright NESS LAB LLC. ALL RIGHTS RESERVED.",
+      "category": "거래소",
+      "keywords": [
+        "AIO",
+        "XNY",
+        "AIO",
+        "바이낸스",
+        "바이낸스"
+      ],
+      "source": "coinness.com"
+    }
+  ],
+  "statistics": {
+    "categoryCount": {
+      "이더리움": 5,
+      "비트코인": 1,
+      "거래소": 3,
+      "스테이블코인": 1
+    },
+    "timeRange": {
+      "earliest": "18:44",
+      "latest": "20:26"
+    },
+    "avgContentLength": 140,
+    "successRate": "100%"
+  },
+  "metadata": {
+    "botDetectionBypass": "Python Playwright 스텔스 모드",
+    "extractionMethod": "시간패턴 분석 + 텍스트 구조화",
+    "dataQuality": "높음",
+    "duplicatesRemoved": true,
+    "errors": [],
+    "notes": "10개 뉴스 완전 추출 성공"
+  }
+}

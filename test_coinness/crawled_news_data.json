@@ -1,0 +1,120 @@
+{
+  "crawlInfo": {
+    "crawlTime": "2025-01-13T10:58:45.123Z",
+    "source": "https://coinness.com/news",
+    "crawler": "Nodriver MCP v1.0",
+    "success": true,
+    "totalNewsFound": 12,
+    "method": "DOM 스크롤 + 텍스트 분석 + 링크 추출"
+  },
+  "newsData": [
+    {
+      "id": "1135896",
+      "title": "이더리움 ICO 참여 고래, $1042만 ETH 크라켄 입금",
+      "link": "https://coinness.com/news/1135896",
+      "category": "이더리움",
+      "keywords": ["이더리움", "ICO", "고래", "$1042만", "ETH", "크라켄"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135895",
+      "title": "해시키 캐피털, $3386만 ETH 바이낸스 추가 입금",
+      "link": "https://coinness.com/news/1135895",
+      "category": "이더리움",
+      "keywords": ["해시키 캐피털", "$3386만", "ETH", "바이낸스"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135894",
+      "title": "300,000,000 USDT 이체... Aave → HTX",
+      "link": "https://coinness.com/news/1135894",
+      "category": "스테이블코인",
+      "keywords": ["USDT", "이체", "Aave", "HTX", "3억달러"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135893",
+      "title": "바이낸스 월렛, REVA 사전 TGE 진행",
+      "link": "https://coinness.com/news/1135893",
+      "category": "거래소",
+      "keywords": ["바이낸스", "REVA", "TGE"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135891",
+      "title": "바이낸스 AIO, XNY 무기한 선물 상장",
+      "link": "https://coinness.com/news/1135891",
+      "category": "거래소",
+      "keywords": ["바이낸스", "AIO", "XNY", "선물", "상장"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135890",
+      "title": "SC \"ETH, 2028년 $2.5만 간다\"...기존 전망 3배 상향",
+      "link": "https://coinness.com/news/1135890",
+      "category": "이더리움",
+      "keywords": ["스탠다드차타드", "ETH", "2028년", "$2.5만", "전망"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135888",
+      "title": "이더리움 ICO 참여 고래, 4개월 간 $3465만 ETH 매도",
+      "link": "https://coinness.com/news/1135888",
+      "category": "이더리움",
+      "keywords": ["이더리움", "ICO", "고래", "$3465만", "ETH", "매도"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135875",
+      "title": "솔라나 TVL $110억 회복...3년래 최대",
+      "link": "https://coinness.com/news/1135875",
+      "category": "솔라나",
+      "keywords": ["솔라나", "TVL", "$110억", "3년래 최대"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135869",
+      "title": "BTC $119,000 하회",
+      "link": "https://coinness.com/news/1135869",
+      "category": "비트코인",
+      "keywords": ["BTC", "$119,000", "하회"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    },
+    {
+      "id": "1135857",
+      "title": "ETH 시총 $5500억 회복",
+      "link": "https://coinness.com/news/1135857",
+      "category": "이더리움",
+      "keywords": ["ETH", "시총", "$5500억", "회복"],
+      "source": "coinness.com",
+      "crawlTime": "2025-01-13T10:58:45.123Z",
+      "status": "extracted"
+    }
+  ],
+  "metadata": {
+    "botDetectionBypass": "Nodriver MCP 사용",
+    "extractionMethod": "DOM 순회 + 텍스트 분석",
+    "filterCriteria": "20자 이상, 암호화폐 키워드 포함, 링크 존재",
+    "duplicatesRemoved": true,
+    "errors": [],
+    "notes": "첫 테스트 크롤링 성공 - 기본 구조 확인됨"
+  }
+}

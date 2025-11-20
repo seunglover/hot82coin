@@ -1,0 +1,126 @@
+{
+  "crawlInfo": {
+    "crawlTime": "2025-08-13T11:00:32.927Z",
+    "source": "https://coinness.com/news",
+    "crawler": "Playwright-stealth v1.0",
+    "method": "텍스트 패턴 분석 + 구조화 추출",
+    "success": true,
+    "totalNews": 10,
+    "date": "2025년 8월 13일 수요일"
+  },
+  "newsData": [
+    {
+      "id": 1,
+      "time": "19:54",
+      "title": "이더리움 ICO 참여 고래, $1042만 ETH 크라켄 입금",
+      "content": "이더리움 ICO 참여 고래가 16시간 전 2283 ETH(1042만달러)를 크라켄에 입금했다고 온체인 렌즈가 전했다. 거래소 입금은 통상 매도 목적으로 해석된다.",
+      "category": "이더리움",
+      "keywords": ["이더리움", "ICO", "고래", "크라켄", "매도"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 2,
+      "time": "19:37", 
+      "title": "해시키 캐피털, $3386만 ETH 바이낸스 추가 입금",
+      "content": "해시키 캐피털 추정 주소가 약 50분 전 바이낸스로 7300 ETH(3386만달러)를 추가 입금했다고 앰버CN이 전했다. 해당 주소는 7월 28일 이후 바이낸스, OKX, 갤럭시 디지털로 총 3만1300 ETH(1.3억달러)를 입금한 바 있다.",
+      "category": "이더리움",
+      "keywords": ["해시키캐피털", "ETH", "바이낸스", "기관투자"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 3,
+      "time": "19:19",
+      "title": "300,000,000 USDT 이체... Aave → HTX", 
+      "content": "웨일 얼럿에 따르면, Aave 주소에서 HTX 주소로 300,000,000 USDT가 이체됐다. 3억 달러 규모다.",
+      "category": "스테이블코인",
+      "keywords": ["USDT", "이체", "Aave", "HTX", "3억달러"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 4,
+      "time": "19:05",
+      "title": "바이낸스 월렛, REVA 사전 TGE 진행",
+      "content": "바이낸스 월렛이 8월 14일 20시(한국시간)부터 2시간 동안 REVA 사전 TGE를 진행한다고 공지했다.",
+      "category": "거래소",
+      "keywords": ["바이낸스", "REVA", "TGE"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 5,
+      "time": "18:44",
+      "title": "바이낸스 AIO, XNY 무기한 선물 상장",
+      "content": "바이낸스가 오늘 20시 30분 AIO, 20시 45분 XNY 무기한 선물을 상장한다고 공지했다. 둘다 최대 50배 레버리지를 지원한다.",
+      "category": "거래소", 
+      "keywords": ["바이낸스", "AIO", "XNY", "선물", "상장"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 6,
+      "time": "18:20",
+      "title": "SC \"ETH, 2028년 $2.5만 간다\"...기존 전망 3배 상향",
+      "content": "스탠다드차타드(SC)가 2028년 말 이더리움 가격 전망치를 기존 7500달러에서 2만5000달러로 대폭 상향했다고 더블록이 전했다. 올해 말 전망치는 4000달러에서 7500달러로 높였다. 3분기 안으로는 이전 최고가인 4866 달러를 넘어설 것으로 내다봤다. SC 애널리스트는 \"기업의 ETH 전략 투자 및 현물 ETF 수요 급증, 미국 스테이블코인 규제 도입 등으로 이더리움 가치가 극적으로 개선됐다\"고 분석했다.",
+      "category": "이더리움",
+      "keywords": ["스탠다드차타드", "ETH", "가격전망", "$25000"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 7,
+      "time": "18:14", 
+      "title": "a16z·로비단체, 미 SEC에 댑 규제 완화 요구",
+      "content": "앤드리슨 호로위츠(a16z), 암호화폐 로비단체 디파이 에듀케이션 펀드가 미국 증권거래위원회(SEC)에 댑 규제 완화를 위한 세이프 하버(safe harbor) 지정을 요구했다고 디크립트가 전했다. 세이프 하버란 특정 조건을 충족하면 법적 제재나 규제 적용을 유예·완화해 주는 제도다. 만약 세이프 하버가 지정되면 DEX, 셀프 커스터디 월렛, NFT 마켓 등 댑 개발사는 브로커 딜러로 간주되지 않는다. 또한 댑이 토큰화 증권을 다루더라도 세이프 하버의 기준을 충족하면 SEC 규제를 받지 않을 수 있다.",
+      "category": "DeFi",
+      "keywords": ["a16z", "SEC", "DApp", "규제완화"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 8,
+      "time": "18:05",
+      "title": "이더리움 ICO 참여 고래, 4개월 간 $3465만 ETH 매도",
+      "content": "이더리움 ICO 참여 고래가 8월 2일부터 지금까지 5125 ETH(2013만달러)를 매도했다고 온체인 애널리스트 ai_9684xtpa가 전했다. 이 고래는 지난 4개월 간 총 14,639 ETH(3465만달러)를 매도했다.",
+      "category": "이더리움",
+      "keywords": ["이더리움", "ICO", "고래", "매도"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 9,
+      "time": "17:59",
+      "title": "BTC $120,000 상회",
+      "content": "코인니스 마켓 모니터링에 따르면 BTC가 120,000 달러를 상회했다. 바이낸스 USDT 마켓 기준 BTC는 120,028.01달러에 거래되고 있다.",
+      "category": "비트코인",
+      "keywords": ["BTC", "$120000", "상회", "가격"],
+      "source": "coinness.com"
+    },
+    {
+      "id": 10,
+      "time": "17:54",
+      "title": "업비트, 베트남 국방부 산하 은행과 제휴", 
+      "content": "암호화폐거래소 업비트를 운영하는 두나무는 베트남 4대 은행인 밀리터리뱅크와 기술 제휴 양해각서를 교환했다고 한국경제가 보도했다. 밀리터리뱅크는 1994년 설립된 은행으로 베트남 국방부 산하 금융기관이다. 두나무는 밀리터리뱅크의 가상자산거래소 설립, 투자자 보호장치 구축 등을 지원할 예정이다.",
+      "category": "거래소",
+      "keywords": ["업비트", "베트남", "밀리터리뱅크", "제휴"],
+      "source": "coinness.com"
+    }
+  ],
+  "statistics": {
+    "categoryCount": {
+      "이더리움": 4,
+      "거래소": 3, 
+      "스테이블코인": 1,
+      "비트코인": 1,
+      "DeFi": 1
+    },
+    "timeRange": {
+      "earliest": "17:54",
+      "latest": "19:54"
+    },
+    "avgContentLength": 156,
+    "successRate": "100%"
+  },
+  "metadata": {
+    "botDetectionBypass": "Playwright-stealth 사용",
+    "extractionMethod": "시간패턴 분석 + 텍스트 구조화",
+    "dataQuality": "높음 (모든 뉴스에 시간, 제목, 내용 포함)",
+    "duplicatesRemoved": true,
+    "errors": [],
+    "notes": "완전한 크롤링 성공 - 시간, 제목, 내용 모두 추출"
+  }
+}
