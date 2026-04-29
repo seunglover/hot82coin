@@ -2808,7 +2808,7 @@ async function drawSparkline(symbol, canvasId) {
         // Canvas 요소 확인
         const canvas = document.getElementById(canvasId);
         if (!canvas) {
-            console.error('Canvas 요소를 찾을 수 없습니다:', canvasId);
+            console.debug('스파크라인 대상이 사라져 렌더링을 건너뜁니다:', canvasId);
             return;
         }
         
@@ -2995,7 +2995,7 @@ async function drawSparklineV2(symbol, canvasId, coinData) {
         // Canvas 요소 확인
         const canvas = document.getElementById(canvasId);
         if (!canvas) {
-            console.error('Canvas 요소를 찾을 수 없습니다:', canvasId);
+            console.debug('스파크라인 대상이 사라져 렌더링을 건너뜁니다:', canvasId);
             return;
         }
         
