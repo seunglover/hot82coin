@@ -75,7 +75,7 @@
             nav_trading: 'Trading',
             nav_security: 'Security',
             nav_faq: 'FAQ',
-            nav_currency: 'KRW',
+            nav_currency: 'USD',
             langLabel: 'Language',
             searchLabel: 'Search coins',
             homeLabel: 'CoinRadar home'

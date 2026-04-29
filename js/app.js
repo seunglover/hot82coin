@@ -14,6 +14,7 @@ class CoinRankingApp {
         this.currentTheme = 'light'; // 현재 테마
         this.currentMenu = 'all'; // 현재 선택된 메뉴
         this.allCoins = []; // 모든 코인 데이터 저장
+        this.usdKrwRate = 1300;
         
         // 성능 최적화를 위한 캐시 추가
         this.cache = {
@@ -278,10 +279,12 @@ class CoinRankingApp {
             
             // 15분 기준 실시간 거래량 데이터로 변경
             console.log('15분 기준 실시간 거래량 데이터 로딩 중...');
-            const [coins, marketStats] = await Promise.all([
+            const [coins, marketStats, usdKrwRate] = await Promise.all([
                 bybitAPI.getTopCoinsFromBybit15Min(50), // 15분 기준 상위 50개 코인
-                bybitAPI.getMarketStats()
+                bybitAPI.getMarketStats(),
+                exchangeRateAPI.getUSDToKRWRate()
             ]);
+            this.usdKrwRate = Number(usdKrwRate) || this.usdKrwRate;
             
             console.log('기본 데이터 로딩 완료, 추가 데이터 로딩 중...');
             
@@ -446,6 +449,11 @@ class CoinRankingApp {
         const changeText = window.languageManager ? window.languageManager.t('change') : '변동률';
         const chartText = window.languageManager ? window.languageManager.t('chart') : '차트';
         const interestText = window.languageManager ? window.languageManager.t('interest') : '관심도';
+
+        if (this.currentMenu === 'ai') {
+            this.displayAIRecommendations(coins);
+            return;
+        }
         
         contentDiv.innerHTML = `
             <div class="coin-list">
@@ -717,10 +725,10 @@ class CoinRankingApp {
         
         // 거래량 정보
         if (coin.volume) {
-            const volumeFormatted = this.formatNumber(coin.volume);
+            const volumeFormatted = this.formatCurrencyAmount(coin.volume);
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
-            reasons.push(`${t('volume_usd')} ${volumeFormatted} USD`);
+            reasons.push(`${t('volume_usd')} ${volumeFormatted}`);
         }
         
         // 가격 변동률
@@ -735,7 +743,7 @@ class CoinRankingApp {
         
         // 현재 가격
         if (coin.price) {
-            const priceFormatted = this.formatUSDPrice(coin.price);
+            const priceFormatted = this.formatDisplayPrice(coin.price);
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
             reasons.push(`${t('current_price')} ${priceFormatted}`);
@@ -845,14 +853,14 @@ class CoinRankingApp {
         
         // 시가총액 정보
         if (details.market_cap) {
-            const marketCapFormatted = this.formatNumber(details.market_cap);
-            reasons.push(`시가총액 ${marketCapFormatted} USD`);
+            const marketCapFormatted = this.formatCurrencyAmount(details.market_cap);
+            reasons.push(`${this.uiText('시가총액', 'Market Cap')} ${marketCapFormatted}`);
         }
         
         // 24시간 거래량
         if (details.volume_24h) {
-            const volumeFormatted = this.formatNumber(details.volume_24h);
-            reasons.push(`24시간 거래량 ${volumeFormatted} USD`);
+            const volumeFormatted = this.formatCurrencyAmount(details.volume_24h);
+            reasons.push(`${this.uiText('24시간 거래량', '24h Volume')} ${volumeFormatted}`);
         }
         
         // 가격 변동률
@@ -1058,7 +1066,7 @@ class CoinRankingApp {
                 <div class="col-longshort longshort-column">
                     ${longShortDisplay}
                 </div>
-                <div class="col-volume volume">$${this.formatNumber(coin.volume)}</div>
+                <div class="col-volume volume">${this.formatCurrencyAmount(coin.volume)}</div>
                 <div class="col-change change ${changeClass}">${changeArrow} ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%</div>
                 <div class="col-sparkline sparkline">
                     <div id="sparkline-${coin.symbol}" class="sparkline-chart"></div>
@@ -1068,6 +1076,211 @@ class CoinRankingApp {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * AI 추천 전용 카드 화면 표시
+     */
+    displayAIRecommendations(coins) {
+        const contentDiv = document.getElementById('content');
+        if (!contentDiv) return;
+
+        const visibleCoins = Array.isArray(coins) ? coins : [];
+        contentDiv.innerHTML = `
+            <section class="ai-reco-panel">
+                <div class="ai-reco-heading">
+                    <div>
+                        <p class="ai-reco-kicker">${this.escapeHTML(this.uiText('실시간 관심 신호', 'Live signal desk'))}</p>
+                        <h3>${this.escapeHTML(this.uiText('AI 추천 관찰 리스트', 'AI watchlist'))}</h3>
+                    </div>
+                    <span>${this.escapeHTML(this.uiText(`${visibleCoins.length}개 후보`, `${visibleCoins.length} candidates`))}</span>
+                </div>
+                <p class="ai-reco-summary">
+                    ${this.escapeHTML(this.uiText(
+                        '거래대금, 변동률, 롱/숏 쏠림, 데이터 신뢰도를 합산해 지금 볼 만한 후보를 정렬했습니다.',
+                        'Ranked by turnover, momentum, long/short skew, and data confidence.'
+                    ))}
+                </p>
+                <div class="ai-reco-grid-list">
+                    ${visibleCoins.map((coin, index) => this.createAIRecommendationCard(coin, index)).join('')}
+                </div>
+            </section>
+        `;
+
+        document.querySelectorAll('.ai-reco-card').forEach(card => {
+            card.addEventListener('click', () => {
+                showCoinModal(card.getAttribute('data-symbol'));
+            });
+            card.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    showCoinModal(card.getAttribute('data-symbol'));
+                }
+            });
+        });
+    }
+
+    /**
+     * AI 추천 카드 생성
+     */
+    createAIRecommendationCard(coin, index) {
+        const symbol = this.sanitizeSymbol(coin.symbol);
+        const confidence = this.getAIConfidence(coin);
+        const level = this.getAIRecommendationLevel(coin);
+        const risk = this.getAIRiskProfile(coin);
+        const reasons = this.getAIRecommendationReasons(coin);
+        const change = Number(coin.priceChangePercent || 0);
+        const changeClass = change >= 0 ? 'positive' : 'negative';
+        const changeText = this.formatSignedPercent(change);
+        const longShortText = this.getLongShortSummary(coin);
+        const actionText = this.getAIActionText(coin, risk.tone);
+
+        return `
+            <article class="ai-reco-card" data-symbol="${this.escapeHTML(symbol)}" tabindex="0" role="button">
+                <div class="ai-reco-card-head">
+                    <span class="ai-reco-rank">${String(index + 1).padStart(2, '0')}</span>
+                    <div class="ai-reco-symbol">
+                        <strong>${this.escapeHTML(symbol)}</strong>
+                        <small>${this.escapeHTML(this.getInterestReason(coin))}</small>
+                    </div>
+                    <span class="ai-reco-level" data-tone="${level.tone}">${this.escapeHTML(level.label)}</span>
+                </div>
+                <div class="ai-reco-price-row">
+                    <strong>${this.escapeHTML(this.formatDisplayPrice(coin.price))}</strong>
+                    <span class="${changeClass}">${this.escapeHTML(changeText)}</span>
+                </div>
+                <div class="ai-reco-confidence">
+                    <div>
+                        <span>${this.escapeHTML(this.uiText('추천 신뢰도', 'Confidence'))}</span>
+                        <strong>${confidence}%</strong>
+                    </div>
+                    <div class="ai-confidence-bar"><span style="width: ${confidence}%"></span></div>
+                </div>
+                <div class="ai-reco-metrics">
+                    <span>${this.escapeHTML(this.uiText('거래대금', 'Turnover'))}<strong>${this.escapeHTML(this.formatCurrencyAmount(coin.dashboardVolume || coin.volume))}</strong></span>
+                    <span>${this.escapeHTML(this.uiText('롱/숏', 'Long/Short'))}<strong>${this.escapeHTML(longShortText)}</strong></span>
+                    <span>${this.escapeHTML(this.uiText('리스크', 'Risk'))}<strong data-risk="${risk.tone}">${this.escapeHTML(risk.label)}</strong></span>
+                </div>
+                <ul class="ai-reco-reasons">
+                    ${reasons.map(reason => `<li>${this.escapeHTML(reason)}</li>`).join('')}
+                </ul>
+                <div class="ai-reco-action">
+                    <span>${this.escapeHTML(this.uiText('관찰 포인트', 'Watch point'))}</span>
+                    <strong>${this.escapeHTML(actionText)}</strong>
+                </div>
+            </article>
+        `;
+    }
+
+    /**
+     * AI 추천 신뢰도 계산
+     */
+    getAIConfidence(coin) {
+        const score = Number(coin.aiScore || 0);
+        const volume = Number(coin.dashboardVolume || coin.volume || 0);
+        const change = Math.abs(Number(coin.priceChangePercent || 0));
+        const hasLongShort = coin.longAccount !== null && coin.longAccount !== undefined;
+        const liquidityBonus = volume >= 1e8 ? 14 : volume >= 1e7 ? 9 : volume >= 1e6 ? 5 : 0;
+        const dataBonus = hasLongShort ? 5 : 0;
+        const volatilityPenalty = change >= 25 ? 8 : change >= 15 ? 4 : 0;
+        const confidence = 46 + (score * 7) + liquidityBonus + dataBonus - volatilityPenalty;
+
+        return Math.max(42, Math.min(92, Math.round(confidence)));
+    }
+
+    /**
+     * AI 추천 단계 라벨
+     */
+    getAIRecommendationLevel(coin) {
+        const confidence = this.getAIConfidence(coin);
+        if (confidence >= 78) {
+            return { label: this.uiText('우선 관찰', 'Priority watch'), tone: 'strong' };
+        }
+        if (confidence >= 64) {
+            return { label: this.uiText('관심 후보', 'Active watch'), tone: 'watch' };
+        }
+        return { label: this.uiText('조건부 관찰', 'Conditional'), tone: 'neutral' };
+    }
+
+    /**
+     * AI 추천 리스크 라벨
+     */
+    getAIRiskProfile(coin) {
+        const change = Math.abs(Number(coin.priceChangePercent || 0));
+        const longValue = Number(coin.longAccount || 0);
+        const longPercent = longValue > 0 && longValue <= 1 ? longValue * 100 : longValue;
+
+        if (change >= 15 || longPercent >= 75) {
+            return { label: this.uiText('높음', 'High'), tone: 'high' };
+        }
+        if (change >= 7 || longPercent >= 65) {
+            return { label: this.uiText('중간', 'Medium'), tone: 'medium' };
+        }
+        return { label: this.uiText('낮음', 'Low'), tone: 'low' };
+    }
+
+    /**
+     * AI 추천 사유 목록
+     */
+    getAIRecommendationReasons(coin) {
+        const reasons = Array.isArray(coin.aiReasons) ? [...coin.aiReasons] : [];
+        const volume = Number(coin.dashboardVolume || coin.volume || 0);
+        const change = Number(coin.priceChangePercent || 0);
+
+        if (volume >= 1e8) {
+            reasons.push(this.uiText(`강한 거래대금 ${this.formatCurrencyAmount(volume)}`, `Heavy turnover ${this.formatCurrencyAmount(volume)}`));
+        } else if (volume >= 1e7) {
+            reasons.push(this.uiText(`거래대금 유입 ${this.formatCurrencyAmount(volume)}`, `Turnover inflow ${this.formatCurrencyAmount(volume)}`));
+        }
+
+        if (change >= 5) {
+            reasons.push(this.uiText(`상승 모멘텀 ${this.formatSignedPercent(change)}`, `Upside momentum ${this.formatSignedPercent(change)}`));
+        } else if (change <= -5) {
+            reasons.push(this.uiText(`되돌림 관찰 ${this.formatSignedPercent(change)}`, `Pullback watch ${this.formatSignedPercent(change)}`));
+        }
+
+        if (coin.longAccount !== null && coin.longAccount !== undefined) {
+            reasons.push(this.uiText(`포지션 데이터 확인 ${this.getLongShortSummary(coin)}`, `Position data checked ${this.getLongShortSummary(coin)}`));
+        }
+
+        return [...new Set(reasons)].slice(0, 3);
+    }
+
+    /**
+     * AI 추천 행동 문구
+     */
+    getAIActionText(coin, riskTone) {
+        const change = Number(coin.priceChangePercent || 0);
+        if (riskTone === 'high') {
+            return this.uiText('급등 후 거래대금 유지 확인', 'Confirm turnover holds after the move');
+        }
+        if (change >= 4) {
+            return this.uiText('추세 유지 시 우선 관찰', 'Watch first if momentum holds');
+        }
+        if (change < 0) {
+            return this.uiText('반등 거래대금 동반 여부 확인', 'Check whether rebound volume follows');
+        }
+        return this.uiText('가격과 포지션 동시 확인', 'Track price and positioning together');
+    }
+
+    /**
+     * 롱/숏 요약
+     */
+    getLongShortSummary(coin) {
+        if (
+            coin.longAccount !== null &&
+            coin.shortAccount !== null &&
+            coin.longAccount !== undefined &&
+            coin.shortAccount !== undefined &&
+            Number(coin.longAccount) > 0 &&
+            Number(coin.shortAccount) > 0
+        ) {
+            const longPercent = Number(coin.longAccount) <= 1 ? Number(coin.longAccount) * 100 : Number(coin.longAccount);
+            const shortPercent = Number(coin.shortAccount) <= 1 ? Number(coin.shortAccount) * 100 : Number(coin.shortAccount);
+            return `${longPercent.toFixed(1)}% / ${shortPercent.toFixed(1)}%`;
+        }
+
+        return this.uiText('확인중', 'Checking');
     }
 
 
@@ -1117,6 +1330,70 @@ class CoinRankingApp {
         } else {
             return price.toLocaleString('ko-KR', {minimumFractionDigits: 2, maximumFractionDigits: 8});
         }
+    }
+
+    /**
+     * 현재 화면 언어 기준 통화 코드
+     */
+    getDisplayCurrency() {
+        const lang = (window.languageManager && window.languageManager.currentLang) || localStorage.getItem('language') || 'ko';
+        return lang === 'en' ? 'USD' : 'KRW';
+    }
+
+    /**
+     * USD 값을 현재 표시 언어에 맞는 통화로 변환
+     */
+    toDisplayCurrencyValue(usdValue) {
+        const value = Number(usdValue || 0);
+        if (!Number.isFinite(value) || value <= 0) return 0;
+        return this.getDisplayCurrency() === 'KRW'
+            ? value * Number(this.usdKrwRate || 1300)
+            : value;
+    }
+
+    /**
+     * 현재 표시 통화로 가격 표시
+     */
+    formatDisplayPrice(usdPrice) {
+        const value = Number(usdPrice || 0);
+        if (!Number.isFinite(value) || value <= 0) {
+            return this.getDisplayCurrency() === 'KRW' ? '₩0' : '$0.00';
+        }
+
+        if (this.getDisplayCurrency() === 'KRW') {
+            return `₩${this.formatKRWPrice(value * Number(this.usdKrwRate || 1300))}`;
+        }
+
+        return this.formatUSDPrice(value);
+    }
+
+    /**
+     * 현재 표시 통화로 거래대금/시총 표시
+     */
+    formatCurrencyAmount(usdValue) {
+        const value = this.toDisplayCurrencyValue(usdValue);
+        if (!Number.isFinite(value) || value <= 0) {
+            return this.getDisplayCurrency() === 'KRW' ? '₩0' : '$0';
+        }
+
+        if (this.getDisplayCurrency() === 'KRW') {
+            return `₩${this.formatCompactKRW(value)}`;
+        }
+
+        return `$${this.formatCompactUSD(value)}`;
+    }
+
+    /**
+     * 원화 큰 숫자 축약 표시
+     */
+    formatCompactKRW(num) {
+        const value = Number(num || 0);
+        if (!Number.isFinite(value) || value <= 0) return '0';
+
+        if (value >= 1e12) return `${(value / 1e12).toFixed(2)}조`;
+        if (value >= 1e8) return `${(value / 1e8).toFixed(1)}억`;
+        if (value >= 1e4) return `${Math.floor(value / 1e4).toLocaleString('ko-KR')}만`;
+        return Math.floor(value).toLocaleString('ko-KR');
     }
 
     /**
@@ -1252,17 +1529,17 @@ class CoinRankingApp {
         this.setText('hero-focus-symbol', this.sanitizeSymbol(focusCoin.symbol));
         this.setText(
             'hero-focus-meta',
-            `${this.getInterestReason(focusCoin)} · ${this.uiText('15분 거래대금', '15m turnover')} $${this.formatCompactUSD(focusCoin.dashboardVolume)}`
+            `${this.getInterestReason(focusCoin)} · ${this.uiText('15분 거래대금', '15m turnover')} ${this.formatCurrencyAmount(focusCoin.dashboardVolume)}`
         );
 
-        this.setText('metric-total-volume', `$${this.formatCompactUSD(totalVolume)}`);
+        this.setText('metric-total-volume', this.formatCurrencyAmount(totalVolume));
         this.setText('metric-volume-note', `${this.uiText('상위 20개 15분 기준', 'Top 20 by 15m volume')} · #1 ${this.sanitizeSymbol(topVolumeCoin.symbol)}`);
         this.setText('metric-market-breadth', `${gainers} / ${losers}`);
         this.setText('metric-breadth-note', gainers >= losers
             ? this.uiText('상승 코인이 더 많습니다', 'More coins are rising')
             : this.uiText('하락 코인이 더 많습니다', 'More coins are falling'));
         this.setText('metric-top-mover', `${this.sanitizeSymbol(topMover.symbol)} ${this.formatSignedPercent(topMover.priceChangePercent)}`);
-        this.setText('metric-mover-note', `${this.uiText('15분 거래대금', '15m turnover')} $${this.formatCompactUSD(topMover.dashboardVolume)}`);
+        this.setText('metric-mover-note', `${this.uiText('15분 거래대금', '15m turnover')} ${this.formatCurrencyAmount(topMover.dashboardVolume)}`);
 
         if (topLongCoin) {
             const longPercent = Number(topLongCoin.longAccount) <= 1
@@ -1458,7 +1735,7 @@ class CoinRankingApp {
                     <span class="hot-rank">${index + 1}</span>
                     <div>
                         <div class="hot-symbol">${this.escapeHTML(symbol)}</div>
-                        <div class="hot-meta">${this.escapeHTML(this.getInterestReason(coin))} · ${this.escapeHTML(this.uiText('15분 거래대금', '15m turnover'))} $${this.escapeHTML(this.formatCompactUSD(coin.dashboardVolume))}</div>
+                        <div class="hot-meta">${this.escapeHTML(this.getInterestReason(coin))} · ${this.escapeHTML(this.uiText('15분 거래대금', '15m turnover'))} ${this.escapeHTML(this.formatCurrencyAmount(coin.dashboardVolume))}</div>
                     </div>
                     <div class="hot-change ${changeClass}">${this.escapeHTML(this.formatSignedPercent(coin.priceChangePercent))}</div>
                 </div>
@@ -1489,8 +1766,8 @@ class CoinRankingApp {
             {
                 title: this.uiText(`거래대금 집중: ${this.sanitizeSymbol(topVolumeCoin.symbol)}`, `Volume focus: ${this.sanitizeSymbol(topVolumeCoin.symbol)}`),
                 body: this.uiText(
-                    `상위 20개 15분 합산 $${this.formatCompactUSD(totalVolume)} 중 가장 큰 관심을 받고 있습니다.`,
-                    `It leads the top-20 15m turnover pool of $${this.formatCompactUSD(totalVolume)}.`
+                    `상위 20개 15분 합산 ${this.formatCurrencyAmount(totalVolume)} 중 가장 큰 관심을 받고 있습니다.`,
+                    `It leads the top-20 15m turnover pool of ${this.formatCurrencyAmount(totalVolume)}.`
                 ),
                 tone: 'blue'
             },
@@ -1626,14 +1903,27 @@ class CoinRankingApp {
     calculateAIScore(coin) {
         let score = 0;
         let reasons = [];
+        const activeVolume = Number(coin.dashboardVolume || this.getAttentionVolume(coin) || coin.volume || 0);
         
         // 가격 상승률 점수
         if (coin.priceChangePercent >= 6) {
             score += 2;
-            reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
+            reasons.push(this.uiText(`상승률 +${coin.priceChangePercent.toFixed(1)}%`, `Momentum +${coin.priceChangePercent.toFixed(1)}%`));
         } else if (coin.priceChangePercent >= 3) {
             score += 1;
-            reasons.push(`상승률 +${coin.priceChangePercent.toFixed(1)}%`);
+            reasons.push(this.uiText(`상승률 +${coin.priceChangePercent.toFixed(1)}%`, `Momentum +${coin.priceChangePercent.toFixed(1)}%`));
+        } else if (coin.priceChangePercent <= -5) {
+            score += 1;
+            reasons.push(this.uiText(`되돌림 ${coin.priceChangePercent.toFixed(1)}%`, `Pullback ${coin.priceChangePercent.toFixed(1)}%`));
+        }
+
+        // 절대 거래대금 점수
+        if (activeVolume >= 1e8) {
+            score += 2;
+            reasons.push(this.uiText(`거래대금 ${this.formatCurrencyAmount(activeVolume)}`, `Turnover ${this.formatCurrencyAmount(activeVolume)}`));
+        } else if (activeVolume >= 1e7) {
+            score += 1;
+            reasons.push(this.uiText(`거래대금 ${this.formatCurrencyAmount(activeVolume)}`, `Turnover ${this.formatCurrencyAmount(activeVolume)}`));
         }
         
         // 거래량 증가율 점수 (이전 거래량과 비교)
@@ -1643,24 +1933,26 @@ class CoinRankingApp {
             
             if (volumeChangePercent >= 40) {
                 score += 2;
-                reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
+                reasons.push(this.uiText(`거래량 +${volumeChangePercent.toFixed(1)}%`, `Volume +${volumeChangePercent.toFixed(1)}%`));
             } else if (volumeChangePercent >= 20) {
                 score += 1;
-                reasons.push(`거래량 +${volumeChangePercent.toFixed(1)}%`);
+                reasons.push(this.uiText(`거래량 +${volumeChangePercent.toFixed(1)}%`, `Volume +${volumeChangePercent.toFixed(1)}%`));
             }
         }
         
         // 롱/숏 비율 점수
-        if (coin.longAccount && coin.longAccount >= 0.7) {
+        const longAccountValue = Number(coin.longAccount || 0);
+        const longPercent = longAccountValue > 0 && longAccountValue <= 1 ? longAccountValue * 100 : longAccountValue;
+        if (longPercent >= 70) {
             score += 2;
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
-            reasons.push(`${t('long_ratio')} ${(coin.longAccount * 100).toFixed(1)}%`);
-        } else if (coin.longAccount && coin.longAccount >= 0.6) {
+            reasons.push(`${t('long_ratio')} ${longPercent.toFixed(1)}%`);
+        } else if (longPercent >= 60) {
             score += 1;
             const langManager = window.languageManager;
             const t = langManager ? langManager.t.bind(langManager) : (key) => key;
-            reasons.push(`${t('long_ratio')} ${(coin.longAccount * 100).toFixed(1)}%`);
+            reasons.push(`${t('long_ratio')} ${longPercent.toFixed(1)}%`);
         }
         
         return { score, reasons };
@@ -1798,7 +2090,10 @@ class CoinRankingApp {
         console.log('원본 코인 개수:', this.originalCoins.length);
 
         // 원본 데이터에서 복사하여 필터링 (원본 데이터 보존)
-        let filteredCoins = [...this.originalCoins];
+        let filteredCoins = this.originalCoins.map(coin => ({
+            ...coin,
+            dashboardVolume: this.getAttentionVolume(coin)
+        }));
 
         // AI 스코어 계산 (모든 코인에 대해)
         filteredCoins.forEach(coin => {
@@ -1869,50 +2164,12 @@ class CoinRankingApp {
                 // AI 추천: AI 점수 높은 코인만
                 this.allCoins = filteredCoins
                     .filter(coin => coin.aiScore >= 2)
-                    .sort((a, b) => b.aiScore - a.aiScore) // AI 점수 높은 순
+                    .sort((a, b) => this.getAIConfidence(b) - this.getAIConfidence(a))
                     .slice(0, 10);
                 break;
             default: // 'all'
-                // 전체: 메인코인 우선 표시 (상위 20개 메인코인 + 10개 밈코인)
-                const mainCoins = ['BTC', 'ETH', 'BNB', 'SOL', 'ADA', 'AVAX', 'DOT', 'MATIC', 'LINK', 'UNI', 'XRP', 'DOGE', 'SHIB', 'LTC', 'BCH', 'ATOM', 'NEAR', 'FTM', 'ALGO', 'VET'];
-                
-                const mainCoinList = filteredCoins.filter(coin => mainCoins.includes(coin.symbol));
-                const otherCoins = filteredCoins.filter(coin => !mainCoins.includes(coin.symbol));
-                
-                console.log('전체 코인 개수:', filteredCoins.length);
-                console.log('메인코인 개수:', mainCoinList.length);
-                console.log('메인코인 목록:', mainCoinList.map(coin => coin.symbol));
-                console.log('기타 코인 개수:', otherCoins.length);
-                
-                // 메인코인을 순수 거래량 기준으로 정렬 (진짜 지금 거래를 많이 하는 순서)
-                const sortedMainCoins = mainCoinList.sort((a, b) => {
-                    const aVolume = parseFloat(a.volume || 0);
-                    const bVolume = parseFloat(b.volume || 0);
-                    return bVolume - aVolume; // 거래량 높은 순
-                });
-                
-                // 밈코인(기타 코인)도 순수 거래량 기준으로 정렬 (진짜 지금 거래를 많이 하는 순서)
-                const sortedOtherCoins = otherCoins.sort((a, b) => {
-                    const aVolume = parseFloat(a.volume || 0);
-                    const bVolume = parseFloat(b.volume || 0);
-                    return bVolume - aVolume; // 거래량 높은 순
-                });
-                
-                // 메인코인을 먼저, 그 다음 다른 코인들
-                this.allCoins = [...sortedMainCoins, ...sortedOtherCoins].slice(0, 20);
-                
-                // 거래량 기준 정렬 결과 로깅
-                console.log('=== 거래량 기준 정렬 결과 ===');
-                console.log('메인코인 거래량 순위:', sortedMainCoins.slice(0, 10).map(coin => ({
-                    symbol: coin.symbol,
-                    volume: `$${(coin.volume / 1e9).toFixed(2)}B`
-                })));
-                console.log('밈코인 거래량 순위:', sortedOtherCoins.slice(0, 5).map(coin => ({
-                    symbol: coin.symbol,
-                    volume: `$${(coin.volume / 1e6).toFixed(1)}M`
-                })));
-                console.log('최종 표시할 코인 개수:', this.allCoins.length);
-                console.log('최종 코인 목록:', this.allCoins.map(coin => coin.symbol));
+                // 전체: 대표 코인과 밈코인을 섞은 관심도 정렬
+                this.allCoins = this.getInterestCoinList(filteredCoins).slice(0, 20);
                 break;
         }
 
@@ -2950,6 +3207,14 @@ function showCoinModal(symbol) {
         
         const changeClass = coin.priceChangePercent >= 0 ? 'positive' : 'negative';
         const changeSymbol = coin.priceChangePercent >= 0 ? '+' : '';
+        const displayCurrency = window.coinApp.getDisplayCurrency();
+        const primaryPrice = window.coinApp.formatDisplayPrice(coin.price);
+        const secondaryPrice = displayCurrency === 'KRW'
+            ? window.coinApp.formatUSDPrice(coin.price)
+            : `₩${coin.price && coin.price > 0 ? window.coinApp.formatKRWPrice(coin.price * Number(window.coinApp.usdKrwRate || 1300)) : '-'}`;
+        const secondaryPriceLabel = displayCurrency === 'KRW'
+            ? window.coinApp.uiText('달러 가격', 'USD Price')
+            : t('krw_price');
         
         modalContent.innerHTML = `
             <div class="coin-detail">
@@ -2962,8 +3227,8 @@ function showCoinModal(symbol) {
                 
                 <div class="coin-price-section">
                     <div class="current-price">
-                        <div class="price-main">${window.coinApp.formatUSDPrice(coin.price)}</div>
-                        <div class="price-krw">₩${coin.price && coin.price > 0 ? (coin.price * 1350).toLocaleString('ko-KR') : '-'}</div>
+                        <div class="price-main">${primaryPrice}</div>
+                        <div class="price-krw">${secondaryPrice}</div>
                         <div class="price-change ${changeClass}">
                             ${changeSymbol}${coin.priceChangePercent.toFixed(2)}%
                         </div>
@@ -2973,11 +3238,11 @@ function showCoinModal(symbol) {
                 <div class="coin-stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">${t('market_cap')}</div>
-                        <div class="stat-value">$${window.coinApp.formatNumber(coin.accurateMarketCap || coin.marketCap)}</div>
+                        <div class="stat-value">${window.coinApp.formatCurrencyAmount(coin.accurateMarketCap || coin.marketCap)}</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">${t('volume_24h')}</div>
-                        <div class="stat-value">$${window.coinApp.formatNumber(coin.volume)}</div>
+                        <div class="stat-value">${window.coinApp.formatCurrencyAmount(coin.volume)}</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">${t('rank')}</div>
@@ -3012,11 +3277,11 @@ function showCoinModal(symbol) {
                         </div>
                         <div class="info-item">
                             <span class="info-label">${t('current_price')}:</span>
-                            <span class="info-value">${window.coinApp.formatUSDPrice(coin.price)}</span>
+                            <span class="info-value">${primaryPrice}</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">${t('krw_price')}:</span>
-                            <span class="info-value">₩${coin.price && coin.price > 0 ? (coin.price * 1350).toLocaleString('ko-KR') : '-'}</span>
+                            <span class="info-label">${secondaryPriceLabel}:</span>
+                            <span class="info-value">${secondaryPrice}</span>
                         </div>
                     </div>
                 </div>
