@@ -61,6 +61,17 @@ class CoinRankingApp {
         
         // 언어 전환 버튼 이벤트 바인딩
         this.bindLanguageEvents();
+
+        // 홈 대시보드 바로가기 버튼
+        this.bindDashboardActions();
+
+        window.addEventListener('coin-lang-change', () => {
+            if (this.allCoins && this.allCoins.length > 0) {
+                this.displayFilteredCoins();
+                this.updateMarketDashboard(this.allCoins);
+            }
+            this.updateTextsForLanguage();
+        });
     }
 
     /**
@@ -89,6 +100,27 @@ class CoinRankingApp {
     }
 
     /**
+     * 홈 대시보드 버튼 이벤트 바인딩
+     */
+    bindDashboardActions() {
+        const actionButtons = document.querySelectorAll('[data-jump-menu]');
+        actionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const menuType = button.getAttribute('data-jump-menu');
+                const targetMenu = document.querySelector(`.menu-btn[data-menu="${menuType}"]`);
+                if (targetMenu) {
+                    targetMenu.click();
+                }
+
+                const contentDiv = document.getElementById('content');
+                if (contentDiv) {
+                    contentDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
+    /**
      * 홈으로 이동
      */
     goHome() {
@@ -107,12 +139,14 @@ class CoinRankingApp {
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
         const myInvestContent = document.getElementById('myinvest-content');
+        const dictionaryContent = document.getElementById('dictionary-content');
         
         if (contentDiv) contentDiv.style.display = 'block';
         if (topCoinInfo) topCoinInfo.style.display = 'none';
         if (marketSentiment) marketSentiment.style.display = 'none';
         if (tipsContent) tipsContent.style.display = 'none';
         if (myInvestContent) myInvestContent.style.display = 'none';
+        if (dictionaryContent) dictionaryContent.style.display = 'none';
 
         // 코인 데이터 표시
         this.displayFilteredCoins();
@@ -1126,6 +1160,434 @@ class CoinRankingApp {
     }
 
     /**
+     * 달러 거래대금 축약 표시
+     */
+    formatCompactUSD(num) {
+        const value = Number(num || 0);
+        if (!Number.isFinite(value) || value <= 0) return '0';
+
+        if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
+        if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+        if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+        if (value >= 1e3) return `${(value / 1e3).toFixed(1)}K`;
+        return value.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    }
+
+    /**
+     * 현재 언어에 맞는 짧은 UI 문구
+     */
+    uiText(ko, en) {
+        const lang = (window.languageManager && window.languageManager.currentLang) || localStorage.getItem('language') || 'ko';
+        return lang === 'en' ? en : ko;
+    }
+
+    /**
+     * 현재 관심도 계산용 달러 거래대금
+     */
+    getAttentionVolume(coin) {
+        if (!coin) return 0;
+
+        if (this.isNumericValue(coin.turnover15min) && Number(coin.turnover15min) > 0) {
+            return Number(coin.turnover15min);
+        }
+
+        if (
+            this.isNumericValue(coin.volume15min) &&
+            this.isNumericValue(coin.price) &&
+            Number(coin.volume15min) > 0 &&
+            Number(coin.price) > 0
+        ) {
+            return Number(coin.volume15min) * Number(coin.price);
+        }
+
+        if (this.isNumericValue(coin.turnover24h) && Number(coin.turnover24h) > 0) {
+            return Number(coin.turnover24h);
+        }
+
+        if (this.isNumericValue(coin.quoteVolume) && Number(coin.quoteVolume) > 0) {
+            return Number(coin.quoteVolume);
+        }
+
+        if (this.isNumericValue(coin.volume) && Number(coin.volume) > 0 && !this.isNumericValue(coin.volume15min)) {
+            return Number(coin.volume);
+        }
+
+        return 0;
+    }
+
+    /**
+     * 홈 대시보드 갱신
+     */
+    updateMarketDashboard(coins) {
+        const validCoins = Array.isArray(coins)
+            ? coins
+                .filter(coin => coin && coin.symbol)
+                .map(coin => ({
+                    ...coin,
+                    dashboardVolume: this.getAttentionVolume(coin)
+                }))
+                .filter(coin => coin.dashboardVolume > 0)
+            : [];
+
+        if (validCoins.length === 0) return;
+
+        const sortedByVolume = [...validCoins].sort((a, b) => Number(b.dashboardVolume || 0) - Number(a.dashboardVolume || 0));
+        const sortedByChange = [...validCoins].sort((a, b) => Number(b.priceChangePercent || 0) - Number(a.priceChangePercent || 0));
+        const longShortCoins = validCoins.filter(coin => this.isNumericValue(coin.longAccount) && Number(coin.longAccount) > 0);
+        const sortedByLong = [...longShortCoins].sort((a, b) => Number(b.longAccount || 0) - Number(a.longAccount || 0));
+
+        const interestCoins = this.getInterestCoinList(validCoins).slice(0, 5);
+        const hotCoins = interestCoins.length > 0 ? interestCoins : sortedByVolume.slice(0, 5);
+        const topVolumeCoin = sortedByVolume[0];
+        const focusCoin = hotCoins[0] || topVolumeCoin;
+        const topMover = sortedByChange[0];
+        const topLongCoin = sortedByLong[0];
+        const gainers = validCoins.filter(coin => Number(coin.priceChangePercent || 0) >= 0).length;
+        const losers = validCoins.length - gainers;
+        const totalVolume = sortedByVolume
+            .slice(0, 20)
+            .reduce((sum, coin) => sum + Number(coin.dashboardVolume || 0), 0);
+
+        this.setText('terminal-updated', this.formatDashboardTime(new Date()));
+        this.setText('hero-focus-symbol', this.sanitizeSymbol(focusCoin.symbol));
+        this.setText(
+            'hero-focus-meta',
+            `${this.getInterestReason(focusCoin)} · ${this.uiText('15분 거래대금', '15m turnover')} $${this.formatCompactUSD(focusCoin.dashboardVolume)}`
+        );
+
+        this.setText('metric-total-volume', `$${this.formatCompactUSD(totalVolume)}`);
+        this.setText('metric-volume-note', `${this.uiText('상위 20개 15분 기준', 'Top 20 by 15m volume')} · #1 ${this.sanitizeSymbol(topVolumeCoin.symbol)}`);
+        this.setText('metric-market-breadth', `${gainers} / ${losers}`);
+        this.setText('metric-breadth-note', gainers >= losers
+            ? this.uiText('상승 코인이 더 많습니다', 'More coins are rising')
+            : this.uiText('하락 코인이 더 많습니다', 'More coins are falling'));
+        this.setText('metric-top-mover', `${this.sanitizeSymbol(topMover.symbol)} ${this.formatSignedPercent(topMover.priceChangePercent)}`);
+        this.setText('metric-mover-note', `${this.uiText('15분 거래대금', '15m turnover')} $${this.formatCompactUSD(topMover.dashboardVolume)}`);
+
+        if (topLongCoin) {
+            const longPercent = Number(topLongCoin.longAccount) <= 1
+                ? Number(topLongCoin.longAccount) * 100
+                : Number(topLongCoin.longAccount);
+            this.setText('metric-longshort', `${this.sanitizeSymbol(topLongCoin.symbol)} ${longPercent.toFixed(1)}%`);
+            this.setText('metric-longshort-note', this.uiText('롱 비중이 가장 큰 코인', 'Highest long-position share'));
+        } else {
+            this.setText('metric-longshort', this.uiText('확인중', 'Checking'));
+            this.setText('metric-longshort-note', this.uiText('포지션 데이터를 불러오는 중', 'Loading position data'));
+        }
+
+        this.renderHeroBars(hotCoins.slice(0, 8));
+        this.renderHeroTape(hotCoins);
+        this.renderHotCoinList(hotCoins);
+        this.renderMarketSignals({
+            focusCoin,
+            topVolumeCoin,
+            topMover,
+            topLongCoin,
+            gainers,
+            losers,
+            totalVolume
+        });
+    }
+
+    /**
+     * 실제 투자 관심 코인 리스트 생성
+     */
+    getInterestCoinList(coins) {
+        const volumeRankMap = new Map(
+            [...coins]
+                .sort((a, b) => Number(b.dashboardVolume || 0) - Number(a.dashboardVolume || 0))
+                .map((coin, index) => [this.sanitizeSymbol(coin.symbol), index + 1])
+        );
+
+        const scoredCoins = [...coins]
+            .map(coin => ({
+                ...coin,
+                interestScore: this.calculateInterestScore(coin, volumeRankMap.get(this.sanitizeSymbol(coin.symbol)) || coins.length)
+            }))
+            .sort((a, b) => b.interestScore - a.interestScore);
+
+        const coreSymbols = this.getCoreInterestSymbols();
+        const memeSymbols = this.getMemeInterestSymbols();
+        const coreCoins = scoredCoins.filter(coin => coreSymbols.has(this.sanitizeSymbol(coin.symbol)));
+        const memeCoins = scoredCoins.filter(coin => memeSymbols.has(this.sanitizeSymbol(coin.symbol)));
+        const momentumCoins = scoredCoins
+            .filter(coin => Number(coin.priceChangePercent || 0) > 0)
+            .sort((a, b) => Number(b.priceChangePercent || 0) - Number(a.priceChangePercent || 0));
+
+        const selected = [];
+        const addUnique = (coin) => {
+            if (!coin) return;
+            const symbol = this.sanitizeSymbol(coin.symbol);
+            if (!selected.some(item => this.sanitizeSymbol(item.symbol) === symbol)) {
+                selected.push(coin);
+            }
+        };
+
+        addUnique(coreCoins[0]);
+        addUnique(memeCoins[0]);
+        addUnique(coreCoins[1]);
+        addUnique(memeCoins[1]);
+        addUnique(momentumCoins[0]);
+
+        scoredCoins.forEach(addUnique);
+        return selected;
+    }
+
+    /**
+     * 거래대금, 대표성, 변동성을 함께 본 관심도 점수
+     */
+    calculateInterestScore(coin, volumeRank) {
+        const symbol = this.sanitizeSymbol(coin.symbol);
+        const majorBoost = {
+            BTC: 9,
+            ETH: 8.4,
+            SOL: 7.6,
+            XRP: 7.1,
+            BNB: 6.8,
+            DOGE: 6.2,
+            ADA: 5.8,
+            SUI: 5.5,
+            LINK: 5.2,
+            AVAX: 5.1,
+            TRX: 4.9,
+            SHIB: 4.7,
+            PEPE: 4.6,
+            LTC: 4.4,
+            BCH: 4.2,
+            DOT: 4.1,
+            NEAR: 4,
+            APT: 3.9,
+            OP: 3.7,
+            ARB: 3.7,
+            INJ: 3.6,
+            SEI: 3.5,
+            RNDR: 3.5,
+            FET: 3.5,
+            WIF: 3.4,
+            BONK: 3.3,
+            FLOKI: 3.2,
+            BABYDOGE: 3,
+            MOG: 2.9,
+            POPCAT: 2.8,
+            TURBO: 2.7,
+            MEW: 2.7
+        }[symbol] || 0;
+
+        const volume = Number(coin.dashboardVolume || 0);
+        const volumeScore = Math.log10(volume + 1) / 2;
+        const rankScore = Math.max(0, 30 - Number(volumeRank || 30)) / 6;
+        const change = Number(coin.priceChangePercent || 0);
+        const volatilityScore = Math.min(Math.abs(change), 20) / 8;
+        const directionScore = change > 0 ? 0.8 : change < -8 ? -0.6 : 0;
+        const liquidityPenalty = volume < 100000 ? -2 : 0;
+
+        return majorBoost + volumeScore + rankScore + volatilityScore + directionScore + liquidityPenalty;
+    }
+
+    /**
+     * 대표 코인 관심권
+     */
+    getCoreInterestSymbols() {
+        return new Set(['BTC', 'ETH', 'SOL', 'XRP', 'BNB', 'ADA', 'SUI', 'LINK', 'AVAX', 'TRX', 'LTC', 'BCH', 'DOT', 'NEAR', 'APT', 'OP', 'ARB', 'INJ', 'SEI', 'RNDR', 'FET']);
+    }
+
+    /**
+     * 밈코인 관심권
+     */
+    getMemeInterestSymbols() {
+        return new Set(['DOGE', 'SHIB', 'PEPE', 'WIF', 'BONK', 'FLOKI', 'BABYDOGE', 'MOG', 'POPCAT', 'TURBO', 'MEW', 'MEME', 'DEGEN', 'GOAT']);
+    }
+
+    /**
+     * 관심 리스트 노출 이유
+     */
+    getInterestReason(coin) {
+        const symbol = this.sanitizeSymbol(coin.symbol);
+        const change = Number(coin.priceChangePercent || 0);
+        const coreCoins = this.getCoreInterestSymbols();
+        const memeCoins = this.getMemeInterestSymbols();
+
+        if (symbol === 'DOGE') return this.uiText('대표 밈코인 관심권', 'Major meme coin watch');
+        if (memeCoins.has(symbol)) return this.uiText('밈코인 관심권', 'Meme coin watch');
+        if (coreCoins.has(symbol)) return this.uiText('대표 투자 관심권', 'Core coin watch');
+        if (change >= 10) return this.uiText('급등 관심권', 'Momentum watch');
+        if (Number(coin.dashboardVolume || 0) >= 10000000) return this.uiText('거래대금 관심권', 'Volume watch');
+        return this.uiText('관찰 후보', 'Watch candidate');
+    }
+
+    /**
+     * 홈 막대 차트 렌더링
+     */
+    renderHeroBars(coins) {
+        const bars = document.getElementById('hero-market-bars');
+        if (!bars || !Array.isArray(coins) || coins.length === 0) return;
+
+        const maxVolume = Math.max(...coins.map(coin => Number(coin.dashboardVolume || this.getAttentionVolume(coin))), 1);
+        bars.innerHTML = coins.map(coin => {
+            const ratio = Number(coin.dashboardVolume || this.getAttentionVolume(coin)) / maxVolume;
+            const height = Math.max(18, Math.round(ratio * 100));
+            return `<span title="${this.escapeHTML(this.sanitizeSymbol(coin.symbol))}" style="height: ${height}%"></span>`;
+        }).join('');
+    }
+
+    /**
+     * 홈 티커 렌더링
+     */
+    renderHeroTape(coins) {
+        const tape = document.getElementById('hero-ticker-tape');
+        if (!tape || !Array.isArray(coins) || coins.length === 0) return;
+
+        tape.innerHTML = coins.map(coin => {
+            const changeClass = Number(coin.priceChangePercent || 0) >= 0 ? 'positive' : 'negative';
+            return `<span class="${changeClass}">${this.escapeHTML(this.sanitizeSymbol(coin.symbol))} ${this.escapeHTML(this.formatSignedPercent(coin.priceChangePercent))}</span>`;
+        }).join('');
+    }
+
+    /**
+     * 사람들이 많이 거래하는 코인 리스트 렌더링
+     */
+    renderHotCoinList(coins) {
+        const list = document.getElementById('hot-coin-list');
+        if (!list || !Array.isArray(coins) || coins.length === 0) return;
+
+        list.innerHTML = coins.map((coin, index) => {
+            const changeClass = Number(coin.priceChangePercent || 0) >= 0 ? 'positive' : 'negative';
+            const symbol = this.sanitizeSymbol(coin.symbol);
+            return `
+                <div class="hot-coin-item">
+                    <span class="hot-rank">${index + 1}</span>
+                    <div>
+                        <div class="hot-symbol">${this.escapeHTML(symbol)}</div>
+                        <div class="hot-meta">${this.escapeHTML(this.getInterestReason(coin))} · ${this.escapeHTML(this.uiText('15분 거래대금', '15m turnover'))} $${this.escapeHTML(this.formatCompactUSD(coin.dashboardVolume))}</div>
+                    </div>
+                    <div class="hot-change ${changeClass}">${this.escapeHTML(this.formatSignedPercent(coin.priceChangePercent))}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    /**
+     * 투자 전에 볼 정보 리스트 렌더링
+     */
+    renderMarketSignals({ topVolumeCoin, topMover, topLongCoin, gainers, losers, totalVolume }) {
+        const list = document.getElementById('market-signal-list');
+        if (!list || !topVolumeCoin || !topMover) return;
+
+        const breadthTone = gainers >= losers ? 'green' : 'amber';
+        const marketText = gainers >= losers
+            ? this.uiText(`상승 ${gainers}개, 하락 ${losers}개로 매수 관심이 우세합니다.`, `${gainers} rising and ${losers} falling. Buy-side interest is stronger.`)
+            : this.uiText(`상승 ${gainers}개, 하락 ${losers}개로 방어적인 흐름입니다.`, `${gainers} rising and ${losers} falling. The market is more defensive.`);
+
+        const longShortText = topLongCoin
+            ? this.uiText(
+                `${this.sanitizeSymbol(topLongCoin.symbol)} 롱 비중이 ${this.formatLongPercent(topLongCoin.longAccount)}로 가장 높습니다.`,
+                `${this.sanitizeSymbol(topLongCoin.symbol)} has the highest long share at ${this.formatLongPercent(topLongCoin.longAccount)}.`
+            )
+            : this.uiText('롱/숏 데이터가 도착하면 포지션 쏠림을 표시합니다.', 'Position skew appears when long/short data is available.');
+
+        const signals = [
+            {
+                title: this.uiText(`거래대금 집중: ${this.sanitizeSymbol(topVolumeCoin.symbol)}`, `Volume focus: ${this.sanitizeSymbol(topVolumeCoin.symbol)}`),
+                body: this.uiText(
+                    `상위 20개 15분 합산 $${this.formatCompactUSD(totalVolume)} 중 가장 큰 관심을 받고 있습니다.`,
+                    `It leads the top-20 15m turnover pool of $${this.formatCompactUSD(totalVolume)}.`
+                ),
+                tone: 'blue'
+            },
+            {
+                title: this.uiText(`가격 움직임: ${this.sanitizeSymbol(topMover.symbol)}`, `Price move: ${this.sanitizeSymbol(topMover.symbol)}`),
+                body: this.uiText(
+                    `변동률 ${this.formatSignedPercent(topMover.priceChangePercent)}입니다. 급등 후 추격 매수는 리스크를 먼저 봐야 합니다.`,
+                    `Move: ${this.formatSignedPercent(topMover.priceChangePercent)}. Check risk before chasing a fast move.`
+                ),
+                tone: 'amber'
+            },
+            {
+                title: this.uiText('시장 온도', 'Market breadth'),
+                body: marketText,
+                tone: breadthTone
+            },
+            {
+                title: this.uiText('롱/숏 쏠림', 'Long/short skew'),
+                body: longShortText,
+                tone: topLongCoin ? 'green' : 'blue'
+            }
+        ];
+
+        list.innerHTML = signals.map(signal => `
+            <div class="signal-item" data-tone="${signal.tone}">
+                <strong>${this.escapeHTML(signal.title)}</strong>
+                <span>${this.escapeHTML(signal.body)}</span>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * DOM 텍스트 안전 업데이트
+     */
+    setText(id, value) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    /**
+     * 코인 심볼 표시용 정규화
+     */
+    sanitizeSymbol(symbol) {
+        return String(symbol || '')
+            .replace(/USDT$/i, '')
+            .replace(/[^a-z0-9]/gi, '')
+            .toUpperCase()
+            .slice(0, 12) || '-';
+    }
+
+    /**
+     * HTML 이스케이프
+     */
+    escapeHTML(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * 변동률 표시
+     */
+    formatSignedPercent(value) {
+        const number = Number(value || 0);
+        const prefix = number >= 0 ? '+' : '';
+        return `${prefix}${number.toFixed(2)}%`;
+    }
+
+    /**
+     * 롱 비중 표시
+     */
+    formatLongPercent(value) {
+        const number = Number(value || 0);
+        const percent = number <= 1 ? number * 100 : number;
+        return `${percent.toFixed(1)}%`;
+    }
+
+    /**
+     * 숫자형 데이터 여부 확인
+     */
+    isNumericValue(value) {
+        return value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value));
+    }
+
+    /**
+     * 홈 업데이트 시간 표시
+     */
+    formatDashboardTime(date) {
+        return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} ${this.uiText('업데이트', 'updated')}`;
+    }
+
+    /**
      * 자동 새로고침 시작 (15분 기준 실시간 거래량 반영)
      */
     startAutoRefresh() {
@@ -1321,12 +1783,14 @@ class CoinRankingApp {
         const marketSentiment = document.getElementById('market-sentiment');
         const tipsContent = document.getElementById('tips-content');
         const myInvestContent = document.getElementById('myinvest-content');
+        const dictionaryContent = document.getElementById('dictionary-content');
         
         // 다른 영역들 숨기기
         if (topCoinInfo) topCoinInfo.style.display = 'none';
         if (marketSentiment) marketSentiment.style.display = 'none';
         if (tipsContent) tipsContent.style.display = 'none';
         if (myInvestContent) myInvestContent.style.display = 'none';
+        if (dictionaryContent) dictionaryContent.style.display = 'none';
 
         if (!this.originalCoins || !this.originalCoins.length) return;
 
@@ -1342,6 +1806,8 @@ class CoinRankingApp {
             coin.aiScore = aiResult.score;
             coin.aiReasons = aiResult.reasons;
         });
+
+        this.updateMarketDashboard(filteredCoins);
 
         // 메뉴별 필터링 및 순위 재정렬
         switch (this.currentMenu) {
@@ -2104,7 +2570,7 @@ async function drawSparkline(symbol, canvasId) {
         }
         
         // 먼저 선물 거래로 시도 (24시간 데이터를 15분 간격으로)
-        let url = `https://api.bybit.com/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=96`;
+        let url = window.coinApiUrl(`/bybit/v5/market/kline?category=linear&symbol=${symbol}USDT&interval=15&limit=96`);
         console.log('선물 API URL:', url);
         
         let res = await fetch(url);
@@ -2113,7 +2579,7 @@ async function drawSparkline(symbol, canvasId) {
         // 선물 거래가 지원되지 않는 경우 스팟 거래로 시도
         if (json.retCode !== 0 || !json.result || !json.result.list || json.result.list.length === 0) {
             console.log(`${symbol} 선물 거래 지원 안됨, 스팟 거래로 시도...`);
-            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=15&limit=96`;
+            url = window.coinApiUrl(`/bybit/v5/market/kline?category=spot&symbol=${symbol}USDT&interval=15&limit=96`);
             console.log('스팟 API URL:', url);
             
             res = await fetch(url);
@@ -2359,7 +2825,7 @@ async function fetchKlineData(symbol, category = 'linear', startTime, endTime) {
     const interval = '15'; // 15분 간격
     const limit = 96; // 24시간 * 4 = 96개
     
-    const url = `https://api.bybit.com/v5/market/kline?category=${category}&symbol=${symbol}USDT&interval=${interval}&limit=${limit}`;
+    const url = window.coinApiUrl(`/bybit/v5/market/kline?category=${category}&symbol=${symbol}USDT&interval=${interval}&limit=${limit}`);
     console.log(`🌐 Kline API 호출: ${url}`);
     
     const response = await fetch(url);

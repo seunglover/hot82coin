@@ -601,9 +601,6 @@ class LanguageManager {
      */
     init() {
         this.updatePageLanguage();
-        
-        // IP 기반 지역 감지 실행 (비동기)
-        this.detectLanguageByIP();
     }
     
     /**
@@ -611,7 +608,7 @@ class LanguageManager {
      */
     loadLanguage() {
         // 저장된 언어 설정이 있으면 사용
-        const savedLang = localStorage.getItem('language');
+        const savedLang = localStorage.getItem('language') || localStorage.getItem('siteLang');
         if (savedLang) {
             return savedLang;
         }
@@ -646,10 +643,7 @@ class LanguageManager {
             }
         }
         
-        // 3. IP 기반 지역 감지 (비동기)
-        this.detectLanguageByIP();
-        
-        // 4. 기본값 (한국어) - 한국에서 접속하면 한국어로 표시
+        // 3. 기본값
         return 'ko';
     }
     
@@ -657,29 +651,7 @@ class LanguageManager {
      * IP 기반 지역 감지
      */
     async detectLanguageByIP() {
-        try {
-            // 무료 IP 지역 감지 API 사용
-            const response = await fetch('https://ipapi.co/json/');
-            const data = await response.json();
-            
-            if (data.country_code === 'KR') {
-                // 한국에서 접속한 경우 한국어로 설정
-                if (this.currentLang !== 'ko') {
-                    this.changeLanguage('ko');
-                }
-            } else if (data.country_code) {
-                // 한국이 아닌 다른 국가에서 접속한 경우 영어로 설정
-                if (this.currentLang !== 'en') {
-                    this.changeLanguage('en');
-                }
-            }
-        } catch (error) {
-            console.log('IP 기반 언어 감지 실패, 브라우저 설정 사용:', error);
-            // IP 감지 실패 시 기본값은 한국어로 설정
-            if (this.currentLang !== 'ko') {
-                this.changeLanguage('ko');
-            }
-        }
+        return null;
     }
     
     /**
@@ -687,6 +659,7 @@ class LanguageManager {
      */
     saveLanguage(lang) {
         localStorage.setItem('language', lang);
+        localStorage.setItem('siteLang', lang);
         this.currentLang = lang;
     }
     
@@ -709,6 +682,7 @@ class LanguageManager {
         
         // 페이지 새로고침 없이 텍스트 업데이트
         this.updateAllTexts();
+        window.dispatchEvent(new CustomEvent('coin-lang-change', { detail: { lang } }));
         
         // 사용자에게 언어 변경 알림
         this.showLanguageChangeNotification(lang);
@@ -782,12 +756,14 @@ class LanguageManager {
      * 언어 전환 버튼 업데이트
      */
     updateLanguageButtons() {
-        const langButtons = document.querySelectorAll('.lang-btn');
+        const langButtons = document.querySelectorAll('.lang-btn, .site-lang-btn');
         langButtons.forEach(btn => {
+            const buttonLang = btn.getAttribute('data-lang') || btn.getAttribute('data-site-lang');
             btn.classList.remove('active');
-            if (btn.getAttribute('data-lang') === this.currentLang) {
+            if (buttonLang === this.currentLang) {
                 btn.classList.add('active');
             }
+            btn.setAttribute('aria-pressed', buttonLang === this.currentLang ? 'true' : 'false');
         });
     }
     
@@ -795,6 +771,13 @@ class LanguageManager {
      * 모든 텍스트 업데이트
      */
     updateAllTexts() {
+        document.querySelectorAll('[data-ko][data-en]').forEach(element => {
+            const translated = element.getAttribute(`data-${this.currentLang}`);
+            if (translated !== null) {
+                element.textContent = translated;
+            }
+        });
+
         // 헤더
         const title = document.querySelector('.header h1');
         const subtitle = document.querySelector('.header p');
@@ -1503,4 +1486,4 @@ class LanguageManager {
 }
 
 // 전역 언어 관리자 인스턴스
-window.languageManager = new LanguageManager(); 
+window.languageManager = new LanguageManager();

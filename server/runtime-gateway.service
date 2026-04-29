@@ -1,0 +1,18 @@
+[Unit]
+Description=Static Site Runtime Gateway
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/site-runtime
+Environment=NODE_ENV=production
+Environment=COIN_API_PORT=8787
+Environment=COIN_API_ALLOWED_ORIGINS=*
+ExecStart=/usr/bin/node /opt/site-runtime/runtime-gateway.mjs
+Restart=always
+RestartSec=3
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

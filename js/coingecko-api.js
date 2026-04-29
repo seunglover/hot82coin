@@ -3,7 +3,7 @@
  */
 class CoinGeckoAPI {
     constructor() {
-        this.BASE_URL = 'https://api.coingecko.com/api/v3';
+        this.BASE_URL = window.coinApiUrl('/coingecko/api/v3');
         this.rateLimit = {
             requests: 0,
             maxRequests: 50, // 1분당 최대 요청 수 (CoinGecko 제한)
@@ -311,4 +311,4 @@ const coinGeckoAPI = new CoinGeckoAPI();
 // 모듈 내보내기 (Node.js 환경에서 사용할 경우)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = CoinGeckoAPI;
-} 
+}

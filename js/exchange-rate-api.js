@@ -3,7 +3,7 @@
  */
 class ExchangeRateAPI {
     constructor() {
-        this.BASE_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
+        this.BASE_URL = window.coinApiUrl('/exchange-rate/v4/latest/USD');
         this.rateLimit = {
             requests: 0,
             maxRequests: 100, // 1분당 최대 요청 수
@@ -125,4 +125,4 @@ const exchangeRateAPI = new ExchangeRateAPI();
 // 모듈 내보내기 (Node.js 환경에서 사용할 경우)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ExchangeRateAPI;
-} 
+}

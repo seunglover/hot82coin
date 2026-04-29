@@ -4,7 +4,7 @@
  */
 class BybitAPI {
     constructor() {
-        this.BYBIT_URL = 'https://api.bybit.com/v5';
+        this.BYBIT_URL = window.coinApiUrl('/bybit/v5');
         this.rateLimit = {
             requests: 0,
             maxRequests: 1200, // V5 API: 1분당 최대 요청 수
@@ -105,7 +105,7 @@ class BybitAPI {
     async getFallbackData() {
         try {
             console.log('CoinGecko API로 대체 데이터 가져오는 중...');
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=80&page=1&sparkline=false&locale=en', {
+            const response = await fetch(window.coinApiUrl('/coingecko/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=80&page=1&sparkline=false&locale=en'), {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -288,7 +288,7 @@ class BybitAPI {
 
     /**
      * 바이비트 V5 선물 롱숏 비율 API에서 데이터 가져오기
-     * https://api.bybit.com/v5/market/account-ratio
+     * Bybit V5 account-ratio data
      */
     async getLongShortRatio(symbol = 'BTCUSDT') {
         try {
@@ -355,7 +355,7 @@ class BybitAPI {
                 throw new Error('CoinGecko ID 없음');
             }
             
-            const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=false&sparkline=false`, {
+            const response = await fetch(window.coinApiUrl(`/coingecko/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=false&sparkline=false`), {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -667,7 +667,9 @@ class BybitAPI {
             
             return finalCoins.map((coin, index) => {
                 const volume24h = parseFloat(coin.volume24h || coin.volume || coin.quoteVolume || 0);
+                const turnover24h = parseFloat(coin.turnover24h || coin.quoteVolume || 0);
                 const volume15min = parseFloat(coin.volume15min || 0);
+                const turnover15min = parseFloat(coin.turnover15min || 0);
                 
                 return {
                     rank: index + 1,
@@ -676,7 +678,9 @@ class BybitAPI {
                     price: parseFloat(coin.lastPrice),
                     volume: volume15min > 0 ? volume15min * 96 : volume24h, // 15분 데이터 있으면 24시간 환산값 사용
                     volume15min: volume15min,
+                    turnover15min: turnover15min,
                     volume24h: volume24h,
+                    turnover24h: turnover24h,
                     priceChange: parseFloat(coin.price24hPcnt) * parseFloat(coin.lastPrice),
                     priceChangePercent: parseFloat(coin.price24hPcnt) * 100,
                     highPrice: parseFloat(coin.highPrice24h),
@@ -845,7 +849,7 @@ class BybitAPI {
     async getTopCoinsFromCoinGecko(limit = 20) {
         try {
             console.log('CoinGecko API에서 거래량 기준 상위 코인 가져오는 중...');
-            const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=${limit}&page=1&sparkline=false&locale=en`, {
+            const response = await fetch(window.coinApiUrl(`/coingecko/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=${limit}&page=1&sparkline=false&locale=en`), {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -968,7 +972,7 @@ class BybitAPI {
     async getMarketStatsFromCoinGecko() {
         try {
             console.log('CoinGecko API에서 시장 통계 가져오는 중...');
-            const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=80&page=1&sparkline=false&locale=en', {
+            const response = await fetch(window.coinApiUrl('/coingecko/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=80&page=1&sparkline=false&locale=en'), {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -1094,4 +1098,4 @@ const bybitAPI = new BybitAPI();
 // 모듈 내보내기 (Node.js 환경에서 사용할 경우)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = BybitAPI;
-} 
+}

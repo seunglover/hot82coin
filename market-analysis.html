@@ -303,37 +303,139 @@
             }
         }
     </style>
+    <script src="js/site-shell.js" defer></script>
 </head>
 <body>
-    <!-- 네비게이션 바 -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-logo">🔥 핫코인</a>
-            <div class="nav-links">
-                <a href="/" class="nav-link">홈</a>
-                <a href="/crypto-guide.html" class="nav-link">초보가이드</a>
-                <a href="/market-analysis.html" class="nav-link active">시장분석</a>
-                <a href="/safety-tips.html" class="nav-link">안전수칙</a>
-                <a href="/faq.html" class="nav-link">FAQ</a>
-            </div>
-        </div>
-    </nav>
-
     <div class="container">
         <div class="analysis-container">
             <div class="analysis-header">
-                <h1 class="analysis-title">📊 시장 분석 방법론</h1>
-                <p class="analysis-subtitle">
+                <h1 class="analysis-title" data-ko="시장 분석" data-en="Market Analysis">시장 분석</h1>
+                <p class="analysis-subtitle" data-ko="성공적인 암호화폐 투자를 위한 핵심 분석 기법들&#10;기술적 분석부터 온체인 분석까지 체계적으로 마스터하세요" data-en="A practical market dashboard for reading crypto attention. Track volume, momentum, positioning, and risk before making a decision">
                     성공적인 암호화폐 투자를 위한 핵심 분석 기법들<br>
                     기술적 분석부터 온체인 분석까지 체계적으로 마스터하세요
                 </p>
             </div>
 
+            <section class="analysis-dashboard" aria-label="시장 분석 대시보드">
+                <div class="analysis-dashboard-main">
+                    <article class="analysis-panel analysis-overview-panel">
+                        <div class="analysis-panel-header">
+                            <div>
+                                <span class="section-kicker">Market overview</span>
+                                <h2 data-ko="오늘 시장을 읽는 핵심 패널" data-en="Core panel for reading today's market">오늘 시장을 읽는 핵심 패널</h2>
+                            </div>
+                            <div class="analysis-range-tabs" aria-label="분석 기간">
+                                <button type="button">1H</button>
+                                <button type="button" class="active">24H</button>
+                                <button type="button">7D</button>
+                            </div>
+                        </div>
+
+                        <div class="analysis-stat-grid">
+                            <div class="analysis-stat-card">
+                                <span data-ko="24H 거래대금" data-en="24h turnover">24H 거래대금</span>
+                                <strong>$68.7B</strong>
+                                <small class="positive">+12.4%</small>
+                            </div>
+                            <div class="analysis-stat-card">
+                                <span data-ko="BTC 도미넌스" data-en="BTC dominance">BTC 도미넌스</span>
+                                <strong>53.8%</strong>
+                                <small class="positive">+0.7%</small>
+                            </div>
+                            <div class="analysis-stat-card">
+                                <span data-ko="공포 & 탐욕" data-en="Fear & greed">공포 & 탐욕</span>
+                                <strong>72</strong>
+                                <small data-ko="탐욕 구간" data-en="Greed zone">탐욕 구간</small>
+                            </div>
+                            <div class="analysis-stat-card">
+                                <span data-ko="상승 / 하락" data-en="Up / down">상승 / 하락</span>
+                                <strong>1,243 / 789</strong>
+                                <small data-ko="상승 우위" data-en="Buy-side lead">상승 우위</small>
+                            </div>
+                        </div>
+
+                        <div class="analysis-chart-card">
+                            <div class="analysis-chart-copy">
+                                <span data-ko="시가총액 흐름" data-en="Market cap trend">시가총액 흐름</span>
+                                <strong>$3.42T <em>+2.12%</em></strong>
+                                <p data-ko="단기 거래대금과 가격 방향이 같이 올라갈 때 관심이 실제 매수세로 이어질 가능성이 높습니다." data-en="When short-term turnover and price direction rise together, attention is more likely to become real demand.">단기 거래대금과 가격 방향이 같이 올라갈 때 관심이 실제 매수세로 이어질 가능성이 높습니다.</p>
+                            </div>
+                            <div class="analysis-line-chart" aria-hidden="true">
+                                <span style="height: 28%"></span>
+                                <span style="height: 48%"></span>
+                                <span style="height: 42%"></span>
+                                <span style="height: 62%"></span>
+                                <span style="height: 58%"></span>
+                                <span style="height: 76%"></span>
+                                <span style="height: 68%"></span>
+                                <span style="height: 88%"></span>
+                                <span style="height: 82%"></span>
+                                <span style="height: 96%"></span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="analysis-panel analysis-watch-panel">
+                        <div class="analysis-panel-header compact">
+                            <div>
+                                <span class="section-kicker">Watch order</span>
+                                <h2 data-ko="먼저 확인할 코인" data-en="Coins to check first">먼저 확인할 코인</h2>
+                            </div>
+                        </div>
+                        <div class="analysis-watch-list">
+                            <div class="analysis-watch-row">
+                                <span class="coin-dot bitcoin">₿</span>
+                                <strong>Bitcoin <small>BTC</small></strong>
+                                <em class="positive">+2.35%</em>
+                            </div>
+                            <div class="analysis-watch-row">
+                                <span class="coin-dot ethereum">◆</span>
+                                <strong>Ethereum <small>ETH</small></strong>
+                                <em class="positive">+1.82%</em>
+                            </div>
+                            <div class="analysis-watch-row">
+                                <span class="coin-dot solana">S</span>
+                                <strong>Solana <small>SOL</small></strong>
+                                <em class="positive">+4.21%</em>
+                            </div>
+                            <div class="analysis-watch-row">
+                                <span class="coin-dot doge">Ð</span>
+                                <strong>Dogecoin <small>DOGE</small></strong>
+                                <em class="positive">+6.21%</em>
+                            </div>
+                            <div class="analysis-watch-row">
+                                <span class="coin-dot pepe">P</span>
+                                <strong>Pepe <small>PEPE</small></strong>
+                                <em class="positive">+8.77%</em>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+
+                <div class="analysis-signal-grid">
+                    <article class="analysis-signal-card">
+                        <span class="signal-index">01</span>
+                        <strong data-ko="거래대금이 먼저 움직이는지 본다" data-en="Check whether turnover moves first">거래대금이 먼저 움직이는지 본다</strong>
+                        <p data-ko="가격 상승보다 15분 거래대금 증가가 먼저 나오면 관심 유입 신호로 봅니다." data-en="If 15m turnover rises before price, it can signal fresh attention.">가격 상승보다 15분 거래대금 증가가 먼저 나오면 관심 유입 신호로 봅니다.</p>
+                    </article>
+                    <article class="analysis-signal-card">
+                        <span class="signal-index">02</span>
+                        <strong data-ko="상승률만 보지 말고 과열을 확인한다" data-en="Do not chase momentum without heat checks">상승률만 보지 말고 과열을 확인한다</strong>
+                        <p data-ko="급등 코인은 이미 늦었을 수 있어 RSI, 이전 고점, 거래량 지속성을 같이 봅니다." data-en="Fast movers may already be late, so check RSI, prior highs, and volume persistence.">급등 코인은 이미 늦었을 수 있어 RSI, 이전 고점, 거래량 지속성을 같이 봅니다.</p>
+                    </article>
+                    <article class="analysis-signal-card">
+                        <span class="signal-index">03</span>
+                        <strong data-ko="롱/숏 한쪽 쏠림은 반대로도 해석한다" data-en="Read crowded long/short skew both ways">롱/숏 한쪽 쏠림은 반대로도 해석한다</strong>
+                        <p data-ko="롱이 과도하면 청산 리스크, 숏이 과도하면 숏커버 가능성을 같이 봅니다." data-en="Heavy longs add liquidation risk, while heavy shorts can create short-cover fuel.">롱이 과도하면 청산 리스크, 숏이 과도하면 숏커버 가능성을 같이 봅니다.</p>
+                    </article>
+                </div>
+            </section>
+
             <div class="method-tabs">
-                <button class="tab-btn active" data-tab="technical">📈 기술적 분석</button>
-                <button class="tab-btn" data-tab="fundamental">📋 기본적 분석</button>
-                <button class="tab-btn" data-tab="onchain">⛓️ 온체인 분석</button>
-                <button class="tab-btn" data-tab="sentiment">🧠 시장 심리</button>
+                <button class="tab-btn active" data-tab="technical" data-ko="기술적 분석" data-en="Technical">기술적 분석</button>
+                <button class="tab-btn" data-tab="fundamental" data-ko="기본적 분석" data-en="Fundamental">기본적 분석</button>
+                <button class="tab-btn" data-tab="onchain" data-ko="온체인 분석" data-en="On-chain">온체인 분석</button>
+                <button class="tab-btn" data-tab="sentiment" data-ko="시장 심리" data-en="Sentiment">시장 심리</button>
             </div>
 
             <!-- 기술적 분석 탭 -->

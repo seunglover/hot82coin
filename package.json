@@ -1,7 +1,7 @@
 {
-  "name": "coin-ranking-app",
+  "name": "personal-static-dashboard",
   "version": "1.0.0",
-  "description": "바이낸스 API를 사용한 실시간 코인 거래량 순위 웹사이트",
+  "description": "Personal static dashboard project",
   "main": "index.html",
   "scripts": {
     "start": "echo '정적 사이트 - 브라우저에서 index.html을 열어주세요'",
@@ -10,20 +10,17 @@
     "deploy": "echo '폴더를 웹 서버에 업로드하세요'"
   },
   "keywords": [
-    "cryptocurrency",
-    "binance",
-    "api",
-    "trading",
-    "volume",
-    "ranking"
+    "static-site",
+    "dashboard",
+    "personal-project"
   ],
   "author": "Coin Ranking App",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/coin-ranking-app.git"
+    "url": "https://github.com/yourusername/personal-static-dashboard.git"
   },
   "engines": {
     "node": ">=14.0.0"
   }
-} 
+}
