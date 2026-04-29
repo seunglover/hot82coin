@@ -2,10 +2,17 @@ import http from 'node:http';
 
 const PORT = Number(process.env.PORT || process.env.COIN_API_PORT || 8787);
 const CACHE_TTL_MS = Number(process.env.COIN_API_CACHE_TTL_MS || 15000);
-const ALLOWED_ORIGINS = (process.env.COIN_API_ALLOWED_ORIGINS || '*')
+const DEFAULT_ALLOWED_ORIGINS = [
+    'https://modong.bobsida.com',
+    'https://cryptopulse.kr'
+];
+const configuredOrigins = (process.env.COIN_API_ALLOWED_ORIGINS || '')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
+const ALLOWED_ORIGINS = configuredOrigins.includes('*')
+    ? ['*']
+    : Array.from(new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins]));
 
 const upstreams = {
     bybit: 'https://api.bybit.com',

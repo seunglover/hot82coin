@@ -7,7 +7,7 @@ Type=simple
 WorkingDirectory=/opt/site-runtime
 Environment=NODE_ENV=production
 Environment=COIN_API_PORT=8787
-Environment=COIN_API_ALLOWED_ORIGINS=*
+Environment=COIN_API_ALLOWED_ORIGINS=https://modong.bobsida.com,https://cryptopulse.kr
 ExecStart=/usr/bin/node /opt/site-runtime/runtime-gateway.mjs
 Restart=always
 RestartSec=3
