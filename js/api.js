@@ -81,7 +81,9 @@ class BybitAPI {
 
             return data;
         } catch (error) {
-            console.error(`바이비트 V5 API 요청 오류 (시도 ${retryCount + 1}/${maxRetries + 1}):`, error);
+            const expectedSymbolError = error.message.includes('symbol not support') || error.message.includes('params error');
+            const logRequestError = expectedSymbolError ? console.warn : console.error;
+            logRequestError(`바이비트 V5 API 요청 오류 (시도 ${retryCount + 1}/${maxRetries + 1}):`, error);
             
             // 재시도 가능한 오류인 경우 재시도
             if (retryCount < maxRetries && (

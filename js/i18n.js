@@ -4,7 +4,7 @@
 const i18n = {
     ko: {
         // 헤더
-        title: "🔥 지금 핫한 코인 순위",
+        title: "코인 레이더",
         subtitle: "해외거래소에서 핫한 코인",
         
         // 메뉴
@@ -124,12 +124,12 @@ const i18n = {
         terms_title: "이용약관",
         terms_intro_title: "서비스 이용에 관한 약관",
         terms_intro_subtitle: "최종 업데이트: 2024년 1월 15일",
-        terms_intro_main: "🔥 지금 핫한 코인 순위(이하 \"본 사이트\")의 이용약관입니다. 본 사이트를 이용하시기 전에 이 약관을 주의 깊게 읽어보시기 바랍니다.",
+        terms_intro_main: "코인 레이더(이하 \"본 사이트\")의 이용약관입니다. 본 사이트를 이용하시기 전에 이 약관을 주의 깊게 읽어보시기 바랍니다.",
         terms_article_1_title: "제1조 (목적)",
         terms_article_1_content: "본 약관은 본 사이트가 제공하는 암호화폐 정보 서비스의 이용과 관련하여 사이트와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.",
         terms_article_2_title: "제2조 (정의)",
         terms_site_def: "사이트",
-        terms_site_def_content: "🔥 지금 핫한 코인 순위 웹사이트",
+        terms_site_def_content: "코인 레이더 웹사이트",
         terms_user_def: "이용자",
         terms_user_def_content: "본 사이트에 접속하여 서비스를 이용하는 모든 사용자",
         terms_service_def: "서비스",
@@ -169,7 +169,7 @@ const i18n = {
         privacy_title: "🔒 개인정보처리방침",
         privacy_intro_title: "개인정보 수집 및 이용에 관한 안내",
         privacy_intro_subtitle: "최종 업데이트: 2024년 1월 15일",
-        privacy_intro_main: "🔥 지금 핫한 코인 순위(이하 \"본 사이트\")는 이용자의 개인정보를 중요하게 생각하며, 개인정보보호법을 준수하여 개인정보를 안전하게 보호하고 있습니다.",
+        privacy_intro_main: "코인 레이더(이하 \"본 사이트\")는 이용자의 개인정보를 중요하게 생각하며, 개인정보보호법을 준수하여 개인정보를 안전하게 보호하고 있습니다.",
         privacy_article_1_title: "📖 제1조 (개인정보 수집 목적)",
         privacy_article_1_content: "본 사이트는 다음과 같은 목적으로 개인정보를 수집합니다:",
         privacy_article_1_items: [
@@ -310,7 +310,7 @@ const i18n = {
     
     en: {
         // 헤더
-        title: "🔥 Hot Coin Rankings Now",
+        title: "CoinRadar",
         subtitle: "Hot coins from overseas exchanges",
         
         // 메뉴
@@ -430,12 +430,12 @@ const i18n = {
         terms_title: "Terms of Service",
         terms_intro_title: "Terms of Service",
         terms_intro_subtitle: "Last updated: January 15, 2024",
-        terms_intro_main: "🔥 Hot Coin Rankings Now (hereinafter \"this site\") Terms of Service. Please read these terms carefully before using this site.",
+        terms_intro_main: "CoinRadar (hereinafter \"this site\") Terms of Service. Please read these terms carefully before using this site.",
         terms_article_1_title: "Article 1 (Purpose)",
         terms_article_1_content: "These terms establish the rights, obligations, and responsibilities between the site and users regarding the cryptocurrency information service provided by this site.",
         terms_article_2_title: "Article 2 (Definitions)",
         terms_site_def: "Site",
-        terms_site_def_content: "🔥 Hot Coin Rankings Now website",
+        terms_site_def_content: "CoinRadar website",
         terms_user_def: "User",
         terms_user_def_content: "All users who access this site and use the service",
         terms_service_def: "Service",
@@ -487,7 +487,7 @@ const i18n = {
         privacy_title: "🔒 Privacy Policy",
         privacy_intro_title: "Personal Information Collection and Use Notice",
         privacy_intro_subtitle: "Last updated: January 15, 2024",
-        privacy_intro_main: "🔥 Hot Coin Rankings Now (hereinafter \"this site\") values user privacy and safely protects personal information in compliance with privacy protection laws.",
+        privacy_intro_main: "CoinRadar (hereinafter \"this site\") values user privacy and safely protects personal information in compliance with privacy protection laws.",
         privacy_article_1_title: "📖 Article 1 (Purpose of Personal Information Collection)",
         privacy_article_1_content: "This site collects personal information for the following purposes:",
         privacy_article_1_items: [

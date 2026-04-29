@@ -14,7 +14,7 @@
     
     <meta name="description" content="비트코인, 이더리움, 솔라나, 리플, 도지, 시바, 페페 등 대표 코인과 밈코인의 실시간 관심도를 15분 거래대금, 급등률, 롱/숏 쏠림으로 확인하세요.">
     <meta name="keywords" content="코인, 암호화폐, 비트코인, 알트코인, 거래량, 롱숏, 급등 코인, 코인 순위, 실시간">
-    <meta name="author" content="Coin Ranking App">
+    <meta name="author" content="Personal Project">
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="코인 레이더 - 비트코인·알트코인·밈코인 실시간 관심도">
@@ -29,13 +29,23 @@
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="코인 순위">
+    <meta name="apple-mobile-web-app-title" content="코인 레이더">
     <meta name="msapplication-TileColor" content="#0f172a">
     <meta name="msapplication-navbutton-color" content="#0f172a">
     
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2347391460222140"
-     crossorigin="anonymous"></script>
+    <!-- Google AdSense: production only -->
+    <script>
+        (() => {
+            const localHosts = new Set(['localhost', '127.0.0.1', '::1']);
+            if (localHosts.has(window.location.hostname)) return;
+
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2347391460222140';
+            script.crossOrigin = 'anonymous';
+            document.head.appendChild(script);
+        })();
+    </script>
     
     <!-- 배포 트리거: 2024-01-15 -->
 </head>
