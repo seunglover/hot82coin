@@ -56,6 +56,8 @@
     }
 
     function shouldSkip() {
+        if (window.PRIVATE_VISITS_ENABLED !== true) return true;
+
         const host = window.location.hostname;
         if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return true;
         if (window.location.pathname.endsWith('/debug.html')) return true;
