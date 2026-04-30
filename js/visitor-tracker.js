@@ -6,6 +6,7 @@
     };
     const SESSION_TTL = 30 * 60 * 1000;
     const DEDUPE_TTL = 20 * 1000;
+    const PRODUCTION_HOSTS = ['cryptopulse.kr', 'www.cryptopulse.kr'];
 
     function randomId(prefix) {
         const bytes = new Uint8Array(12);
@@ -56,9 +57,10 @@
     }
 
     function shouldSkip() {
-        if (window.PRIVATE_VISITS_ENABLED !== true) return true;
-
         const host = window.location.hostname;
+        const isProductionHost = PRODUCTION_HOSTS.includes(host);
+
+        if (!isProductionHost && window.PRIVATE_VISITS_ENABLED !== true) return true;
         if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return true;
         if (window.location.pathname.endsWith('/debug.html')) return true;
         if (window.location.pathname.endsWith('/private-stats.html')) return true;
