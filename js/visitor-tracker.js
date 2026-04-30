@@ -110,17 +110,12 @@
         const body = JSON.stringify(payload);
 
         try {
-            if (navigator.sendBeacon) {
-                const blob = new Blob([body], { type: 'application/json' });
-                navigator.sendBeacon(url, blob);
-                return;
-            }
-
             fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
                 body,
-                mode: 'cors',
+                mode: 'no-cors',
+                credentials: 'omit',
                 keepalive: true
             }).catch(() => {});
         } catch (_) {
