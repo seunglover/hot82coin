@@ -19,6 +19,10 @@ Allow: /privacy.html
 Allow: /terms.html
 Allow: /contact.html
 Allow: /faq.html
+Allow: /coin-volume-ranking.html
+Allow: /meme-coin-watch.html
+Allow: /long-short-ratio.html
+Allow: /rising-coins.html
 Allow: /crypto-guide.html
 Allow: /safety-tips.html
 Allow: /market-analysis.html

@@ -1328,6 +1328,146 @@ body.subpage .tool-item {
     line-height: 1.6;
 }
 
+.seo-topic-section {
+    margin: 28px 0;
+    padding: 0 20px;
+}
+
+.seo-topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+.seo-topic-card {
+    display: grid;
+    gap: 10px;
+    padding: 18px;
+    color: var(--text-primary);
+    text-decoration: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.seo-topic-card:hover,
+.seo-topic-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    outline: none;
+}
+
+.seo-topic-card small {
+    color: var(--accent);
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.seo-topic-card strong {
+    font-size: 1.08rem;
+    line-height: 1.35;
+}
+
+.seo-topic-card span {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.92rem;
+}
+
+.seo-page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px 56px;
+}
+
+.seo-answer-block,
+.seo-checklist,
+.seo-faq,
+.seo-related {
+    background:
+        linear-gradient(180deg, rgba(20, 34, 55, 0.94), rgba(10, 18, 32, 0.88));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 18px;
+}
+
+.seo-answer-block h2,
+.seo-checklist h2,
+.seo-faq h2,
+.seo-related h2 {
+    color: var(--text-primary);
+    font-size: 1.45rem;
+    margin-bottom: 12px;
+}
+
+.seo-answer-block p,
+.seo-answer-block li,
+.seo-checklist li,
+.seo-faq p {
+    color: var(--text-secondary);
+    line-height: 1.72;
+}
+
+.seo-answer-block > p:first-of-type {
+    color: var(--text-primary);
+    font-size: 1.04rem;
+}
+
+.seo-signal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.seo-signal-table th,
+.seo-signal-table td {
+    padding: 13px;
+    border: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.seo-signal-table th {
+    color: var(--text-primary);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.seo-signal-table td {
+    color: var(--text-secondary);
+}
+
+.seo-checklist ol,
+.seo-checklist ul,
+.seo-answer-block ol,
+.seo-answer-block ul {
+    padding-left: 22px;
+}
+
+.seo-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.seo-related-grid a {
+    padding: 14px;
+    color: var(--text-primary);
+    text-decoration: none;
+    background: rgba(15, 23, 42, 0.58);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.seo-related-grid a:hover {
+    border-color: var(--accent);
+}
+
 .skeleton-line {
     height: 58px;
     border-radius: 8px;
@@ -1378,6 +1518,27 @@ body.subpage .tool-item {
 
     .strategy-strip {
         grid-template-columns: 1fr;
+    }
+
+    .seo-topic-section {
+        padding: 0 14px;
+    }
+
+    .seo-page {
+        padding: 0 14px 42px;
+    }
+
+    .seo-answer-block,
+    .seo-checklist,
+    .seo-faq,
+    .seo-related {
+        padding: 18px;
+    }
+
+    .seo-signal-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 }
 
