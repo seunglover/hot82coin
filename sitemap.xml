@@ -61,6 +61,42 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://cryptopulse.kr/today-rising-coins.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cryptopulse.kr/volume-spike-coins.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cryptopulse.kr/altcoin-volume-ranking.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cryptopulse.kr/bitcoin-long-short-ratio.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cryptopulse.kr/meme-coin-ranking.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cryptopulse.kr/coin-market-cap-volume.html</loc>
+    <lastmod>2026-04-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://cryptopulse.kr/trading-basics.html</loc>
     <lastmod>2026-04-30</lastmod>
     <changefreq>weekly</changefreq>

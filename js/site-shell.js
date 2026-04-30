@@ -24,6 +24,30 @@
             ko: ['급등 코인', '상승률, 거래대금, 롱숏비율을 함께 보고 급등 코인을 확인하는 기준입니다.'],
             en: ['Rising Coins', 'How to scan fast-moving coins with momentum, turnover, and positioning.']
         },
+        'today-rising-coins.html': {
+            ko: ['오늘 급등 코인', '상승률과 15분 거래대금으로 오늘 관심이 몰린 코인을 확인하는 기준입니다.'],
+            en: ['Today Rising Coins', 'How to check coins gaining attention today with momentum and 15-minute turnover.']
+        },
+        'volume-spike-coins.html': {
+            ko: ['거래량 급증 코인', '거래량과 거래대금 급증이 실제 관심인지 단기 이벤트인지 구분하는 방법입니다.'],
+            en: ['Volume Spike Coins', 'How to separate real attention from short-lived volume spikes.']
+        },
+        'altcoin-volume-ranking.html': {
+            ko: ['알트코인 거래대금 순위', 'BTC와 ETH에 가려진 알트코인 순환매와 유동성 흐름을 확인하는 기준입니다.'],
+            en: ['Altcoin Volume Ranking', 'How to read altcoin rotation and liquidity outside BTC and ETH.']
+        },
+        'bitcoin-long-short-ratio.html': {
+            ko: ['비트코인 롱숏비율', 'BTC 선물 시장의 롱/숏 쏠림과 과열 위험을 해석하는 방법입니다.'],
+            en: ['Bitcoin Long/Short Ratio', 'How to read BTC futures positioning and crowding risk.']
+        },
+        'meme-coin-ranking.html': {
+            ko: ['밈코인 순위', 'DOGE, SHIB, PEPE, WIF 같은 밈코인을 거래대금과 변동성 기준으로 보는 방법입니다.'],
+            en: ['Meme Coin Ranking', 'How to read meme coins such as DOGE, SHIB, PEPE, and WIF by turnover and volatility.']
+        },
+        'coin-market-cap-volume.html': {
+            ko: ['시가총액과 거래대금 차이', '코인 시가총액, 거래량, 거래대금이 각각 어떤 의미인지 정리했습니다.'],
+            en: ['Market Cap vs Turnover', 'The difference between crypto market cap, volume, and turnover.']
+        },
         'crypto-guide.html': {
             ko: ['초보 가이드', '비트코인, 알트코인, 밈코인을 처음 보는 사람을 위한 입문 가이드입니다.'],
             en: ['Beginner Guide', 'A first look at Bitcoin, altcoins, and meme coins.']

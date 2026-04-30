@@ -3,8 +3,6 @@ Allow: /
 Sitemap: https://cryptopulse.kr/sitemap.xml
 
 # 불필요한 파일 크롤링 방지
-Disallow: /js/
-Disallow: /css/
 Disallow: /_headers
 Disallow: /netlify.toml
 Disallow: /debug.html
@@ -23,6 +21,12 @@ Allow: /coin-volume-ranking.html
 Allow: /meme-coin-watch.html
 Allow: /long-short-ratio.html
 Allow: /rising-coins.html
+Allow: /today-rising-coins.html
+Allow: /volume-spike-coins.html
+Allow: /altcoin-volume-ranking.html
+Allow: /bitcoin-long-short-ratio.html
+Allow: /meme-coin-ranking.html
+Allow: /coin-market-cap-volume.html
 Allow: /crypto-guide.html
 Allow: /safety-tips.html
 Allow: /market-analysis.html
