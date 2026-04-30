@@ -292,15 +292,11 @@ class CoinRankingApp {
             let longShortData = [];
             let accurateMarketCapData = [];
             
-            // 롱숏 데이터와 시가총액 데이터를 병렬로 가져오기
+            // Keep the initial page load on the primary market feed. The public CoinGecko
+            // market-cap endpoint is rate-limit prone and should be cached server-side
+            // before being used again on every static page load.
             try {
-                [longShortData, accurateMarketCapData] = await Promise.allSettled([
-                    bybitAPI.getTopCoinsLongShortRatio(coins),
-                    coinGeckoAPI.getAccurateMarketCap(coins)
-                ]).then(results => [
-                    results[0].status === 'fulfilled' ? results[0].value : [],
-                    results[1].status === 'fulfilled' ? results[1].value : []
-                ]);
+                longShortData = await bybitAPI.getTopCoinsLongShortRatio(coins);
             } catch (error) {
                 console.warn('추가 데이터 로딩 실패, 기본 데이터로 계속 진행:', error);
             }
