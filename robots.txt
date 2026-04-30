@@ -6,6 +6,7 @@ Sitemap: https://cryptopulse.kr/sitemap.xml
 Disallow: /_headers
 Disallow: /netlify.toml
 Disallow: /debug.html
+Disallow: /private-stats.html
 Disallow: /.git/
 Disallow: /.cursor/
 Disallow: /node_modules/

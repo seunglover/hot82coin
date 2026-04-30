@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Private Stats | CoinRadar</title>
+    <link rel="stylesheet" href="css/style.css?v=20260430-seo-pages">
+    <style>
+        .private-stats {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 42px 18px;
+        }
+
+        .private-stats h1 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .private-stats p {
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .stats-panel {
+            margin-top: 22px;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .stats-form input,
+        .stats-form button {
+            min-height: 44px;
+            border-radius: 8px;
+        }
+
+        .stats-form input {
+            padding: 0 12px;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .stats-form button {
+            padding: 0 18px;
+            color: white;
+            background: var(--accent);
+            border: 0;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .stats-card {
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.58);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .stats-card span {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.86rem;
+            margin-bottom: 8px;
+        }
+
+        .stats-card strong {
+            color: var(--text-primary);
+            font-size: 1.55rem;
+        }
+
+        .stats-list {
+            margin-top: 18px;
+        }
+
+        .stats-list h2 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .stats-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .stats-list th,
+        .stats-list td {
+            padding: 12px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            text-align: left;
+        }
+
+        .stats-list th {
+            color: var(--text-primary);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .stats-message {
+            margin-top: 14px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 640px) {
+            .stats-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="private-stats">
+        <h1>Private Stats</h1>
+        <p>방문자 수는 공개 페이지에 표시하지 않습니다. 서버에 설정된 관리자 토큰으로만 통계를 조회합니다.</p>
+
+        <section class="stats-panel">
+            <label for="stats-token">Admin token</label>
+            <div class="stats-form">
+                <input id="stats-token" type="password" autocomplete="off" placeholder="서버 관리자 토큰">
+                <button id="load-stats" type="button">조회</button>
+            </div>
+            <p class="stats-message" id="stats-message">토큰은 이 브라우저에 저장하지 않습니다.</p>
+
+            <div class="stats-grid" id="stats-grid" hidden>
+                <div class="stats-card"><span>오늘 방문</span><strong id="visits-today">0</strong></div>
+                <div class="stats-card"><span>7일 방문</span><strong id="visits-week">0</strong></div>
+                <div class="stats-card"><span>30일 방문</span><strong id="visits-month">0</strong></div>
+                <div class="stats-card"><span>전체 방문</span><strong id="visits-total">0</strong></div>
+            </div>
+
+            <div class="stats-list" id="top-pages" hidden>
+                <h2>상위 페이지</h2>
+                <table>
+                    <thead><tr><th>Page</th><th>Visits</th></tr></thead>
+                    <tbody id="top-pages-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const gatewayPath = atob('L2NvaW4tYXBp');
+            const remoteHost = atob('bW9kb25nLmJvYnNpZGEuY29t');
+            const apiBase = `https://${remoteHost}${gatewayPath}`;
+            const message = document.getElementById('stats-message');
+            const grid = document.getElementById('stats-grid');
+            const topPages = document.getElementById('top-pages');
+            const topPagesBody = document.getElementById('top-pages-body');
+
+            function setText(id, value) {
+                document.getElementById(id).textContent = Number(value || 0).toLocaleString('ko-KR');
+            }
+
+            function render(data) {
+                setText('visits-today', data.today);
+                setText('visits-week', data.last7Days);
+                setText('visits-month', data.last30Days);
+                setText('visits-total', data.total);
+
+                topPagesBody.innerHTML = '';
+                (data.topPages || []).slice(0, 20).forEach(row => {
+                    const tr = document.createElement('tr');
+                    const path = document.createElement('td');
+                    const visits = document.createElement('td');
+                    path.textContent = row.path || '/';
+                    visits.textContent = Number(row.visits || 0).toLocaleString('ko-KR');
+                    tr.append(path, visits);
+                    topPagesBody.append(tr);
+                });
+
+                grid.hidden = false;
+                topPages.hidden = false;
+            }
+
+            async function loadStats() {
+                const token = document.getElementById('stats-token').value.trim();
+                if (!token) {
+                    message.textContent = '토큰을 입력하세요.';
+                    return;
+                }
+
+                message.textContent = '조회 중...';
+                try {
+                    const response = await fetch(`${apiBase}/visits/summary?days=30`, {
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        mode: 'cors',
+                        cache: 'no-store'
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    render(data);
+                    message.textContent = `마지막 조회: ${new Date().toLocaleString('ko-KR')}`;
+                } catch (error) {
+                    message.textContent = `조회 실패: ${error.message}. 서버에 /visits/summary API와 관리자 토큰이 필요합니다.`;
+                }
+            }
+
+            document.getElementById('load-stats').addEventListener('click', loadStats);
+            document.getElementById('stats-token').addEventListener('keydown', event => {
+                if (event.key === 'Enter') loadStats();
+            });
+        })();
+    </script>
+</body>
+</html>
